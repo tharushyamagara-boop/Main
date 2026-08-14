@@ -19,15 +19,19 @@ const heroSlides = [
     description: "Empowering professional sewage emptiers through advocacy, training, and standardized compliance to ensure a cleaner, healthier Rwanda for everyone.",
     imgId: "hero-sanitation",
     ctaPrimary: "Partner With Us",
-    ctaSecondary: "View Our Impact"
+    ctaSecondary: "View Our Impact",
+    hrefPrimary: "/contact",
+    hrefSecondary: "/dashboard"
   },
   {
     title: "Professionalizing the ",
     titleHighlight: "Sanitation Sector",
     description: "Providing technical training and certifications to ensure the highest standards of hygiene and environmental safety across all provinces.",
     imgId: "member-training",
-    ctaPrimary: "Learn About Us",
-    ctaSecondary: "Member Resources"
+    ctaPrimary: "Our Services",
+    ctaSecondary: "Resource Center",
+    hrefPrimary: "/services",
+    hrefSecondary: "/resources"
   },
   {
     title: "Protecting Our ",
@@ -35,7 +39,9 @@ const heroSlides = [
     description: "Working across all 30 districts to protect public health through professionalized waste management and infrastructure development.",
     imgId: "community-impact",
     ctaPrimary: "Get in Touch",
-    ctaSecondary: "Impact Dashboard"
+    ctaSecondary: "Advocacy News",
+    hrefPrimary: "/contact",
+    hrefSecondary: "/news"
   }
 ];
 
@@ -59,26 +65,27 @@ export default function Home() {
                           src={slideImg.imageUrl}
                           alt={slideImg.description}
                           fill
-                          className="object-cover brightness-[0.35]"
+                          className="object-cover brightness-[0.4]"
                           priority={index === 0}
                           data-ai-hint={slideImg.imageHint}
                         />
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
                     </div>
                     <div className="container mx-auto px-4 z-10 text-white">
                       <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <h1 className="text-4xl md:text-6xl font-headline font-bold leading-tight">
                           {slide.title}<span className="text-primary">{slide.titleHighlight}</span>
                         </h1>
-                        <p className="text-lg md:text-xl font-body text-slate-200 max-w-2xl">
+                        <p className="text-lg md:text-xl font-body text-slate-200 max-w-2xl leading-relaxed">
                           {slide.description}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
                           <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white font-headline px-8">
-                            <Link href="/contact">{slide.ctaPrimary}</Link>
+                            <Link href={slide.hrefPrimary}>{slide.ctaPrimary}</Link>
                           </Button>
                           <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 font-headline px-8">
-                            <Link href="/dashboard">{slide.ctaSecondary}</Link>
+                            <Link href={slide.hrefSecondary}>{slide.ctaSecondary}</Link>
                           </Button>
                         </div>
                       </div>
@@ -88,7 +95,7 @@ export default function Home() {
               );
             })}
           </CarouselContent>
-          <div className="absolute bottom-8 right-16 flex gap-2 z-20">
+          <div className="absolute bottom-8 right-8 md:right-16 flex gap-2 z-20">
             <CarouselPrevious className="static translate-y-0 bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 w-12" />
             <CarouselNext className="static translate-y-0 bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 w-12" />
           </div>
@@ -184,7 +191,7 @@ export default function Home() {
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="w-full lg:w-1/2 relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="w-full lg:w-1/2 relative h-[450px] rounded-2xl overflow-hidden shadow-2xl">
               {impactImg && (
                 <Image
                   src={impactImg.imageUrl}
@@ -208,13 +215,13 @@ export default function Home() {
                   "Government partnership and policy advocacy"
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-center gap-3 font-body font-semibold text-secondary">
-                    <Droplets className="w-5 h-5 text-primary" />
+                    <Droplets className="w-5 h-5 text-primary shrink-0" />
                     {item}
                   </li>
                 ))}
               </ul>
               <div className="pt-6">
-                <Button asChild className="bg-secondary hover:bg-secondary/90 text-white font-headline">
+                <Button asChild className="bg-secondary hover:bg-secondary/90 text-white font-headline shadow-lg py-6 px-8">
                   <Link href="/contact">Inquire for Partnership</Link>
                 </Button>
               </div>
