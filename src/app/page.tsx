@@ -35,7 +35,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white font-headline px-8">
-                <Link href="/register">Join ASSERWA Today</Link>
+                <Link href="/contact">Partner With Us</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 font-headline px-8">
                 <Link href="/dashboard">View Our Impact</Link>
@@ -165,7 +165,7 @@ export default function Home() {
               </ul>
               <div className="pt-6">
                 <Button asChild className="bg-secondary hover:bg-secondary/90 text-white font-headline">
-                  <Link href="/contact">Partner With Us</Link>
+                  <Link href="/contact">Inquire for Partnership</Link>
                 </Button>
               </div>
             </div>

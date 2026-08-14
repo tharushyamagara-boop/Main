@@ -44,7 +44,7 @@ export function Navbar() {
           ))}
           <div className="h-6 w-px bg-border mx-2" />
           <Button asChild variant="default" className="bg-primary hover:bg-primary/90 text-white font-headline uppercase tracking-wider text-xs px-6 py-2">
-            <Link href="/register">Register</Link>
+            <Link href="/contact">Contact Us</Link>
           </Button>
         </div>
 
@@ -74,7 +74,7 @@ export function Navbar() {
             </Link>
           ))}
           <Button asChild variant="default" className="w-full mt-2" onClick={() => setIsOpen(false)}>
-            <Link href="/register">Register Member</Link>
+            <Link href="/contact">Contact Association</Link>
           </Button>
         </div>
       )}
