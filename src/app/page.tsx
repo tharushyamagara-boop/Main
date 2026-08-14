@@ -1,9 +1,9 @@
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck, BarChart3, Users, Droplets, ArrowRight } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { CountUp } from '@/components/count-up';
 
 export default function Home() {
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-sanitation');
@@ -50,19 +50,27 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">250+</div>
+              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">
+                <CountUp end={250} suffix="+" />
+              </div>
               <div className="text-sm font-headline uppercase tracking-wider text-slate-300">Active Members</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">30+</div>
+              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">
+                <CountUp end={30} suffix="+" />
+              </div>
               <div className="text-sm font-headline uppercase tracking-wider text-slate-300">Districts Supported</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">15k+</div>
+              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">
+                <CountUp end={15} suffix="k+" />
+              </div>
               <div className="text-sm font-headline uppercase tracking-wider text-slate-300">Facilities Managed</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">50+</div>
+              <div className="text-3xl md:text-4xl font-headline font-bold text-primary mb-1">
+                <CountUp end={50} suffix="+" />
+              </div>
               <div className="text-sm font-headline uppercase tracking-wider text-slate-300">Annual Trainings</div>
             </div>
           </div>
