@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -24,7 +25,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <Droplets className="h-8 w-8 text-primary" />
           <span className="font-headline font-bold text-xl tracking-tight text-secondary">
-            ASSERWA<span className="text-primary">PORTAL</span>
+            ASSERWA
           </span>
         </Link>
 

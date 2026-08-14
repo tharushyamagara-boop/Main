@@ -6,7 +6,7 @@ import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'ASSERWA Portal | Association of Sewage Emptiers in Rwanda',
+  title: 'ASSERWA | Association of Sewage Emptiers in Rwanda',
   description: 'Empowering sanitation professionals and promoting environmental protection in Rwanda.',
 };
 
