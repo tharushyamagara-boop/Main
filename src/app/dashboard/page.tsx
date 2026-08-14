@@ -5,11 +5,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { CountUp } from '@/components/count-up';
 
 const districtData = [
-  { name: 'Kigali', value: 85 },
-  { name: 'East', value: 45 },
-  { name: 'West', value: 38 },
-  { name: 'North', value: 32 },
-  { name: 'South', value: 50 },
+  { name: 'Kigali', value: 6 },
+  { name: 'East', value: 3 },
+  { name: 'West', value: 3 },
+  { name: 'North', value: 2 },
+  { name: 'South', value: 2 },
 ];
 
 const trainingData = [
@@ -34,9 +34,9 @@ export default function DashboardPage() {
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <StatCard 
-          title="Members Trained" 
-          value={1240} 
-          change="+12% from last year"
+          title="Active Members" 
+          value={16} 
+          change="Verified association members"
         />
         <StatCard 
           title="Communities Reached" 
@@ -62,7 +62,7 @@ export default function DashboardPage() {
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="font-headline text-secondary">Reach by Province</CardTitle>
-            <CardDescription>Number of active member cooperatives operating in each region.</CardDescription>
+            <CardDescription>Number of active member organizations operating in each region (Total: 16).</CardDescription>
           </CardHeader>
           <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
