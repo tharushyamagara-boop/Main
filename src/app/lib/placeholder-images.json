@@ -30,6 +30,24 @@
       "description": "Stakeholder engagement meeting",
       "imageUrl": "https://picsum.photos/seed/asserwa-5/800/600",
       "imageHint": "government meeting"
+    },
+    {
+      "id": "gallery-1",
+      "description": "Sanitation infrastructure project",
+      "imageUrl": "https://picsum.photos/seed/asserwa-g1/800/600",
+      "imageHint": "infrastructure construction"
+    },
+    {
+      "id": "gallery-2",
+      "description": "Mobile sanitation unit",
+      "imageUrl": "https://picsum.photos/seed/asserwa-g2/800/600",
+      "imageHint": "truck equipment"
+    },
+    {
+      "id": "gallery-3",
+      "description": "Clean water management",
+      "imageUrl": "https://picsum.photos/seed/asserwa-g3/800/600",
+      "imageHint": "water environment"
     }
   ]
 }

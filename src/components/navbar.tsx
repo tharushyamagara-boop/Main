@@ -4,15 +4,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { Droplets, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 const navLinks = [
-  { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Compliance', href: '/compliance' },
-  { name: 'Resources', href: '/resources' },
-  { name: 'News', href: '/news' },
+  { name: 'HOME', href: '/' },
+  { name: 'ABOUT', href: '/about' },
+  { name: 'SERVICES', href: '/services' },
+  { name: 'ARTICLES', href: '/news' },
+  { name: 'GALLERY', href: '/gallery' },
+  { name: 'CONTACT', href: '/contact' },
 ];
 
 export function Navbar() {
@@ -30,23 +31,19 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === link.href ? "text-primary" : "text-muted-foreground"
+                "text-xs font-bold tracking-widest transition-colors hover:text-primary",
+                pathname === link.href ? "text-primary" : "text-secondary"
               )}
             >
               {link.name}
             </Link>
           ))}
-          <div className="h-6 w-px bg-border mx-2" />
-          <Button asChild variant="default" className="bg-primary hover:bg-primary/90 text-white font-headline uppercase tracking-wider text-xs px-6 py-2">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
         </div>
 
         {/* Mobile Nav Toggle */}
@@ -67,16 +64,13 @@ export function Navbar() {
               href={link.href}
               onClick={() => setIsOpen(false)}
               className={cn(
-                "py-2 text-base font-medium transition-colors hover:text-primary",
-                pathname === link.href ? "text-primary" : "text-muted-foreground"
+                "py-3 text-sm font-bold tracking-widest transition-colors hover:text-primary border-b border-slate-50",
+                pathname === link.href ? "text-primary" : "text-secondary"
               )}
             >
               {link.name}
             </Link>
           ))}
-          <Button asChild variant="default" className="w-full mt-2" onClick={() => setIsOpen(false)}>
-            <Link href="/contact">Contact Association</Link>
-          </Button>
         </div>
       )}
     </nav>
