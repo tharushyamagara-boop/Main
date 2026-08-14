@@ -1,0 +1,35 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-sanitation",
+      "description": "Professional sanitation workers in Rwanda",
+      "imageUrl": "https://picsum.photos/seed/asserwa-1/1200/600",
+      "imageHint": "sanitation water"
+    },
+    {
+      "id": "community-impact",
+      "description": "Clean community environment in Rwanda",
+      "imageUrl": "https://picsum.photos/seed/asserwa-2/800/600",
+      "imageHint": "community health"
+    },
+    {
+      "id": "member-training",
+      "description": "Training session for sanitation professionals",
+      "imageUrl": "https://picsum.photos/seed/asserwa-3/800/600",
+      "imageHint": "meeting training"
+    },
+    {
+      "id": "resource-cover",
+      "description": "Technical manual cover",
+      "imageUrl": "https://picsum.photos/seed/asserwa-4/400/500",
+      "imageHint": "document manual"
+    },
+    {
+      "id": "news-advocacy",
+      "description": "Stakeholder engagement meeting",
+      "imageUrl": "https://picsum.photos/seed/asserwa-5/800/600",
+      "imageHint": "government meeting"
+    }
+  ]
+}

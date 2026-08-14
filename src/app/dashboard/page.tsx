@@ -1,0 +1,129 @@
+
+'use client';
+
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
+import { Users, Droplets, Home, CheckCircle2 } from 'lucide-react';
+
+const districtData = [
+  { name: 'Kigali', value: 85 },
+  { name: 'East', value: 45 },
+  { name: 'West', value: 38 },
+  { name: 'North', value: 32 },
+  { name: 'South', value: 50 },
+];
+
+const trainingData = [
+  { month: 'Jan', count: 12 },
+  { month: 'Feb', count: 18 },
+  { month: 'Mar', count: 15 },
+  { month: 'Apr', count: 25 },
+  { month: 'May', count: 20 },
+  { month: 'Jun', count: 32 },
+];
+
+const COLORS = ['#6cb166', '#3b66b0', '#82ca9d', '#8884d8', '#ffc658'];
+
+export default function DashboardPage() {
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-10 space-y-2">
+        <h1 className="text-3xl md:text-4xl font-headline font-bold text-secondary">Impact Dashboard</h1>
+        <p className="text-muted-foreground font-body text-lg">Tracking ASSERWA's real-time contributions to Rwanda's sanitation infrastructure.</p>
+      </div>
+
+      {/* Top Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <StatCard 
+          icon={<Users className="w-8 h-8 text-primary" />} 
+          title="Members Trained" 
+          value="1,240" 
+          change="+12% from last year"
+        />
+        <StatCard 
+          icon={<Home className="w-8 h-8 text-primary" />} 
+          title="Communities Reached" 
+          value="482" 
+          change="+8% this quarter"
+        />
+        <StatCard 
+          icon={<Droplets className="w-8 h-8 text-primary" />} 
+          title="Waste Managed (m³)" 
+          value="45k" 
+          change="+24% YoY"
+        />
+        <StatCard 
+          icon={<CheckCircle2 className="w-8 h-8 text-primary" />} 
+          title="Compliant Facilities" 
+          value="89%" 
+          change="+5% improvement"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Geographic Reach */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="font-headline text-secondary">Reach by Province</CardTitle>
+            <CardDescription>Number of active member cooperatives operating in each region.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={districtData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                  {districtData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Training Trends */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="font-headline text-secondary">Professional Development Trends</CardTitle>
+            <CardDescription>Technical trainings conducted for members per month.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={trainingData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                />
+                <Bar dataKey="count" fill="#3b66b0" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, title, value, change }: { icon: React.ReactNode, title: string, value: string, change: string }) {
+  return (
+    <Card className="shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="pt-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-primary/10 rounded-2xl">{icon}</div>
+          <div>
+            <p className="text-sm font-headline text-muted-foreground uppercase tracking-wider">{title}</p>
+            <h3 className="text-2xl font-headline font-bold text-secondary">{value}</h3>
+            <p className="text-xs text-green-600 font-semibold">{change}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
