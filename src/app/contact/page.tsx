@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -8,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, MapPin, HandHeart, Heart, Globe, Building } from 'lucide-react';
+import { Mail, Phone, MapPin, HandHeart, Heart, Globe } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function ContactPage() {
@@ -96,10 +95,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="orgName">Organization Name</Label>
-                    <div className="relative">
-                      <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input id="orgName" className="pl-9" placeholder="UN-Habitat / World Bank" required />
-                    </div>
+                    <Input id="orgName" placeholder="UN-Habitat / World Bank" required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="inquiryType">Inquiry Type</Label>
@@ -143,7 +139,7 @@ export default function ContactPage() {
                 </Button>
                 
                 <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-                  <Globe className="w-3 h-3" /> Supporting UN Sustainable Development Goal 6 (Clean Water & Sanitation)
+                  <Globe className="w-3 h-3" /> Supporting UN Sustainable Development Goal 6
                 </p>
               </form>
             </CardContent>

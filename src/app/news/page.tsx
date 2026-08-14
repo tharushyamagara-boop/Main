@@ -1,10 +1,10 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
+import { ArrowRight, Tag } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Input } from '@/components/ui/input';
 
 const newsItems = [
   {
@@ -66,8 +66,9 @@ export default function NewsPage() {
               </div>
               <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                  <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {news.date}</span>
-                  <span className="flex items-center gap-1"><User className="w-3 h-3" /> {news.author}</span>
+                  <span>{news.date}</span>
+                  <span className="w-1 h-1 bg-muted-foreground rounded-full" />
+                  <span>{news.author}</span>
                 </div>
                 <h2 className="text-xl font-headline font-bold text-secondary mb-3 leading-tight group-hover:text-primary transition-colors">
                   {news.title}

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { ShieldCheck, UserPlus, FileText, Building2 } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,6 @@ export default function RegisterPage() {
   return (
     <div className="container mx-auto px-4 py-20 max-w-2xl">
       <div className="text-center mb-10 space-y-2">
-        <UserPlus className="w-12 h-12 text-primary mx-auto mb-4" />
         <h1 className="text-3xl md:text-4xl font-headline font-bold text-secondary">Join the Association</h1>
         <p className="text-muted-foreground font-body">Register as a professional sanitation practitioner in Rwanda.</p>
       </div>
@@ -57,18 +55,12 @@ export default function RegisterPage() {
 
             <div className="space-y-2">
               <Label htmlFor="coop">Cooperative/Company Name</Label>
-              <div className="relative">
-                <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input id="coop" className="pl-9" placeholder="Kigali Green Sanitation Ltd" required />
-              </div>
+              <Input id="coop" placeholder="Kigali Green Sanitation Ltd" required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="license">RURA License Number</Label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input id="license" className="pl-9" placeholder="RURA/SAN/2024/000" required />
-              </div>
+              <Input id="license" placeholder="RURA/SAN/2024/000" required />
             </div>
 
             <div className="space-y-2">

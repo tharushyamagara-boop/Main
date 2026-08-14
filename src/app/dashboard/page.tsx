@@ -1,9 +1,7 @@
-
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
-import { Users, Droplets, Home, CheckCircle2 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const districtData = [
   { name: 'Kigali', value: 85 },
@@ -35,25 +33,21 @@ export default function DashboardPage() {
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <StatCard 
-          icon={<Users className="w-8 h-8 text-primary" />} 
           title="Members Trained" 
           value="1,240" 
           change="+12% from last year"
         />
         <StatCard 
-          icon={<Home className="w-8 h-8 text-primary" />} 
           title="Communities Reached" 
           value="482" 
           change="+8% this quarter"
         />
         <StatCard 
-          icon={<Droplets className="w-8 h-8 text-primary" />} 
           title="Waste Managed (m³)" 
           value="45k" 
           change="+24% YoY"
         />
         <StatCard 
-          icon={<CheckCircle2 className="w-8 h-8 text-primary" />} 
           title="Compliant Facilities" 
           value="89%" 
           change="+5% improvement"
@@ -111,17 +105,14 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ icon, title, value, change }: { icon: React.ReactNode, title: string, value: string, change: string }) {
+function StatCard({ title, value, change }: { title: string, value: string, change: string }) {
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="pt-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-primary/10 rounded-2xl">{icon}</div>
-          <div>
-            <p className="text-sm font-headline text-muted-foreground uppercase tracking-wider">{title}</p>
-            <h3 className="text-2xl font-headline font-bold text-secondary">{value}</h3>
-            <p className="text-xs text-green-600 font-semibold">{change}</p>
-          </div>
+        <div>
+          <p className="text-sm font-headline text-muted-foreground uppercase tracking-wider">{title}</p>
+          <h3 className="text-3xl font-headline font-bold text-secondary mt-1">{value}</h3>
+          <p className="text-xs text-green-600 font-semibold mt-1">{change}</p>
         </div>
       </CardContent>
     </Card>

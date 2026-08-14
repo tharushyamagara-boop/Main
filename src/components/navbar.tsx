@@ -1,18 +1,17 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Droplets, Users, BarChart3, BookOpen, ShieldCheck, Menu, X } from 'lucide-react';
+import { Droplets, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 const navLinks = [
-  { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { name: 'Compliance', href: '/compliance', icon: ShieldCheck },
-  { name: 'Resources', href: '/resources', icon: BookOpen },
-  { name: 'News', href: '/news', icon: Users },
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Compliance', href: '/compliance' },
+  { name: 'Resources', href: '/resources' },
+  { name: 'News', href: '/news' },
 ];
 
 export function Navbar() {
@@ -36,11 +35,10 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
+                "text-sm font-medium transition-colors hover:text-primary",
                 pathname === link.href ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <link.icon className="h-4 w-4" />
               {link.name}
             </Link>
           ))}
@@ -68,11 +66,10 @@ export function Navbar() {
               href={link.href}
               onClick={() => setIsOpen(false)}
               className={cn(
-                "flex items-center gap-3 py-2 text-base font-medium transition-colors hover:text-primary",
+                "py-2 text-base font-medium transition-colors hover:text-primary",
                 pathname === link.href ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <link.icon className="h-5 w-5" />
               {link.name}
             </Link>
           ))}

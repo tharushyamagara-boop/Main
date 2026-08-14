@@ -1,7 +1,6 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, FileText, BookOpen, ExternalLink, Search } from 'lucide-react';
+import { Download, BookOpen, ExternalLink, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const resources = [
@@ -67,7 +66,6 @@ export default function ResourcesPage() {
                 <span className="px-2 py-1 bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-wider rounded">
                   {res.type}
                 </span>
-                <FileText className="w-5 h-5 text-primary" />
               </div>
               <CardTitle className="font-headline text-lg text-secondary group-hover:text-primary transition-colors">
                 {res.title}
@@ -79,8 +77,8 @@ export default function ResourcesPage() {
               </p>
             </CardContent>
             <CardFooter className="bg-slate-50/50 border-t flex justify-between items-center text-xs text-muted-foreground">
-              <div className="flex items-center gap-1 font-semibold">
-                <Download className="w-3 h-3" /> {res.size}
+              <div className="font-semibold">
+                {res.size}
               </div>
               <Button size="sm" variant="ghost" className="text-primary hover:text-primary hover:bg-primary/10">
                 Download PDF
