@@ -4,45 +4,95 @@ import { Button } from '@/components/ui/button';
 import { ShieldCheck, BarChart3, Users, Droplets, ArrowRight } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { CountUp } from '@/components/count-up';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+const heroSlides = [
+  {
+    title: "Advancing Rwanda's ",
+    titleHighlight: "Sanitation Excellence",
+    description: "Empowering professional sewage emptiers through advocacy, training, and standardized compliance to ensure a cleaner, healthier Rwanda for everyone.",
+    imgId: "hero-sanitation",
+    ctaPrimary: "Partner With Us",
+    ctaSecondary: "View Our Impact"
+  },
+  {
+    title: "Professionalizing the ",
+    titleHighlight: "Sanitation Sector",
+    description: "Providing technical training and certifications to ensure the highest standards of hygiene and environmental safety across all provinces.",
+    imgId: "member-training",
+    ctaPrimary: "Learn About Us",
+    ctaSecondary: "Member Resources"
+  },
+  {
+    title: "Protecting Our ",
+    titleHighlight: "Environment & Health",
+    description: "Working across all 30 districts to protect public health through professionalized waste management and infrastructure development.",
+    imgId: "community-impact",
+    ctaPrimary: "Get in Touch",
+    ctaSecondary: "Impact Dashboard"
+  }
+];
 
 export default function Home() {
-  const heroImg = PlaceHolderImages.find(img => img.id === 'hero-sanitation');
   const impactImg = PlaceHolderImages.find(img => img.id === 'community-impact');
 
   return (
     <div className="flex flex-col w-full">
-      {/* Hero Section */}
-      <section className="relative h-[600px] w-full flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          {heroImg && (
-            <Image
-              src={heroImg.imageUrl}
-              alt={heroImg.description}
-              fill
-              className="object-cover brightness-[0.4]"
-              priority
-              data-ai-hint={heroImg.imageHint}
-            />
-          )}
-        </div>
-        <div className="container mx-auto px-4 z-10 text-white">
-          <div className="max-w-2xl space-y-6">
-            <h1 className="text-4xl md:text-6xl font-headline font-bold leading-tight">
-              Advancing Rwanda's <span className="text-primary">Sanitation Excellence</span>
-            </h1>
-            <p className="text-lg md:text-xl font-body text-slate-200">
-              Empowering professional sewage emptiers through advocacy, training, and standardized compliance to ensure a cleaner, healthier Rwanda for everyone.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white font-headline px-8">
-                <Link href="/contact">Partner With Us</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 font-headline px-8">
-                <Link href="/dashboard">View Our Impact</Link>
-              </Button>
-            </div>
+      {/* Hero Slideshow Section */}
+      <section className="relative w-full overflow-hidden bg-slate-900">
+        <Carousel className="w-full" opts={{ loop: true }}>
+          <CarouselContent>
+            {heroSlides.map((slide, index) => {
+              const slideImg = PlaceHolderImages.find(img => img.id === slide.imgId);
+              return (
+                <CarouselItem key={index}>
+                  <div className="relative h-[650px] w-full flex items-center">
+                    <div className="absolute inset-0 z-0">
+                      {slideImg && (
+                        <Image
+                          src={slideImg.imageUrl}
+                          alt={slideImg.description}
+                          fill
+                          className="object-cover brightness-[0.35]"
+                          priority={index === 0}
+                          data-ai-hint={slideImg.imageHint}
+                        />
+                      )}
+                    </div>
+                    <div className="container mx-auto px-4 z-10 text-white">
+                      <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <h1 className="text-4xl md:text-6xl font-headline font-bold leading-tight">
+                          {slide.title}<span className="text-primary">{slide.titleHighlight}</span>
+                        </h1>
+                        <p className="text-lg md:text-xl font-body text-slate-200 max-w-2xl">
+                          {slide.description}
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                          <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white font-headline px-8">
+                            <Link href="/contact">{slide.ctaPrimary}</Link>
+                          </Button>
+                          <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 font-headline px-8">
+                            <Link href="/dashboard">{slide.ctaSecondary}</Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+          <div className="absolute bottom-8 right-16 flex gap-2 z-20">
+            <CarouselPrevious className="static translate-y-0 bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 w-12" />
+            <CarouselNext className="static translate-y-0 bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 w-12" />
           </div>
-        </div>
+        </Carousel>
       </section>
 
       {/* Quick Impact Stats */}
