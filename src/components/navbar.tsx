@@ -47,8 +47,8 @@ export function Navbar() {
           <div className="w-full flex h-20 items-center justify-between">
             {/* Brand Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 group-hover:scale-105 transition-transform flex items-center justify-center">
-                <Image src="/logo.png" alt="ASSERWA Logo" width={48} height={48} className="object-contain w-full h-full drop-shadow-sm" />
+              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1">
+                <Image src="/logo.png" alt="ASSERWA Logo" width={48} height={48} className="object-contain w-full h-full" />
               </div>
               <div className="flex flex-col">
                 <span className="font-headline font-bold text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm">
