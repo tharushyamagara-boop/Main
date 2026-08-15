@@ -46,7 +46,7 @@ export default function Home() {
               const slideImg = PlaceHolderImages.find(img => img.id === slide.imgId);
               return (
                 <CarouselItem key={index}>
-                  <div className="relative h-[480px] md:h-[540px] w-full flex items-center">
+                  <div className="relative h-[460px] md:h-[520px] w-full flex items-center">
                     {/* Background Image spanning 100% full viewport width */}
                     <div className="absolute inset-0 z-0">
                       {slideImg && (
@@ -64,10 +64,6 @@ export default function Home() {
                     {/* Compact White Background Slide Overlay */}
                     <div className="container mx-auto px-6 lg:px-12 z-10 relative">
                       <div className="max-w-lg space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-xl">
-                        <div className="inline-flex items-center gap-1.5 bg-[#6cb166]/10 border border-[#6cb166]/30 px-2.5 py-1 rounded-full text-[#4d8748] font-headline font-bold text-[11px] tracking-wide">
-                          <ShieldCheck className="w-3.5 h-3.5 text-[#6cb166]" />
-                          <span>Official Association of Sewage Emptiers in Rwanda</span>
-                        </div>
                         <h1 className="text-xl sm:text-2xl lg:text-3xl font-headline font-extrabold leading-tight text-slate-900 tracking-tight">
                           {slide.title}<span className="text-[#6cb166]">{slide.titleHighlight}</span>
                         </h1>
@@ -278,7 +274,7 @@ export default function Home() {
             We invite international development organizations, government agencies, and municipal authorities to partner with ASSERWA in advancing sustainable waste management.
           </p>
           <div className="pt-4 flex justify-center gap-4">
-            <Button asChild size="lg" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline font-bold px-8 shadow-lg">
+            <Button asChild size="lg" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-sm font-bold px-8 shadow-lg">
               <Link href="/contact">Contact Our Office</Link>
             </Button>
           </div>
