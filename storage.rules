@@ -1,0 +1,13 @@
+rules_version = '2';
+
+// Firebase Storage Rules for ASSERWA Web Application
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Allow public read access to images and videos
+      allow read: if true;
+      // Allow image and video uploads up to 100MB
+      allow write: if true;
+    }
+  }
+}

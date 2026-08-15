@@ -8,7 +8,7 @@ export default function MembershipInfoPage() {
     <div className="bg-slate-50/50 py-16">
       <div className="container mx-auto px-4 max-w-2xl space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-4xl font-headline font-extrabold text-slate-900">ASSSERVA Membership</h1>
+          <h1 className="text-3xl md:text-4xl font-headline font-extrabold text-slate-900">ASSERWA Membership</h1>
           <p className="text-slate-600 font-body">Information regarding sewage emptiers and sanitation service providers membership.</p>
         </div>
 
@@ -17,12 +17,12 @@ export default function MembershipInfoPage() {
             <CardTitle className="font-headline text-xl flex items-center gap-2 text-white">
               <Info className="w-5 h-5 text-[#6cb166]" /> Organization Membership Structure
             </CardTitle>
-            <CardDescription className="text-white/90 text-sm font-body">ASSSERVA brings together sewage emptiers and sanitation service providers in Rwanda.</CardDescription>
+            <CardDescription className="text-white/90 text-sm font-body">ASSERWA brings together sewage emptiers and sanitation service providers in Rwanda.</CardDescription>
           </CardHeader>
           <CardContent className="p-8 space-y-6">
             <div className="font-body text-slate-700 leading-relaxed space-y-4 text-sm">
               <p>
-                ASSSERVA is a non-governmental organization that brings together sewage emptiers and sanitation service providers across Kigali City, Western Province, Northern Province, and Southern Province.
+                ASSERWA is a non-governmental organization that brings together sewage emptiers and sanitation service providers across Kigali City, Western Province, Northern Province, and Southern Province.
               </p>
               <p>
                 The organization works to promote high professional standards among sewage emptiers, protect public health, and safeguard the environment.
@@ -42,7 +42,7 @@ export default function MembershipInfoPage() {
                 </p>
                 <p className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-[#6cb166] shrink-0" />
-                  <span>assservarwanda@gmail.com</span>
+                  <span>asserwarwanda@gmail.com</span>
                 </p>
               </div>
 

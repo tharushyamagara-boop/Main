@@ -2,35 +2,68 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export type SlideshowItem = {
+  id: string;
+  title: string;
+  titleHighlight: string;
+  description: string;
+  imageUrl: string;
+  mediaType?: 'image' | 'video';
+  videoUrl?: string;
+};
+
+export type GalleryItem = {
+  id: string;
+  description: string;
+  imageUrl: string;
+  mediaType?: 'image' | 'video';
+  videoUrl?: string;
+};
+
+export type NewsItem = {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  author: string;
+  tag: string;
+  imageUrl: string;
+  mediaType?: 'image' | 'video';
+  videoUrl?: string;
+};
+
 // Default Brochure Data Constants
-export const defaultSlideshows = [
+export const defaultSlideshows: SlideshowItem[] = [
   {
     id: 'slide-1',
     title: "Advancing Rwanda's ",
     titleHighlight: "Hygiene & Sanitation",
     description: "Let us work together to promote hygiene, sanitation, and environmental protection.",
-    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1600&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1600&q=80",
+    mediaType: 'image'
   },
   {
     id: 'slide-2',
     title: "Professionalizing ",
     titleHighlight: "Sanitation Service Providers",
-    description: "ASSSERVA brings together sewage emptiers and sanitation practitioners in Rwanda to protect public health and safeguard the environment.",
-    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80"
+    description: "ASSERWA brings together sewage emptiers and sanitation practitioners in Rwanda to protect public health and safeguard the environment.",
+    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+    mediaType: 'image'
   },
   {
     id: 'slide-3',
     title: "Safeguarding Our ",
     titleHighlight: "Environment & Community Health",
     description: "Advocating for proper operation, maintenance, and construction of sanitation infrastructure across all provinces.",
-    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    mediaType: 'image'
   }
 ];
 
 export const defaultAboutUs = {
   headerTag: "Official Profile",
-  title: "Who is ASSSERVA?",
-  description: "ASSSERVA (Association of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda.",
+  title: "Who is ASSERWA?",
+  description: "ASSERWA (Association of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda.",
   mission: "To promote a culture of hygiene and sanitation among members and the wider community.",
   objectiveScope: "The organization works to improve sanitation services, protect public health, and safeguard the environment across all provinces of Rwanda.",
   imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80"
@@ -39,7 +72,7 @@ export const defaultAboutUs = {
 export const defaultObjectives = [
   {
     id: 'obj-1',
-    title: "1. Environmental & Hygiene Promotion",
+    title: "Environmental & Hygiene Promotion",
     color: "#6cb166",
     points: [
       "Promote environmental protection and sanitation practices.",
@@ -48,7 +81,7 @@ export const defaultObjectives = [
   },
   {
     id: 'obj-2',
-    title: "2. Professional Development",
+    title: "Professional Development",
     color: "#3b66b0",
     points: [
       "Promote high professional standards among sewage emptiers and sanitation workers."
@@ -56,7 +89,7 @@ export const defaultObjectives = [
   },
   {
     id: 'obj-3',
-    title: "3. Multi-Level Advocacy",
+    title: "Multi-Level Advocacy",
     color: "#6cb166",
     points: [
       "National government institutions advocacy.",
@@ -66,7 +99,7 @@ export const defaultObjectives = [
   },
   {
     id: 'obj-4',
-    title: "4. Sanitation Infrastructure",
+    title: "Sanitation Infrastructure",
     color: "#3b66b0",
     points: [
       "Advocate for the construction of toilets and sanitation facilities.",
@@ -108,24 +141,21 @@ export const defaultServices = [
 
 export const defaultMemberNetwork = [
   {
-    region: "Kigali City",
-    description: "Capital & Central Administrative Operations",
-    companies: ["Kyalin Services SARL", "Igisubizo Co. Ltd", "SANEC Co. Ltd", "Kant Kigali Ltd"]
-  },
-  {
-    region: "Western Province (Uburengerazuba)",
-    description: "Lake Kivu & Western Regional Providers",
-    companies: ["UBTC Fast", "Timbe Best Co. Ltd", "Umucyo Best Technical Co."]
-  },
-  {
-    region: "Northern Province (Amajyaruguru)",
-    description: "Northern Region Service Providers",
-    companies: ["Sanitec Co. Ltd", "Theophile"]
-  },
-  {
-    region: "Southern Province (Amajyepfo)",
-    description: "Southern Regional Operations",
-    companies: ["UMOJA Co. Ltd", "Tabara Co. Ltd"]
+    region: "Official Member Companies",
+    description: "Full roster of ASSERWA certified member companies and sanitation service providers in Rwanda",
+    companies: [
+      "Kigali Septic Service",
+      "Nganila Co LTD",
+      "Kadja Business LTD",
+      "Sanity Rwanda",
+      "Sewage septic services",
+      "Kanguka Business company Ltd",
+      "Dachris company Ltd",
+      "Sima Vidura",
+      "Camel Motor Group Ltd",
+      "Pit Vidura",
+      "SANEX COMPANY LTD"
+    ]
   }
 ];
 
@@ -153,44 +183,47 @@ export const defaultResources = [
   },
   {
     id: 'res-4',
-    title: "ASSSERVA Organizational Charter",
+    title: "ASSERWA Organizational Charter",
     type: "Policy",
     size: "1.5 MB",
     description: "Code of professional standards and ethics for all member sewage emptiers in Rwanda."
   }
 ];
 
-export const defaultNews = [
+export const defaultNews: NewsItem[] = [
   {
     id: 'news-1',
-    title: "ASSSERVA Conducts Regional Sanitation & Hygiene Workshop",
+    title: "ASSERWA Conducts Regional Sanitation & Hygiene Workshop",
     excerpt: "Promoting high professional standards among sewage emptiers and sanitation practitioners in Rwanda.",
     date: "May 24, 2024",
-    author: "ASSSERVA Secretariat",
+    author: "ASSERWA Secretariat",
     tag: "Advocacy",
-    imageUrl: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
+    mediaType: 'image'
   },
   {
     id: 'news-2',
     title: "Promoting Toilet Construction & Facility Maintenance",
     excerpt: "Workshops focusing on infrastructure maintenance and environmental protection in communities.",
     date: "June 12, 2024",
-    author: "ASSSERVA Secretariat",
+    author: "ASSERWA Secretariat",
     tag: "Infrastructure",
-    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+    mediaType: 'image'
   },
   {
     id: 'news-3',
     title: "Multi-Level Stakeholder Advocacy Engagement",
     excerpt: "Advocating for sewage emptiers at national and local government institutions across provinces.",
     date: "June 05, 2024",
-    author: "ASSSERVA Secretariat",
+    author: "ASSERWA Secretariat",
     tag: "Community",
-    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    mediaType: 'image'
   }
 ];
 
-export const defaultGallery = [
+export const defaultGallery: GalleryItem[] = [
   {
     id: 'gal-1',
     description: "Modern Waste Treatment & Infrastructure Inspection",
@@ -203,7 +236,7 @@ export const defaultGallery = [
   },
   {
     id: 'gal-3',
-    description: "ASSSERVA Operational Headquarters & Administration",
+    description: "ASSERWA Operational Headquarters & Administration",
     imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
   },
   {
@@ -226,9 +259,7 @@ export const defaultGallery = [
 export const defaultContactInfo = {
   address: "Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell / Public Cell, Remera Sector, Gasabo District, Kigali City, Rwanda",
   phone: "+250 784 246 216",
-  email: "assservarwanda@gmail.com",
-  slogan: "Let us work together to promote hygiene, sanitation, and environmental protection.",
-  sloganKinyarwanda: "Dukorere hamwe duharanira isuku, isukura no kurengera ibidukikije."
+  email: "asserwarwanda@gmail.com"
 };
 
 type ContentStoreContextType = {
@@ -257,7 +288,7 @@ type ContentStoreContextType = {
 
 const ContentStoreContext = createContext<ContentStoreContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'assserva_cms_content_v1';
+const STORAGE_KEY = 'asserwa_cms_content_v4';
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [slideshows, setSlideshows] = useState(defaultSlideshows);
@@ -270,29 +301,48 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [gallery, setGallery] = useState(defaultGallery);
   const [contactInfo, setContactInfo] = useState(defaultContactInfo);
 
-  // Load from localStorage on client side mount
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load from localStorage on mount and listen for storage sync events live
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.slideshows) setSlideshows(parsed.slideshows);
-        if (parsed.aboutUs) setAboutUs(parsed.aboutUs);
-        if (parsed.objectives) setObjectives(parsed.objectives);
-        if (parsed.services) setServices(parsed.services);
-        if (parsed.memberNetwork) setMemberNetwork(parsed.memberNetwork);
-        if (parsed.resources) setResources(parsed.resources);
-        if (parsed.news) setNews(parsed.news);
-        if (parsed.gallery) setGallery(parsed.gallery);
-        if (parsed.contactInfo) setContactInfo(parsed.contactInfo);
+    const loadStore = () => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY) || 
+                      localStorage.getItem('assserva_cms_content_v4') || 
+                      localStorage.getItem('assserva_cms_content_v3');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed.slideshows)) setSlideshows(parsed.slideshows);
+          if (parsed.aboutUs) setAboutUs(parsed.aboutUs);
+          if (parsed.objectives) setObjectives(parsed.objectives);
+          if (parsed.services) setServices(parsed.services);
+          if (parsed.memberNetwork) setMemberNetwork(parsed.memberNetwork);
+          if (parsed.resources) setResources(parsed.resources);
+          if (Array.isArray(parsed.news)) setNews(parsed.news);
+          if (Array.isArray(parsed.gallery)) setGallery(parsed.gallery);
+          if (parsed.contactInfo) setContactInfo(parsed.contactInfo);
+        }
+      } catch (e) {
+        console.error("Error reading cms store from localStorage", e);
+      } finally {
+        setIsLoaded(true);
       }
-    } catch (e) {
-      console.error("Error reading cms store from localStorage", e);
-    }
+    };
+
+    loadStore();
+    const handleStorageEvent = (e: StorageEvent) => {
+      // Only reload on real cross-tab storage events with matching key
+      if (e.key === STORAGE_KEY || e.key === 'assserva_cms_content_v4') {
+        loadStore();
+      }
+    };
+    window.addEventListener('storage', handleStorageEvent);
+    return () => window.removeEventListener('storage', handleStorageEvent);
   }, []);
 
-  // Save to localStorage on change
+  // Save to localStorage on change (only after initial load has completed)
   useEffect(() => {
+    if (!isLoaded) return;
     try {
       const dataToSave = {
         slideshows,
@@ -309,7 +359,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       console.error("Error saving cms store to localStorage", e);
     }
-  }, [slideshows, aboutUs, objectives, services, memberNetwork, resources, news, gallery, contactInfo]);
+  }, [isLoaded, slideshows, aboutUs, objectives, services, memberNetwork, resources, news, gallery, contactInfo]);
 
   const resetToDefaults = () => {
     setSlideshows(defaultSlideshows);

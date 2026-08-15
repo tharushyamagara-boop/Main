@@ -7,7 +7,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, MapPin, ShieldCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function ContactPage() {
@@ -20,89 +19,61 @@ export default function ContactPage() {
       setLoading(false);
       toast({
         title: "Message sent",
-        description: "Thank you for contacting ASSSERVA. An officer will reply shortly.",
+        description: "Thank you for contacting ASSERWA. An officer will reply shortly.",
       });
     }, 1000);
   };
 
   return (
-    <div className="bg-slate-50/50 py-16">
+    <div className="bg-slate-50/50 py-[30px]">
       <div className="container mx-auto px-4 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-[30px] items-start">
           {/* Contact Info */}
-          <div className="lg:col-span-5 space-y-8">
+          <div className="lg:col-span-5 space-y-[30px]">
             <div className="space-y-4">
               <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
                 Official Contact
               </span>
-              <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Contact ASSSERVA</h1>
+              <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Contact ASSERWA</h1>
               <p className="text-slate-600 font-body text-base leading-relaxed">
                 Association of Sewage Emptiers in Rwanda. Reach out to our headquarters for inquiries, advocacy, or technical partnerships.
               </p>
             </div>
 
-            <div className="space-y-6 pt-2">
-              <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div className="w-10 h-10 bg-[#6cb166]/10 rounded-xl flex items-center justify-center shrink-0">
-                  <MapPin className="text-[#4d8748] w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-headline font-bold text-slate-900 text-sm">Headquarters Address</h4>
-                  <p className="text-slate-600 text-xs font-body leading-relaxed mt-0.5">
-                    Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell / Public Cell, Remera Sector, Gasabo District, Kigali City, Rwanda
-                  </p>
-                </div>
+            <div className="space-y-[30px] pt-2">
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+                <h4 className="font-headline font-bold text-slate-900 text-sm">Headquarters Address</h4>
+                <p className="text-slate-600 text-xs font-body leading-relaxed">
+                  Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell / Public Cell, Remera Sector, Gasabo District, Kigali City, Rwanda
+                </p>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div className="w-10 h-10 bg-[#6cb166]/10 rounded-xl flex items-center justify-center shrink-0">
-                  <Phone className="text-[#4d8748] w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-headline font-bold text-slate-900 text-sm">Telephone</h4>
-                  <p className="text-slate-600 text-xs font-body leading-relaxed mt-0.5">
-                    +250 784 246 216
-                  </p>
-                </div>
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+                <h4 className="font-headline font-bold text-slate-900 text-sm">Telephone</h4>
+                <p className="text-slate-600 text-xs font-body leading-relaxed">
+                  +250 784 246 216
+                </p>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div className="w-10 h-10 bg-[#6cb166]/10 rounded-xl flex items-center justify-center shrink-0">
-                  <Mail className="text-[#4d8748] w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-headline font-bold text-slate-900 text-sm">Official Email</h4>
-                  <p className="text-slate-600 text-xs font-body leading-relaxed mt-0.5">
-                    assservarwanda@gmail.com
-                  </p>
-                </div>
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-1">
+                <h4 className="font-headline font-bold text-slate-900 text-sm">Official Email</h4>
+                <p className="text-slate-600 text-xs font-body leading-relaxed">
+                  asserwarwanda@gmail.com
+                </p>
               </div>
-            </div>
-
-            {/* Slogan Banner */}
-            <div className="p-6 bg-[#6cb166] text-white rounded-3xl border border-white/20 space-y-3 shadow-xl">
-              <div className="flex items-center gap-2 text-white font-headline font-bold text-xs uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-white" /> Official Slogan
-              </div>
-              <p className="text-sm font-headline font-bold italic text-white">
-                “Let us work together to promote hygiene, sanitation, and environmental protection.”
-              </p>
-              <p className="text-xs text-white/90 font-body">
-                (“Dukorere hamwe duharanira isuku, isukura no kurengera ibidukikije.”)
-              </p>
             </div>
           </div>
 
           {/* Inquiry Form */}
           <div className="lg:col-span-7">
             <Card className="shadow-xl border border-slate-200 rounded-3xl overflow-hidden bg-white">
-              <CardHeader className="bg-[#3b66b0] text-white p-8">
+              <CardHeader className="bg-[#3b66b0] text-white p-[30px]">
                 <CardTitle className="font-headline text-2xl text-white">Contact & Inquiry Form</CardTitle>
-                <CardDescription className="text-white/90 text-sm font-body">Send a direct message to ASSSERVA leadership.</CardDescription>
+                <CardDescription className="text-white/90 text-sm font-body">Send a direct message to ASSERWA leadership.</CardDescription>
               </CardHeader>
-              <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="p-[30px]">
+                <form onSubmit={handleSubmit} className="space-y-[30px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-[30px]">
                     <div className="space-y-2">
                       <Label htmlFor="contactName" className="text-slate-800 font-headline font-bold text-xs">Full Name</Label>
                       <Input id="contactName" placeholder="Your Name" required className="h-11 font-body" />
