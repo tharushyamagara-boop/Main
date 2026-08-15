@@ -25,9 +25,9 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full shadow-lg">
-      {/* Executive Top Header Bar - Dark Brand Blue */}
-      <div className="bg-[#2b4c85] text-white/90 text-xs py-2 px-4 border-b border-white/10 hidden sm:block">
-        <div className="container mx-auto flex justify-between items-center">
+      {/* Full Width Top Header Bar */}
+      <div className="w-full bg-[#2b4c85] text-white/90 text-xs py-2.5 px-6 lg:px-12 border-b border-white/10 hidden sm:block">
+        <div className="w-full flex justify-between items-center">
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5 hover:text-white transition-colors">
               <MapPin className="h-3.5 w-3.5 text-[#6cb166]" />
@@ -51,9 +51,9 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Main Navbar - Brand Blue #3b66b0 */}
-      <nav className="w-full bg-[#3b66b0] text-white shadow-md border-b border-white/10">
-        <div className="container mx-auto px-4 flex h-20 items-center justify-between">
+      {/* Full Width Main Navbar - Brand Blue #3b66b0 */}
+      <nav className="w-full bg-[#3b66b0] text-white shadow-md border-b border-white/10 px-6 lg:px-12">
+        <div className="w-full flex h-20 items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl bg-[#6cb166] flex items-center justify-center shadow-md shadow-blue-900/30 group-hover:scale-105 transition-transform">

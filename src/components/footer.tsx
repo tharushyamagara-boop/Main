@@ -4,9 +4,9 @@ import { Droplets, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, ShieldCheck
 export function Footer() {
   return (
     <footer className="w-full bg-[#3b66b0] text-white border-t border-white/10">
-      {/* Top Banner / Key Institutional Partners - Dark Brand Blue */}
-      <div className="border-b border-white/10 bg-[#2b4c85] py-6">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+      {/* Full Width Top Banner / Key Institutional Partners */}
+      <div className="w-full border-b border-white/10 bg-[#2b4c85] py-6 px-6 lg:px-12">
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2 text-white font-headline font-bold">
             <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
             <span>INSTITUTIONAL & REGULATORY STAKEHOLDERS:</span>
@@ -23,7 +23,8 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-16">
+      {/* Full Width Main Footer Content */}
+      <div className="w-full px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
           {/* Col 1: Brand & About */}
           <div className="lg:col-span-2 space-y-4">
