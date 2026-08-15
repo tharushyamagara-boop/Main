@@ -314,8 +314,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [gallery, setGallery] = useState(defaultGallery);
   const [contactInfo, setContactInfo] = useState(defaultContactInfo);
 
-  const [isLoaded, setIsLoaded] = useState(false);
-
   // Load from localStorage on mount & subscribe to live Firebase Cloud Firestore updates
   useEffect(() => {
     const loadStore = () => {
@@ -337,8 +335,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (e) {
         console.error("Error reading cms store from localStorage", e);
-      } finally {
-        setIsLoaded(true);
       }
     };
 
@@ -376,26 +372,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Save to localStorage on local state changes (Cloud Firestore is updated explicitly when saved in admin)
-  useEffect(() => {
-    if (!isLoaded) return;
-    try {
-      const dataToSave = {
-        slideshows,
-        aboutUs,
-        objectives,
-        services,
-        memberNetwork,
-        resources,
-        news,
-        gallery,
-        contactInfo
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-    } catch (e) {
-      console.error("Error saving cms store to localStorage", e);
-    }
-  }, [isLoaded, slideshows, aboutUs, objectives, services, memberNetwork, resources, news, gallery, contactInfo]);
+
+
 
   const resetToDefaults = () => {
     setSlideshows(defaultSlideshows);
