@@ -27,21 +27,21 @@ export function Navbar() {
   const { contactInfo } = useContentStore();
 
   return (
-    <header className="sticky top-0 z-50 w-full shadow-lg border-b border-white/10">
-      {/* Full Width Top Header Bar - Dark Brand Green */}
-      <div className="w-full bg-[#4d8748] text-white/90 text-xs py-2.5 px-6 lg:px-12 border-b border-white/10 hidden sm:block">
+    <header className="sticky top-0 z-50 w-full shadow-md bg-white">
+      {/* Top Header Bar (Contact Information) - NO BACKGROUND */}
+      <div className="w-full bg-transparent text-slate-700 text-xs py-2.5 px-6 lg:px-12 border-b border-slate-200 hidden sm:block">
         <div className="w-full flex justify-between items-center">
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <MapPin className="h-3.5 w-3.5 text-white" />
+            <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
+              <MapPin className="h-3.5 w-3.5 text-[#6cb166]" />
               <span className="truncate max-w-xs md:max-w-md">{contactInfo.address}</span>
             </span>
-            <span className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <Phone className="h-3.5 w-3.5 text-white" />
+            <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
+              <Phone className="h-3.5 w-3.5 text-[#6cb166]" />
               <span>{contactInfo.phone}</span>
             </span>
-            <span className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <Mail className="h-3.5 w-3.5 text-white" />
+            <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
+              <Mail className="h-3.5 w-3.5 text-[#6cb166]" />
               <span>{contactInfo.email}</span>
             </span>
           </div>
@@ -54,7 +54,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Full Width Main Navbar - Brand Green #6cb166 */}
+      {/* Main Navbar (Navigation Menus) - GREEN BACKGROUND #6cb166 */}
       <nav className="w-full bg-[#6cb166] text-white px-6 lg:px-12">
         <div className="w-full flex h-20 items-center justify-between">
           {/* Brand Logo */}
