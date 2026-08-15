@@ -50,8 +50,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full bg-slate-50/50">
-      {/* Hero Slideshow Section - Clean Image Display */}
-      <section className="relative w-full overflow-hidden bg-slate-900">
+      {/* Hero Slideshow Section - Completely Transparent Background */}
+      <section className="relative w-full overflow-hidden bg-transparent">
         <Carousel className="w-full" opts={{ loop: true }}>
           <CarouselContent>
             {heroSlides.map((slide, index) => {
@@ -59,33 +59,31 @@ export default function Home() {
               return (
                 <CarouselItem key={index}>
                   <div className="relative h-[620px] md:h-[680px] w-full flex items-center">
-                    {/* Background Image & Natural Shadow Overlay */}
+                    {/* Background Image without background color tint */}
                     <div className="absolute inset-0 z-0">
                       {slideImg && (
                         <Image
                           src={slideImg.imageUrl}
                           alt={slide.title}
                           fill
-                          className="object-cover brightness-[0.45] contrast-[1.05]"
+                          className="object-cover"
                           priority={index === 0}
                           data-ai-hint={slideImg.imageHint}
                         />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
                     </div>
 
                     {/* Content Container */}
                     <div className="container mx-auto px-4 z-10 text-white">
-                      <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-full text-white font-headline font-bold text-xs tracking-wide">
+                      <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[#3b66b0]/90 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/20 shadow-2xl">
+                        <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 px-3.5 py-1.5 rounded-full text-white font-headline font-bold text-xs tracking-wide">
                           <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
                           <span>Official Association of Sewage Emptiers in Rwanda</span>
                         </div>
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-extrabold leading-[1.15] text-white tracking-tight">
                           {slide.title}<span className="text-[#6cb166]">{slide.titleHighlight}</span>
                         </h1>
-                        <p className="text-base sm:text-lg lg:text-xl font-body text-slate-200 max-w-2xl leading-relaxed">
+                        <p className="text-base sm:text-lg lg:text-xl font-body text-white/95 max-w-2xl leading-relaxed">
                           {slide.description}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -94,7 +92,7 @@ export default function Home() {
                               {slide.ctaPrimary} <ArrowRight className="w-4 h-4" />
                             </Link>
                           </Button>
-                          <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white/20 font-headline px-8">
+                          <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/40 text-white hover:bg-white/20 font-headline px-8">
                             <Link href={slide.hrefSecondary}>{slide.ctaSecondary}</Link>
                           </Button>
                         </div>
