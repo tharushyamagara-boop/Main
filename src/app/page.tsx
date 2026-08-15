@@ -1,8 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, CheckCircle2, Building2, Globe2, MapPin, Users, HeartHandshake, Wrench } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { ShieldCheck, CheckCircle2, Building2, Globe2, MapPin, Users, HeartHandshake, Wrench, ArrowRight, BarChart3 } from 'lucide-react';
+import { useContentStore } from '@/lib/content-store';
 import {
   Carousel,
   CarouselContent,
@@ -11,36 +13,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const heroSlides = [
-  {
-    title: "Advancing Rwanda's ",
-    titleHighlight: "Hygiene & Sanitation",
-    description: "Let us work together to promote hygiene, sanitation, and environmental protection.",
-    imgId: "hero-sanitation"
-  },
-  {
-    title: "Professionalizing ",
-    titleHighlight: "Sanitation Service Providers",
-    description: "ASSSERVA brings together sewage emptiers and sanitation practitioners in Rwanda to protect public health and safeguard the environment.",
-    imgId: "member-training"
-  },
-  {
-    title: "Safeguarding Our ",
-    titleHighlight: "Environment & Community Health",
-    description: "Advocating for proper operation, maintenance, and construction of sanitation infrastructure across all provinces.",
-    imgId: "community-impact"
-  }
-];
-
-const memberCompanies = [
-  { region: "Kigali City", companies: ["Kyalin Services SARL", "Igisubizo Co. Ltd", "SANEC Co. Ltd", "Kant Kigali Ltd"] },
-  { region: "Western Province (Uburengerazuba)", companies: ["UBTC Fast", "Timbe Best Co. Ltd", "Umucyo Best Technical Co."] },
-  { region: "Northern Province (Amajyaruguru)", companies: ["Sanitec Co. Ltd", "Theophile"] },
-  { region: "Southern Province (Amajyepfo)", companies: ["UMOJA Co. Ltd", "Tabara Co. Ltd"] },
-];
-
 export default function Home() {
-  const impactImg = PlaceHolderImages.find(img => img.id === 'community-impact');
+  const { slideshows, memberNetwork, objectives, contactInfo, services } = useContentStore();
 
   return (
     <div className="flex flex-col w-full bg-slate-50/50 min-h-screen">
@@ -48,21 +22,19 @@ export default function Home() {
       <section className="relative w-full overflow-hidden bg-slate-100">
         <Carousel className="w-full" opts={{ loop: true }}>
           <CarouselContent>
-            {heroSlides.map((slide, index) => {
-              const slideImg = PlaceHolderImages.find(img => img.id === slide.imgId);
+            {slideshows.map((slide, index) => {
               return (
-                <CarouselItem key={index}>
+                <CarouselItem key={slide.id || index}>
                   <div className="relative h-[460px] md:h-[520px] w-full flex items-center">
                     {/* Background Image */}
                     <div className="absolute inset-0 z-0">
-                      {slideImg && (
+                      {slide.imageUrl && (
                         <Image
-                          src={slideImg.imageUrl}
+                          src={slide.imageUrl}
                           alt={slide.title}
                           fill
                           className="object-cover"
                           priority={index === 0}
-                          data-ai-hint={slideImg.imageHint}
                         />
                       )}
                     </div>
@@ -99,9 +71,9 @@ export default function Home() {
             <span>OFFICIAL SLOGAN</span>
           </div>
           <div className="text-center md:text-right font-semibold text-white">
-            “Let us work together to promote hygiene, sanitation, and environmental protection.”
+            “{contactInfo.slogan}”
             <span className="block text-[11px] text-white/80 font-normal mt-0.5">
-              (“Dukorere hamwe duharanira isuku, isukura no kurengera ibidukikije.”)
+              (“{contactInfo.sloganKinyarwanda}”)
             </span>
           </div>
         </div>
@@ -134,7 +106,7 @@ export default function Home() {
                 <MapPin className="w-4 h-4 text-[#3b66b0]" /> Headquarters Location
               </h4>
               <p className="text-xs text-slate-600 font-body leading-relaxed">
-                Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell, Remera II, Remera Sector, Gasabo District, Kigali City, Rwanda.
+                {contactInfo.address}
               </p>
             </div>
           </div>
@@ -154,73 +126,22 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Obj 1 */}
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
-            <div className="w-12 h-12 bg-[#6cb166]/10 rounded-xl flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6 text-[#4d8748]" />
+          {objectives.map((obj, idx) => (
+            <div key={obj.id || idx} className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${obj.color}15` }}>
+                <ShieldCheck className="w-6 h-6" style={{ color: obj.color }} />
+              </div>
+              <h3 className="text-lg font-headline font-bold text-slate-900">{obj.title}</h3>
+              <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
+                {obj.points.map((pt, pIdx) => (
+                  <li key={pIdx} className="flex items-start gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: obj.color }} />
+                    <span>{pt}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <h3 className="text-lg font-headline font-bold text-slate-900">1. Environmental & Hygiene Promotion</h3>
-            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
-                <span>Promote environmental protection and sanitation practices.</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
-                <span>Promote activities improving health and well-being.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Obj 2 */}
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
-            <div className="w-12 h-12 bg-[#3b66b0]/10 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-[#3b66b0]" />
-            </div>
-            <h3 className="text-lg font-headline font-bold text-slate-900">2. Professional Development</h3>
-            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#3b66b0] shrink-0 mt-0.5" />
-                <span>Promote high professional standards among sewage emptiers and sanitation workers.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Obj 3 */}
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
-            <div className="w-12 h-12 bg-[#6cb166]/10 rounded-xl flex items-center justify-center">
-              <HeartHandshake className="w-6 h-6 text-[#4d8748]" />
-            </div>
-            <h3 className="text-lg font-headline font-bold text-slate-900">3. Multi-Level Advocacy</h3>
-            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
-                <span>National government institutions advocacy.</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
-                <span>Local government & NGO partners representation.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Obj 4 */}
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
-            <div className="w-12 h-12 bg-[#3b66b0]/10 rounded-xl flex items-center justify-center">
-              <Wrench className="w-6 h-6 text-[#3b66b0]" />
-            </div>
-            <h3 className="text-lg font-headline font-bold text-slate-900">4. Sanitation Infrastructure</h3>
-            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#3b66b0] shrink-0 mt-0.5" />
-                <span>Advocate for toilet construction and sanitation facilities.</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#3b66b0] shrink-0 mt-0.5" />
-                <span>Proper operation and maintenance of infrastructure.</span>
-              </li>
-            </ul>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -235,7 +156,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {memberCompanies.map((item, idx) => (
+            {memberNetwork.map((item, idx) => (
               <div key={idx} className="p-6 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-sm space-y-3">
                 <h3 className="font-headline font-bold text-base text-white border-b border-white/20 pb-2">{item.region}</h3>
                 <ul className="space-y-2 text-xs font-body text-white/95">
@@ -260,9 +181,9 @@ export default function Home() {
             Contact Association Headquarters
           </h2>
           <p className="text-slate-600 font-body text-sm leading-relaxed">
-            Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell, Remera Sector, Gasabo District, Kigali City, Rwanda
+            {contactInfo.address}
             <br />
-            Email: <span className="font-bold text-slate-800">assservarwanda@gmail.com</span> | Telephone: <span className="font-bold text-slate-800">+250 784 246 216</span>
+            Email: <span className="font-bold text-slate-800">{contactInfo.email}</span> | Telephone: <span className="font-bold text-slate-800">{contactInfo.phone}</span>
           </p>
           <div className="pt-2">
             <Button asChild size="lg" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-8 shadow-md">

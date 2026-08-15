@@ -1,32 +1,12 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { MapPin, Building2, ShieldCheck, Users } from 'lucide-react';
-
-const memberNetwork = [
-  {
-    region: "Kigali City",
-    description: "Capital & Central Administrative Operations",
-    companies: ["Kyalin Services SARL", "Igisubizo Co. Ltd", "SANEC Co. Ltd", "Kant Kigali Ltd"]
-  },
-  {
-    region: "Western Province (Uburengerazuba)",
-    description: "Lake Kivu & Western Regional Providers",
-    companies: ["UBTC Fast", "Timbe Best Co. Ltd", "Umucyo Best Technical Co."]
-  },
-  {
-    region: "Northern Province (Amajyaruguru)",
-    description: "Northern Region Service Providers",
-    companies: ["Sanitec Co. Ltd", "Theophile"]
-  },
-  {
-    region: "Southern Province (Amajyepfo)",
-    description: "Southern Regional Operations",
-    companies: ["UMOJA Co. Ltd", "Tabara Co. Ltd"]
-  }
-];
+import { MapPin, Building2, ShieldCheck } from 'lucide-react';
+import { useContentStore } from '@/lib/content-store';
 
 export default function DashboardPage() {
+  const { memberNetwork } = useContentStore();
+
   return (
     <div className="bg-slate-50/50 py-12">
       <div className="container mx-auto px-4 max-w-6xl space-y-10">

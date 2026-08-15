@@ -1,36 +1,21 @@
+'use client';
+
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Search, Download } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-
-const resources = [
-  {
-    title: "Sanitation & Hygiene Guidelines",
-    type: "Regulation",
-    size: "4.2 MB",
-    description: "Official guidelines for sewage management, hygiene promotion, and environmental protection in Rwanda."
-  },
-  {
-    title: "Toilet Maintenance & Operations Manual",
-    type: "Technical Guide",
-    size: "8.1 MB",
-    description: "Operational standards for toilet construction, safe fecal sludge handling, and facility maintenance."
-  },
-  {
-    title: "Environmental Protection Standard",
-    type: "Report",
-    size: "5.5 MB",
-    description: "Frameworks safeguarding public health and water sources from untreated wastewater."
-  },
-  {
-    title: "ASSSERVA Organizational Charter",
-    type: "Policy",
-    size: "1.5 MB",
-    description: "Code of professional standards and ethics for all member sewage emptiers in Rwanda."
-  }
-];
+import { useContentStore } from '@/lib/content-store';
 
 export default function ResourcesPage() {
+  const { resources } = useContentStore();
+  const [query, setQuery] = useState('');
+
+  const filteredResources = resources.filter(res => 
+    res.title.toLowerCase().includes(query.toLowerCase()) || 
+    res.description.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
     <div className="bg-slate-50/50 py-16">
       <div className="container mx-auto px-4 max-w-6xl space-y-12">
@@ -46,13 +31,18 @@ export default function ResourcesPage() {
           </div>
           <div className="relative w-full md:w-80">
             <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
-            <Input className="pl-10 bg-white" placeholder="Search manuals..." />
+            <Input 
+              className="pl-10 bg-white" 
+              placeholder="Search manuals..." 
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {resources.map((res, idx) => (
-            <Card key={idx} className="group hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border-slate-200 bg-white rounded-2xl">
+          {filteredResources.map((res, idx) => (
+            <Card key={res.id || idx} className="group hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border-slate-200 bg-white rounded-2xl">
               <CardHeader className="bg-slate-50 group-hover:bg-[#6cb166]/10 transition-colors p-6">
                 <span className="px-2.5 py-1 bg-[#3b66b0] text-white text-[10px] font-bold uppercase tracking-wider rounded-md self-start mb-2">
                   {res.type}

@@ -1,38 +1,15 @@
+'use client';
+
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tag, Calendar, User, MailCheck } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Input } from '@/components/ui/input';
-
-const newsItems = [
-  {
-    title: "ASSSERVA Conducts Regional Sanitation & Hygiene Workshop",
-    excerpt: "Promoting high professional standards among sewage emptiers and sanitation practitioners in Rwanda.",
-    date: "May 24, 2024",
-    author: "ASSSERVA Secretariat",
-    tag: "Advocacy",
-    imgId: "news-advocacy"
-  },
-  {
-    title: "Promoting Toilet Construction & Facility Maintenance",
-    excerpt: "Workshops focusing on infrastructure maintenance and environmental protection in communities.",
-    date: "June 12, 2024",
-    author: "ASSSERVA Secretariat",
-    tag: "Infrastructure",
-    imgId: "member-training"
-  },
-  {
-    title: "Multi-Level Stakeholder Advocacy Engagement",
-    excerpt: "Advocating for sewage emptiers at national and local government institutions across provinces.",
-    date: "June 05, 2024",
-    author: "ASSSERVA Secretariat",
-    tag: "Community",
-    imgId: "community-impact"
-  }
-];
+import { useContentStore } from '@/lib/content-store';
 
 export default function NewsPage() {
+  const { news } = useContentStore();
+
   return (
     <div className="bg-slate-50/50 py-16">
       <div className="container mx-auto px-4 max-w-6xl space-y-12">
@@ -40,44 +17,42 @@ export default function NewsPage() {
           <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
             Official News
           </span>
-          <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Advocacy & Updates</h1>
+          <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Advocacy & News</h1>
           <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
             Stay informed on institutional engagements, professional standards, and community initiatives from ASSSERVA.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {newsItems.map((news, idx) => {
-            const img = PlaceHolderImages.find(i => i.id === news.imgId);
+          {news.map((item, idx) => {
             return (
-              <Card key={idx} className="overflow-hidden border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col rounded-2xl bg-white group">
+              <Card key={item.id || idx} className="overflow-hidden border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col rounded-2xl bg-white group">
                 <div className="relative h-56 w-full overflow-hidden bg-[#6cb166]">
-                  {img && (
+                  {item.imageUrl && (
                     <Image
-                      src={img.imageUrl}
-                      alt={news.title}
+                      src={item.imageUrl}
+                      alt={item.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500 brightness-90 group-hover:brightness-100"
-                      data-ai-hint={img.imageHint}
                     />
                   )}
                   <div className="absolute top-4 left-4 z-10">
                     <span className="bg-[#3b66b0] text-white text-[10px] font-headline font-extrabold uppercase tracking-widest px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md">
-                      <Tag className="w-3 h-3" /> {news.tag}
+                      <Tag className="w-3 h-3" /> {item.tag}
                     </span>
                   </div>
                 </div>
                 <CardContent className="p-7 flex-1 flex flex-col space-y-4">
                   <div className="flex items-center gap-3 text-xs text-slate-500 font-body">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#3b66b0]" /> {news.date}</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#3b66b0]" /> {item.date}</span>
                     <span>•</span>
-                    <span className="flex items-center gap-1"><User className="w-3.5 h-3.5 text-[#3b66b0]" /> {news.author}</span>
+                    <span className="flex items-center gap-1"><User className="w-3.5 h-3.5 text-[#3b66b0]" /> {item.author}</span>
                   </div>
                   <h2 className="text-xl font-headline font-bold text-slate-900 leading-snug group-hover:text-[#3b66b0] transition-colors">
-                    {news.title}
+                    {item.title}
                   </h2>
                   <p className="text-sm text-slate-600 font-body leading-relaxed flex-1">
-                    {news.excerpt}
+                    {item.excerpt}
                   </p>
                 </CardContent>
               </Card>

@@ -3,9 +3,10 @@ import './globals.css';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/toaster';
+import { ContentProvider } from '@/lib/content-store';
 
 export const metadata: Metadata = {
-  title: 'ASSERVA | Association of Sewage Emptiers in Rwanda',
+  title: 'ASSSERVA | Association of Sewage Emptiers in Rwanda',
   description: 'Let us work together to promote hygiene, sanitation, and environmental protection in Rwanda.',
 };
 
@@ -22,12 +23,14 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen bg-slate-50/50 text-slate-900">
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <Toaster />
+        <ContentProvider>
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <Toaster />
+        </ContentProvider>
       </body>
     </html>
   );

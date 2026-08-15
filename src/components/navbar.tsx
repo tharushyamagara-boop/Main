@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Droplets, Menu, X, Phone, Mail, MapPin, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Droplets, Menu, X, Phone, Mail, MapPin, ShieldCheck, ArrowRight, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useContentStore } from '@/lib/content-store';
 
 const navLinks = [
   { name: 'HOME', href: '/' },
@@ -17,11 +18,13 @@ const navLinks = [
   { name: 'ADVOCACY & NEWS', href: '/news' },
   { name: 'GALLERY', href: '/gallery' },
   { name: 'CONTACT', href: '/contact' },
+  { name: 'ADMIN PANEL', href: '/admin', isAdmin: true },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { contactInfo } = useContentStore();
 
   return (
     <header className="sticky top-0 z-50 w-full shadow-sm border-b border-slate-200 bg-white">
@@ -31,22 +34,22 @@ export function Navbar() {
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
               <MapPin className="h-3.5 w-3.5 text-[#6cb166]" />
-              <span>Remera Sector, Gasabo District, Kigali, Rwanda</span>
+              <span className="truncate max-w-xs md:max-w-md">{contactInfo.address}</span>
             </span>
             <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
               <Phone className="h-3.5 w-3.5 text-[#6cb166]" />
-              <span>+250 784 246 216</span>
+              <span>{contactInfo.phone}</span>
             </span>
             <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
               <Mail className="h-3.5 w-3.5 text-[#6cb166]" />
-              <span>assservarwanda@gmail.com</span>
+              <span>{contactInfo.email}</span>
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1 bg-[#6cb166]/10 border border-[#6cb166]/30 text-[#4d8748] px-2.5 py-0.5 rounded-full text-[11px] font-semibold">
-              <ShieldCheck className="w-3 h-3 text-[#6cb166]" />
-              Non-Governmental Organization
-            </span>
+            <Link href="/admin" className="inline-flex items-center gap-1 bg-[#3b66b0] text-white px-2.5 py-0.5 rounded-full text-[11px] font-bold hover:bg-[#2b4c85] transition-colors shadow-sm">
+              <Settings className="w-3 h-3" />
+              Admin Portal
+            </Link>
           </div>
         </div>
       </div>
@@ -70,7 +73,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-5">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -79,11 +82,12 @@ export function Navbar() {
                   href={link.href}
                   className={cn(
                     "text-xs font-bold tracking-wider transition-all duration-200 relative py-2 hover:text-[#3b66b0] flex items-center gap-1.5",
-                    isActive ? "text-[#3b66b0] font-extrabold" : "text-slate-700"
+                    isActive ? "text-[#3b66b0] font-extrabold" : "text-slate-700",
+                    link.isAdmin && "text-[#3b66b0] font-extrabold bg-[#3b66b0]/10 px-2.5 py-1 rounded-full border border-[#3b66b0]/30"
                   )}
                 >
                   {link.name}
-                  {isActive && (
+                  {isActive && !link.isAdmin && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#3b66b0] rounded-full" />
                   )}
                 </Link>
@@ -122,7 +126,8 @@ export function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={cn(
                     "py-2.5 px-4 text-xs font-bold tracking-wider rounded-lg transition-colors flex items-center justify-between",
-                    isActive ? "bg-slate-100 text-[#3b66b0] border border-slate-200" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    isActive ? "bg-slate-100 text-[#3b66b0] border border-slate-200" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900",
+                    link.isAdmin && "text-[#3b66b0] bg-[#3b66b0]/10 font-extrabold"
                   )}
                 >
                   <span>{link.name}</span>
