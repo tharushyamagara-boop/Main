@@ -3,12 +3,12 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyB5AN9lSenHdYR2gxUGsVMMJZ2flQbFOxc",
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "studio-5758307495-584da.firebaseapp.com",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "studio-5758307495-584da",
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "studio-5758307495-584da.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || ""
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "162880584628",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:162880584628:web:cf2ba65d6e2367c8e2d0e1"
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
