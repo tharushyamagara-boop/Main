@@ -50,67 +50,65 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full bg-slate-50/50 min-h-screen">
-      {/* Hero Slideshow Section with Left & Right Margins */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
-        <div className="relative w-full overflow-hidden rounded-3xl shadow-xl bg-transparent border border-slate-200">
-          <Carousel className="w-full" opts={{ loop: true }}>
-            <CarouselContent>
-              {heroSlides.map((slide, index) => {
-                const slideImg = PlaceHolderImages.find(img => img.id === slide.imgId);
-                return (
-                  <CarouselItem key={index}>
-                    <div className="relative h-[580px] md:h-[640px] w-full flex items-center p-6 md:p-12">
-                      {/* Background Image */}
-                      <div className="absolute inset-0 z-0">
-                        {slideImg && (
-                          <Image
-                            src={slideImg.imageUrl}
-                            alt={slide.title}
-                            fill
-                            className="object-cover"
-                            priority={index === 0}
-                            data-ai-hint={slideImg.imageHint}
-                          />
-                        )}
-                      </div>
+      {/* 100% Full Width Hero Slideshow Section */}
+      <section className="relative w-full overflow-hidden bg-transparent">
+        <Carousel className="w-full" opts={{ loop: true }}>
+          <CarouselContent>
+            {heroSlides.map((slide, index) => {
+              const slideImg = PlaceHolderImages.find(img => img.id === slide.imgId);
+              return (
+                <CarouselItem key={index}>
+                  <div className="relative h-[620px] md:h-[680px] w-full flex items-center">
+                    {/* Background Image spanning 100% full viewport width */}
+                    <div className="absolute inset-0 z-0">
+                      {slideImg && (
+                        <Image
+                          src={slideImg.imageUrl}
+                          alt={slide.title}
+                          fill
+                          className="object-cover"
+                          priority={index === 0}
+                          data-ai-hint={slideImg.imageHint}
+                        />
+                      )}
+                    </div>
 
-                      {/* Content Card with Glassmorphic Backdrop */}
-                      <div className="container mx-auto z-10 text-white relative">
-                        <div className="max-w-2xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[#3b66b0]/90 backdrop-blur-md p-8 md:p-10 rounded-3xl border border-white/20 shadow-2xl">
-                          <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 px-3.5 py-1.5 rounded-full text-white font-headline font-bold text-xs tracking-wide">
-                            <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
-                            <span>Official Association of Sewage Emptiers in Rwanda</span>
-                          </div>
-                          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-extrabold leading-[1.15] text-white tracking-tight">
-                            {slide.title}<span className="text-[#6cb166]">{slide.titleHighlight}</span>
-                          </h1>
-                          <p className="text-sm sm:text-base lg:text-lg font-body text-white/95 leading-relaxed">
-                            {slide.description}
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                            <Button asChild size="lg" className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline font-bold px-8 shadow-lg">
-                              <Link href={slide.hrefPrimary} className="flex items-center gap-2">
-                                {slide.ctaPrimary} <ArrowRight className="w-4 h-4" />
-                              </Link>
-                            </Button>
-                            <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/40 text-white hover:bg-white/20 font-headline px-8">
-                              <Link href={slide.hrefSecondary}>{slide.ctaSecondary}</Link>
-                            </Button>
-                          </div>
+                    {/* Slide Content */}
+                    <div className="container mx-auto px-6 lg:px-12 z-10 text-white relative">
+                      <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[#3b66b0]/90 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/20 shadow-2xl">
+                        <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 px-3.5 py-1.5 rounded-full text-white font-headline font-bold text-xs tracking-wide">
+                          <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
+                          <span>Official Association of Sewage Emptiers in Rwanda</span>
+                        </div>
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-extrabold leading-[1.15] text-white tracking-tight">
+                          {slide.title}<span className="text-[#6cb166]">{slide.titleHighlight}</span>
+                        </h1>
+                        <p className="text-base sm:text-lg lg:text-xl font-body text-white/95 max-w-2xl leading-relaxed">
+                          {slide.description}
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                          <Button asChild size="lg" className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline font-bold px-8 shadow-lg">
+                            <Link href={slide.hrefPrimary} className="flex items-center gap-2">
+                              {slide.ctaPrimary} <ArrowRight className="w-4 h-4" />
+                            </Link>
+                          </Button>
+                          <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/40 text-white hover:bg-white/20 font-headline px-8">
+                            <Link href={slide.hrefSecondary}>{slide.ctaSecondary}</Link>
+                          </Button>
                         </div>
                       </div>
                     </div>
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            
-            <div className="absolute bottom-8 right-6 md:right-12 flex gap-3 z-20">
-              <CarouselPrevious className="static translate-y-0 bg-[#3b66b0] border-white/20 text-white hover:bg-[#2b4c85] h-11 w-11 rounded-xl shadow-lg transition-colors" />
-              <CarouselNext className="static translate-y-0 bg-[#3b66b0] border-white/20 text-white hover:bg-[#2b4c85] h-11 w-11 rounded-xl shadow-lg transition-colors" />
-            </div>
-          </Carousel>
-        </div>
+                  </div>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+          
+          <div className="absolute bottom-8 right-6 md:right-12 flex gap-3 z-20">
+            <CarouselPrevious className="static translate-y-0 bg-[#3b66b0] border-white/20 text-white hover:bg-[#2b4c85] h-11 w-11 rounded-xl shadow-lg transition-colors" />
+            <CarouselNext className="static translate-y-0 bg-[#3b66b0] border-white/20 text-white hover:bg-[#2b4c85] h-11 w-11 rounded-xl shadow-lg transition-colors" />
+          </div>
+        </Carousel>
       </section>
 
       {/* Institutional Partner Bar with Margins */}
