@@ -1,44 +1,54 @@
-
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Camera, Image as ImageIcon } from 'lucide-react';
 
 export default function GalleryPage() {
-  const galleryImages = PlaceHolderImages.filter(img => img.id.startsWith('gallery-') || img.id === 'community-impact' || img.id === 'hero-sanitation');
+  const galleryImages = PlaceHolderImages.filter(img => img.id.startsWith('gallery-') || img.id === 'community-impact' || img.id === 'hero-sanitation' || img.id === 'member-training' || img.id === 'news-advocacy');
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="max-w-3xl mb-16 space-y-4">
-        <h1 className="text-4xl md:text-5xl font-headline font-bold text-secondary">Impact Gallery</h1>
-        <p className="text-lg text-muted-foreground font-body leading-relaxed">
-          Visual documentation of our projects, infrastructure development, and community impact across Rwanda.
-        </p>
-      </div>
+    <div className="bg-slate-50/50 py-16">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="max-w-3xl mb-12 space-y-4">
+          <span className="text-xs font-headline font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/80 px-3.5 py-1 rounded-full border border-emerald-300">
+            Field Documentation
+          </span>
+          <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Impact Gallery</h1>
+          <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
+            Visual record of ASSERWA field projects, facility inspections, capacity building workshops, and community sanitation outreach across Rwanda.
+          </p>
+        </div>
 
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
-        {galleryImages.map((img, idx) => (
-          <div key={idx} className="relative group overflow-hidden rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 break-inside-avoid">
-            <Image
-              src={img.imageUrl}
-              alt={img.description}
-              width={800}
-              height={600}
-              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-              data-ai-hint={img.imageHint}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-              <p className="text-white font-headline text-sm font-bold tracking-wide">
-                {img.description}
-              </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {galleryImages.map((img, idx) => (
+            <div key={idx} className="relative group overflow-hidden rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 bg-slate-900 h-72 border border-slate-200">
+              <Image
+                src={img.imageUrl}
+                alt={img.description}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
+                data-ai-hint={img.imageHint}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300 flex flex-col justify-end p-6">
+                <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-headline font-bold uppercase tracking-wider text-emerald-400 bg-slate-900/80 px-2.5 py-0.5 rounded-full mb-2 border border-emerald-500/30">
+                    <Camera className="w-3 h-3" /> Field Inspection
+                  </span>
+                  <p className="text-white font-headline text-sm font-bold leading-snug">
+                    {img.description}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-      
-      <div className="mt-20 py-12 border-t text-center">
-        <h3 className="text-xl font-headline font-bold text-secondary mb-4">Sharing the Vision</h3>
-        <p className="text-muted-foreground font-body max-w-xl mx-auto italic">
-          "A cleaner Rwanda is visible in every community we serve. Our gallery reflects the dedication of our 16 member organizations."
-        </p>
+          ))}
+        </div>
+        
+        <div className="mt-20 p-10 bg-white border border-slate-200 rounded-3xl text-center shadow-md max-w-3xl mx-auto space-y-3">
+          <ImageIcon className="w-10 h-10 text-emerald-600 mx-auto" />
+          <h3 className="text-xl font-headline font-bold text-slate-900">Documenting Progress Across 30 Districts</h3>
+          <p className="text-slate-600 font-body text-sm italic leading-relaxed">
+            "A cleaner Rwanda is visible in every community we serve. Our gallery reflects the ongoing dedication of our 16 member organizations."
+          </p>
+        </div>
       </div>
     </div>
   );

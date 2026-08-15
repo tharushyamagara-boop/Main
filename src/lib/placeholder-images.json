@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-sanitation",
+      "description": "Advancing Rwanda's Sanitation & Environmental Excellence",
+      "imageUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1600&q=80",
+      "imageHint": "Clean green environment and sustainable water infrastructure"
+    },
+    {
+      "id": "member-training",
+      "description": "Professional Technical Training for Sanitation Engineers",
+      "imageUrl": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Engineers and professionals attending a technical seminar"
+    },
+    {
+      "id": "community-impact",
+      "description": "Community Health & Sanitation Protection Initiative",
+      "imageUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Community health outreach and public hygiene protection"
+    },
+    {
+      "id": "news-advocacy",
+      "description": "ASSERWA Executive Stakeholder Meeting with Regulatory Authorities",
+      "imageUrl": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Executive roundtable discussion with government officials"
+    },
+    {
+      "id": "gallery-1",
+      "description": "Modern Waste Treatment & Infrastructure Inspection",
+      "imageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Technical inspector working on environmental sanitation system"
+    },
+    {
+      "id": "gallery-2",
+      "description": "Environmental Safety & Field Compliance Verification",
+      "imageUrl": "https://images.unsplash.com/photo-1584467735871-8e85353a8413?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Field technician conducting water quality testing"
+    },
+    {
+      "id": "gallery-3",
+      "description": "ASSERWA Central Operational Operations Center",
+      "imageUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Modern corporate office environment"
+    },
+    {
+      "id": "gallery-4",
+      "description": "National Stakeholder & Partner Policy Consultation",
+      "imageUrl": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Professional team reviewing policy document"
+    },
+    {
+      "id": "gallery-5",
+      "description": "Standardized Equipment & Health Protocols Verification",
+      "imageUrl": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Quality assurance checking industrial facility"
+    },
+    {
+      "id": "gallery-6",
+      "description": "Community Hygiene & District Outreach Program",
+      "imageUrl": "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1200&q=80",
+      "imageHint": "Community development project in progress"
+    }
+  ]
 }
