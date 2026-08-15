@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, MapPin, HandHeart, Globe, Building2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, ShieldCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function ContactPage() {
@@ -32,7 +32,7 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-4">
-              <span className="text-xs font-headline font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/80 px-3.5 py-1 rounded-full border border-emerald-300">
+              <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
                 Institutional Engagement
               </span>
               <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Partner with ASSERWA</h1>
@@ -43,8 +43,8 @@ export default function ContactPage() {
 
             <div className="space-y-6 pt-2">
               <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                  <MapPin className="text-emerald-700 w-5 h-5" />
+                <div className="w-10 h-10 bg-[#6cb166]/10 rounded-xl flex items-center justify-center shrink-0">
+                  <MapPin className="text-[#4d8748] w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="font-headline font-bold text-slate-900 text-sm">Headquarters Address</h4>
@@ -53,8 +53,8 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Phone className="text-emerald-700 w-5 h-5" />
+                <div className="w-10 h-10 bg-[#6cb166]/10 rounded-xl flex items-center justify-center shrink-0">
+                  <Phone className="text-[#4d8748] w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="font-headline font-bold text-slate-900 text-sm">Telephone Support</h4>
@@ -63,8 +63,8 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Mail className="text-emerald-700 w-5 h-5" />
+                <div className="w-10 h-10 bg-[#6cb166]/10 rounded-xl flex items-center justify-center shrink-0">
+                  <Mail className="text-[#4d8748] w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="font-headline font-bold text-slate-900 text-sm">Official Email</h4>
@@ -73,23 +73,24 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-900 text-white rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-              <div className="flex items-center gap-2 text-emerald-400 font-headline font-bold text-xs uppercase tracking-wider">
+            {/* SDG Box - Brand Green #6cb166 */}
+            <div className="p-6 bg-[#6cb166] text-white rounded-3xl border border-white/20 space-y-4 shadow-xl">
+              <div className="flex items-center gap-2 text-white font-headline font-bold text-xs uppercase tracking-wider">
                 <ShieldCheck className="w-4 h-4" /> UN SDG Alignment
               </div>
               <h3 className="text-lg font-headline font-bold text-white">Supporting UN Sustainable Development Goal 6</h3>
-              <p className="text-xs text-slate-300 font-body leading-relaxed">
+              <p className="text-xs text-white/95 font-body leading-relaxed">
                 Ensure availability and sustainable management of water and sanitation for all in Rwanda.
               </p>
             </div>
           </div>
 
-          {/* Inquiry Form */}
+          {/* Inquiry Form - Header Brand Blue #3b66b0 */}
           <div className="lg:col-span-7">
             <Card className="shadow-xl border border-slate-200 rounded-3xl overflow-hidden bg-white">
-              <CardHeader className="bg-slate-900 text-white p-8">
+              <CardHeader className="bg-[#3b66b0] text-white p-8">
                 <CardTitle className="font-headline text-2xl text-white">Institutional Partnership Inquiry</CardTitle>
-                <CardDescription className="text-slate-300 text-sm font-body">Submit project collaboration proposals or stakeholder inquiries.</CardDescription>
+                <CardDescription className="text-white/90 text-sm font-body">Submit project collaboration proposals or stakeholder inquiries.</CardDescription>
               </CardHeader>
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -135,7 +136,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-headline text-sm font-bold py-6 shadow-lg transition-transform hover:scale-[1.005]" disabled={loading}>
+                  <Button type="submit" className="w-full bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-sm font-bold py-6 shadow-lg transition-transform hover:scale-[1.005]" disabled={loading}>
                     {loading ? "Transmitting Inquiry..." : "Submit Official Inquiry"}
                   </Button>
                 </form>

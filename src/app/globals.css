@@ -11,23 +11,23 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    /* Primary Emerald Green #15803d -> HSL 142 71% 29% */
-    --primary: 142 71% 29%;
+    /* Primary Brand Green #6cb166 -> HSL 115 34% 55% */
+    --primary: 115 34% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary Deep Slate Navy #0f172a -> HSL 222.2 84% 4.9% */
-    --secondary: 222.2 84% 9.8%;
+    /* Secondary Brand Blue #3b66b0 -> HSL 218 50% 46% */
+    --secondary: 218 50% 46%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 142 71% 95%;
-    --accent-foreground: 142 71% 25%;
+    --accent: 115 34% 94%;
+    --accent-foreground: 115 34% 25%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142 71% 29%;
+    --ring: 115 34% 55%;
     --radius: 0.75rem;
   }
 
@@ -36,11 +36,9 @@
     --foreground: 210 40% 98%;
     --card: 222.2 84% 9.8%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 9.8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142 71% 38%;
+    --primary: 115 34% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 218 50% 46%;
     --secondary-foreground: 0 0% 100%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
@@ -50,7 +48,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142 71% 38%;
+    --ring: 115 34% 55%;
   }
 }
 
@@ -69,27 +67,18 @@
   }
 }
 
-/* Glassmorphism & Custom Effects */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.brand-blue {
+  background-color: #3b66b0;
 }
 
-.dark-glass-panel {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.brand-green {
+  background-color: #6cb166;
 }
 
-.gradient-heading {
-  background: linear-gradient(135deg, #0f172a 0%, #15803d 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.brand-blue-dark {
+  background-color: #2b4c85;
 }
 
-.gradient-green-blue {
-  background: linear-gradient(135deg, #15803d 0%, #1e40af 100%);
+.brand-green-dark {
+  background-color: #4d8748;
 }
