@@ -1,33 +1,33 @@
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Tag, Calendar, User, MailCheck } from 'lucide-react';
+import { Tag, Calendar, User, MailCheck } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Input } from '@/components/ui/input';
 
 const newsItems = [
   {
-    title: "ASSERWA Meets with WASAC to Discuss New Service Tariffs",
-    excerpt: "High-level stakeholder engagement meeting focused on establishing transparent pricing frameworks for sewage emptying across all provinces.",
+    title: "ASSSERVA Conducts Regional Sanitation & Hygiene Workshop",
+    excerpt: "Promoting high professional standards among sewage emptiers and sanitation practitioners in Rwanda.",
     date: "May 24, 2024",
-    author: "Emery Kabera",
+    author: "ASSSERVA Secretariat",
     tag: "Advocacy",
     imgId: "news-advocacy"
   },
   {
-    title: "Professional Training: Modern Waste Treatment Techniques",
-    excerpt: "Over 100 member representatives attended our intensive workshop on eco-friendly disposal and decentralized facility maintenance.",
+    title: "Promoting Toilet Construction & Facility Maintenance",
+    excerpt: "Workshops focusing on infrastructure maintenance and environmental protection in communities.",
     date: "June 12, 2024",
-    author: "Alice Mukantwali",
-    tag: "Technical Training",
+    author: "ASSSERVA Secretariat",
+    tag: "Infrastructure",
     imgId: "member-training"
   },
   {
-    title: "Community Outreach: Health & Hygiene Campaign in Bugesera",
-    excerpt: "Collaborating with regional healthcare centers to educate facility managers on sanitation maintenance standards.",
+    title: "Multi-Level Stakeholder Advocacy Engagement",
+    excerpt: "Advocating for sewage emptiers at national and local government institutions across provinces.",
     date: "June 05, 2024",
-    author: "David Tuyizere",
-    tag: "Community Health",
+    author: "ASSSERVA Secretariat",
+    tag: "Community",
     imgId: "community-impact"
   }
 ];
@@ -35,14 +35,14 @@ const newsItems = [
 export default function NewsPage() {
   return (
     <div className="bg-slate-50/50 py-16">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="max-w-3xl mb-12 space-y-4">
+      <div className="container mx-auto px-4 max-w-6xl space-y-12">
+        <div className="max-w-3xl space-y-4">
           <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-            Press & Governance
+            Official News
           </span>
-          <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Advocacy & News</h1>
+          <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Advocacy & Updates</h1>
           <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
-            Stay informed on regulatory engagements, technical training schedules, and public health policy updates from ASSERWA.
+            Stay informed on institutional engagements, professional standards, and community initiatives from ASSSERVA.
           </p>
         </div>
 
@@ -79,11 +79,6 @@ export default function NewsPage() {
                   <p className="text-sm text-slate-600 font-body leading-relaxed flex-1">
                     {news.excerpt}
                   </p>
-                  <div className="pt-2 border-t border-slate-100">
-                    <Button variant="ghost" className="p-0 h-auto text-[#3b66b0] font-headline font-bold text-xs hover:bg-transparent flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                      Read Full Report <ArrowRight className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             );
@@ -91,18 +86,18 @@ export default function NewsPage() {
         </div>
 
         {/* Newsletter Box - Brand Green #6cb166 */}
-        <div className="mt-20 py-12 bg-[#6cb166] text-white rounded-3xl px-8 md:px-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl border border-white/10">
+        <div className="py-12 bg-[#6cb166] text-white rounded-3xl px-8 md:px-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl border border-white/10">
           <div className="flex-1 space-y-3">
             <div className="flex items-center gap-2 text-white font-headline text-xs font-bold uppercase tracking-wider">
               <MailCheck className="w-4 h-4" /> Stakeholder Briefing
             </div>
-            <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">Subscribe to Regulatory Updates</h2>
+            <h2 className="text-2xl md:text-3xl font-headline font-bold text-white">Subscribe to ASSSERVA Updates</h2>
             <p className="text-white/95 font-body text-sm max-w-xl">
-              Receive monthly digests on tariff framework adjustments, national sanitation policies, and technical guidelines.
+              Get official announcements regarding sanitation guidelines and environmental protection initiatives.
             </p>
           </div>
           <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
-            <Input className="w-full sm:w-80 bg-white/20 border-white/30 text-white placeholder:text-white/70 font-body" placeholder="Enter work email" />
+            <Input className="w-full sm:w-80 bg-white/20 border-white/30 text-white placeholder:text-white/70 font-body" placeholder="Enter your email" />
             <Button className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-8 py-5 shadow-lg">
               Subscribe
             </Button>

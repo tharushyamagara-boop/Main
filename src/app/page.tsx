@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, BarChart3, Users, Droplets, ArrowRight, CheckCircle2, Building2, Globe2 } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Building2, Globe2, MapPin, Users, HeartHandshake, Wrench } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { CountUp } from '@/components/count-up';
 import {
   Carousel,
   CarouselContent,
@@ -15,22 +14,29 @@ import {
 const heroSlides = [
   {
     title: "Advancing Rwanda's ",
-    titleHighlight: "Sanitation Excellence",
-    description: "Empowering professional sewage emptiers through advocacy, technical training, and standardized compliance to ensure a cleaner, healthier Rwanda for everyone.",
+    titleHighlight: "Hygiene & Sanitation",
+    description: "Let us work together to promote hygiene, sanitation, and environmental protection.",
     imgId: "hero-sanitation"
   },
   {
-    title: "Professionalizing the ",
-    titleHighlight: "Sanitation Sector",
-    description: "Providing technical training and national certifications to ensure the highest standards of environmental safety and hygiene across all 30 districts.",
+    title: "Professionalizing ",
+    titleHighlight: "Sanitation Service Providers",
+    description: "ASSSERVA brings together sewage emptiers and sanitation practitioners in Rwanda to protect public health and safeguard the environment.",
     imgId: "member-training"
   },
   {
-    title: "Protecting Our ",
-    titleHighlight: "Environment & Health",
-    description: "Working alongside national regulators (RURA, WASAC) to protect public health through professionalized waste management and decentralized infrastructure.",
+    title: "Safeguarding Our ",
+    titleHighlight: "Environment & Community Health",
+    description: "Advocating for proper operation, maintenance, and construction of sanitation infrastructure across all provinces.",
     imgId: "community-impact"
   }
+];
+
+const memberCompanies = [
+  { region: "Kigali City", companies: ["Kyalin Services SARL", "Igisubizo Co. Ltd", "SANEC Co. Ltd", "Kant Kigali Ltd"] },
+  { region: "Western Province (Uburengerazuba)", companies: ["UBTC Fast", "Timbe Best Co. Ltd", "Umucyo Best Technical Co."] },
+  { region: "Northern Province (Amajyaruguru)", companies: ["Sanitec Co. Ltd", "Theophile"] },
+  { region: "Southern Province (Amajyepfo)", companies: ["UMOJA Co. Ltd", "Tabara Co. Ltd"] },
 ];
 
 export default function Home() {
@@ -47,7 +53,7 @@ export default function Home() {
               return (
                 <CarouselItem key={index}>
                   <div className="relative h-[460px] md:h-[520px] w-full flex items-center">
-                    {/* Background Image spanning 100% full viewport width */}
+                    {/* Background Image */}
                     <div className="absolute inset-0 z-0">
                       {slideImg && (
                         <Image
@@ -85,197 +91,182 @@ export default function Home() {
         </Carousel>
       </section>
 
-      {/* Institutional Partner Bar with Margins */}
+      {/* Official Slogan Bar */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
         <div className="py-5 px-8 bg-[#3b66b0] text-white text-xs font-headline font-bold rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-white">
-            <Building2 className="w-4 h-4 text-[#6cb166]" />
-            <span>REGULATORY COLLABORATION & GOVERNANCE</span>
+            <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
+            <span>OFFICIAL SLOGAN</span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-8 text-white/90">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166]" />
-              <span>RURA Certified Guidelines</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166]" />
-              <span>WASAC Alignment</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166]" />
-              <span>Ministry of Environment Compliant</span>
-            </div>
+          <div className="text-center md:text-right font-semibold text-white">
+            “Let us work together to promote hygiene, sanitation, and environmental protection.”
+            <span className="block text-[11px] text-white/80 font-normal mt-0.5">
+              (“Dukorere hamwe duharanira isuku, isukura no kurengera ibidukikije.”)
+            </span>
           </div>
         </div>
       </section>
 
-      {/* Quick Impact Stats with Margins */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
-        <div className="py-14 px-8 bg-[#6cb166] text-white rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-center backdrop-blur-sm">
-              <div className="text-4xl md:text-5xl font-headline font-extrabold text-white mb-2">
-                <CountUp end={16} />
-              </div>
-              <div className="text-xs font-headline font-bold uppercase tracking-wider text-white/90">Active Member Companies</div>
-            </div>
-            <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-center backdrop-blur-sm">
-              <div className="text-4xl md:text-5xl font-headline font-extrabold text-white mb-2">
-                <CountUp end={30} suffix="+" />
-              </div>
-              <div className="text-xs font-headline font-bold uppercase tracking-wider text-white/90">Districts Supported</div>
-            </div>
-            <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-center backdrop-blur-sm">
-              <div className="text-4xl md:text-5xl font-headline font-extrabold text-white mb-2">
-                <CountUp end={15} suffix="k+" />
-              </div>
-              <div className="text-xs font-headline font-bold uppercase tracking-wider text-white/90">Facilities Managed</div>
-            </div>
-            <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-center backdrop-blur-sm">
-              <div className="text-4xl md:text-5xl font-headline font-extrabold text-white mb-2">
-                <CountUp end={50} suffix="+" />
-              </div>
-              <div className="text-xs font-headline font-bold uppercase tracking-wider text-white/90">Annual Trainings</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Institutional Services with Margins */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#6cb166] bg-[#6cb166]/10 px-3.5 py-1 rounded-full border border-[#6cb166]/30">
-            Institutional Framework
-          </span>
-          <h2 className="text-3xl md:text-4xl font-headline font-bold text-slate-900">Professionalizing Rwanda's Sanitation Sector</h2>
-          <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
-            We provide the tools, digital frameworks, and technical resources necessary for sanitation professionals to deliver safe, dignified, and compliant service.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Service Card 1 */}
-          <div className="group p-8 rounded-2xl border border-slate-200 bg-white hover:shadow-xl hover:border-[#6cb166]/50 transition-all duration-300 flex flex-col">
-            <div className="w-14 h-14 bg-[#6cb166]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#6cb166] transition-all duration-300">
-              <ShieldCheck className="w-7 h-7 text-[#6cb166] group-hover:text-white transition-colors" />
-            </div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-[#6cb166] text-white px-2 py-0.5 rounded">GenAI Engine</span>
-            </div>
-            <h3 className="text-xl font-headline font-bold mb-3 text-slate-900">Compliance Evaluation</h3>
-            <p className="text-slate-600 font-body text-sm mb-6 leading-relaxed flex-1">
-              Evaluate technical service reports and facility maintenance plans against Rwandan national sanitation standards using our reasoning AI model.
+      {/* Who is ASSSERVA? Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="p-8 md:p-12 bg-white rounded-3xl border border-slate-200 shadow-md space-y-6">
+          <div className="max-w-3xl space-y-3">
+            <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
+              About the Organization
+            </span>
+            <h2 className="text-3xl font-headline font-bold text-slate-900">Who is ASSSERVA?</h2>
+            <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
+              ASSSERVA (Association of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda. The organization works to improve sanitation services, protect public health, and safeguard the environment.
             </p>
-            <Link href="/compliance" className="text-[#3b66b0] font-headline font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-              Run Evaluation <ArrowRight className="w-4 h-4" />
-            </Link>
           </div>
 
-          {/* Service Card 2 */}
-          <div className="group p-8 rounded-2xl border border-slate-200 bg-white hover:shadow-xl hover:border-[#3b66b0]/50 transition-all duration-300 flex flex-col">
-            <div className="w-14 h-14 bg-[#3b66b0]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#3b66b0] transition-all duration-300">
-              <BarChart3 className="w-7 h-7 text-[#3b66b0] group-hover:text-white transition-colors" />
-            </div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-[#3b66b0] text-white px-2 py-0.5 rounded">Analytics</span>
-            </div>
-            <h3 className="text-xl font-headline font-bold mb-3 text-slate-900">Impact Dashboard</h3>
-            <p className="text-slate-600 font-body text-sm mb-6 leading-relaxed flex-1">
-              Track real-time geographic coverage, waste volume managed (m³), and technical training metrics across all 30 districts.
-            </p>
-            <Link href="/dashboard" className="text-[#3b66b0] font-headline font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-              View Dashboard <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {/* Service Card 3 */}
-          <div className="group p-8 rounded-2xl border border-slate-200 bg-white hover:shadow-xl hover:border-[#6cb166]/50 transition-all duration-300 flex flex-col">
-            <div className="w-14 h-14 bg-[#6cb166]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#6cb166] transition-all duration-300">
-              <Users className="w-7 h-7 text-[#6cb166] group-hover:text-white transition-colors" />
-            </div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-200 px-2 py-0.5 rounded">Advocacy</span>
-            </div>
-            <h3 className="text-xl font-headline font-bold mb-3 text-slate-900">Advocacy & News</h3>
-            <p className="text-slate-600 font-body text-sm mb-6 leading-relaxed flex-1">
-              Stay updated with stakeholder engagements with RURA & WASAC, tariff policy discussions, and association initiatives.
-            </p>
-            <Link href="/news" className="text-[#3b66b0] font-headline font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-              Read Updates <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Institutional Advocacy Section with Margins */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <div className="p-8 md:p-12 bg-white rounded-3xl border border-slate-200 shadow-lg">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="w-full lg:w-1/2 relative h-[420px] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
-              {impactImg && (
-                <Image
-                  src={impactImg.imageUrl}
-                  alt={impactImg.description}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={impactImg.imageHint}
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#3b66b0]/90 via-transparent to-transparent flex items-end p-6">
-                <div className="text-white">
-                  <p className="font-headline font-bold text-base">National Sanitation Standard Enforcement</p>
-                  <p className="text-slate-200 text-xs font-body">Kigali & 30 Provinces Coverage</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full lg:w-1/2 space-y-6">
-              <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-                Government & Public Health Partnership
-              </span>
-              <h2 className="text-3xl font-headline font-bold text-slate-900">Advocating for Public Health, Ethics & Trust</h2>
-              <p className="text-base text-slate-600 font-body leading-relaxed">
-                ASSERWA acts as the vital institutional bridge between private sanitation practitioners and regulatory bodies including RURA, WASAC, and the Ministry of Environment. We represent our member companies while guaranteeing environmental integrity for the Rwandan public.
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <h4 className="font-headline font-bold text-slate-900 text-sm flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#6cb166]" /> Main Mission
+              </h4>
+              <p className="text-xs text-slate-600 font-body leading-relaxed">
+                To promote a culture of hygiene and sanitation among members and the wider community.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {[
-                  "Technical capacity building for operators",
-                  "Environmental safety & PPE standards",
-                  "Standardized transparent tariff frameworks",
-                  "Policy advocacy & institutional representation"
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                    <Droplets className="w-5 h-5 text-[#6cb166] shrink-0 mt-0.5" />
-                    <span className="font-headline font-bold text-xs text-slate-800 leading-snug">{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-sm font-bold px-8 shadow-lg">
-                  <Link href="/contact">Inquire for Partnership</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-[#6cb166] text-[#4d8748] hover:bg-[#6cb166]/10 font-headline text-sm font-bold">
-                  <Link href="/about">About Our Association</Link>
-                </Button>
-              </div>
+            </div>
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <h4 className="font-headline font-bold text-slate-900 text-sm flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#3b66b0]" /> Headquarters Location
+              </h4>
+              <p className="text-xs text-slate-600 font-body leading-relaxed">
+                Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell, Remera II, Remera Sector, Gasabo District, Kigali City, Rwanda.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Corporate Call to Action with Margins */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-16 w-full">
-        <div className="py-16 px-8 bg-[#6cb166] text-white rounded-3xl shadow-xl text-center space-y-6">
-          <Globe2 className="w-12 h-12 text-white mx-auto opacity-90" />
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-white tracking-tight">
-            Collaborate With ASSERWA for a Cleaner Rwanda
-          </h2>
-          <p className="text-white/95 font-body text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            We invite international development organizations, government agencies, and municipal authorities to partner with ASSERWA in advancing sustainable waste management.
+      {/* 4 Main Objectives of the Organization */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#6cb166] bg-[#6cb166]/10 px-3.5 py-1 rounded-full border border-[#6cb166]/30">
+            Institutional Objectives
+          </span>
+          <h2 className="text-3xl md:text-4xl font-headline font-bold text-slate-900">Objectives of the Organization</h2>
+          <p className="text-slate-600 font-body text-sm md:text-base leading-relaxed">
+            ASSSERVA operates across four key strategic pillars to advance Rwanda's sanitation sector.
           </p>
-          <div className="pt-4 flex justify-center gap-4">
-            <Button asChild size="lg" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-sm font-bold px-8 shadow-lg">
-              <Link href="/contact">Contact Our Office</Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Obj 1 */}
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
+            <div className="w-12 h-12 bg-[#6cb166]/10 rounded-xl flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-[#4d8748]" />
+            </div>
+            <h3 className="text-lg font-headline font-bold text-slate-900">1. Environmental & Hygiene Promotion</h3>
+            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
+                <span>Promote environmental protection and sanitation practices.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
+                <span>Promote activities improving health and well-being.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Obj 2 */}
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
+            <div className="w-12 h-12 bg-[#3b66b0]/10 rounded-xl flex items-center justify-center">
+              <Users className="w-6 h-6 text-[#3b66b0]" />
+            </div>
+            <h3 className="text-lg font-headline font-bold text-slate-900">2. Professional Development</h3>
+            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3b66b0] shrink-0 mt-0.5" />
+                <span>Promote high professional standards among sewage emptiers and sanitation workers.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Obj 3 */}
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
+            <div className="w-12 h-12 bg-[#6cb166]/10 rounded-xl flex items-center justify-center">
+              <HeartHandshake className="w-6 h-6 text-[#4d8748]" />
+            </div>
+            <h3 className="text-lg font-headline font-bold text-slate-900">3. Multi-Level Advocacy</h3>
+            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
+                <span>National government institutions advocacy.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#6cb166] shrink-0 mt-0.5" />
+                <span>Local government & NGO partners representation.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Obj 4 */}
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white hover:shadow-lg transition-shadow space-y-3">
+            <div className="w-12 h-12 bg-[#3b66b0]/10 rounded-xl flex items-center justify-center">
+              <Wrench className="w-6 h-6 text-[#3b66b0]" />
+            </div>
+            <h3 className="text-lg font-headline font-bold text-slate-900">4. Sanitation Infrastructure</h3>
+            <ul className="text-xs text-slate-600 font-body space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3b66b0] shrink-0 mt-0.5" />
+                <span>Advocate for toilet construction and sanitation facilities.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#3b66b0] shrink-0 mt-0.5" />
+                <span>Proper operation and maintenance of infrastructure.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Member Companies & Areas of Operation */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div className="py-14 px-8 bg-[#6cb166] text-white rounded-3xl shadow-xl space-y-8">
+          <div className="max-w-3xl space-y-2">
+            <h2 className="text-3xl font-headline font-bold text-white">Areas of Operation / Member Companies</h2>
+            <p className="text-white/90 font-body text-sm">
+              ASSSERVA represents member companies and sanitation service providers operating across different regions of Rwanda:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {memberCompanies.map((item, idx) => (
+              <div key={idx} className="p-6 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-sm space-y-3">
+                <h3 className="font-headline font-bold text-base text-white border-b border-white/20 pb-2">{item.region}</h3>
+                <ul className="space-y-2 text-xs font-body text-white/95">
+                  {item.companies.map((comp, cIdx) => (
+                    <li key={cIdx} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                      <span>{comp}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Call to Action */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-16 w-full">
+        <div className="p-10 bg-white border border-slate-200 rounded-3xl shadow-lg text-center space-y-4 max-w-3xl mx-auto">
+          <Globe2 className="w-10 h-10 text-[#3b66b0] mx-auto" />
+          <h2 className="text-2xl font-headline font-bold text-slate-900">
+            Contact Association Headquarters
+          </h2>
+          <p className="text-slate-600 font-body text-sm leading-relaxed">
+            Irembo House, Gishushu Road, Nyarutarama Village, Rukiri Cell, Remera Sector, Gasabo District, Kigali City, Rwanda
+            <br />
+            Email: <span className="font-bold text-slate-800">assservarwanda@gmail.com</span> | Telephone: <span className="font-bold text-slate-800">+250 784 246 216</span>
+          </p>
+          <div className="pt-2">
+            <Button asChild size="lg" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-8 shadow-md">
+              <Link href="/contact">Get in Touch</Link>
             </Button>
           </div>
         </div>

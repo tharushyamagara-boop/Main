@@ -4,21 +4,18 @@ import { Droplets, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, ShieldCheck
 export function Footer() {
   return (
     <footer className="w-full bg-[#3b66b0] text-white border-t border-white/10">
-      {/* Full Width Top Banner / Key Institutional Partners */}
+      {/* Top Slogan Banner */}
       <div className="w-full border-b border-white/10 bg-[#2b4c85] py-6 px-6 lg:px-12">
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2 text-white font-headline font-bold">
             <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
-            <span>INSTITUTIONAL & REGULATORY STAKEHOLDERS:</span>
+            <span>OFFICIAL SLOGAN:</span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 font-semibold">
-            <span className="hover:text-[#6cb166] transition-colors cursor-default">RURA (Rwanda Utilities Regulatory Authority)</span>
-            <span className="text-white/40">•</span>
-            <span className="hover:text-[#6cb166] transition-colors cursor-default">WASAC (Water & Sanitation Corporation)</span>
-            <span className="text-white/40">•</span>
-            <span className="hover:text-[#6cb166] transition-colors cursor-default">Ministry of Environment</span>
-            <span className="text-white/40">•</span>
-            <span className="hover:text-[#6cb166] transition-colors cursor-default">City of Kigali</span>
+          <div className="text-center md:text-right text-white/90 font-semibold italic">
+            "Let us work together to promote hygiene, sanitation, and environmental protection."
+            <span className="block text-[11px] text-white/70 font-normal mt-0.5">
+              (Kinyarwanda: "Dukorere hamwe duharanira isuku, isukura no kurengera ibidukikije.")
+            </span>
           </div>
         </div>
       </div>
@@ -33,14 +30,14 @@ export function Footer() {
                 <Droplets className="h-6 w-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="font-headline font-bold text-xl text-white tracking-tight">ASSERWA</span>
+                <span className="font-headline font-bold text-xl text-white tracking-tight">ASSSERVA</span>
                 <span className="text-[10px] text-white/80 font-body uppercase tracking-wider font-semibold">
                   Association of Sewage Emptiers in Rwanda
                 </span>
               </div>
             </div>
             <p className="text-xs text-white/80 leading-relaxed font-body max-w-sm">
-              The official professional association representing sewage emptiers and sanitation managers across Rwanda's 30 districts. Dedicated to environmental sustainability, technical standardization, and public health advocacy.
+              ASSSERVA is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda to improve sanitation services, protect public health, and safeguard the environment.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <Link href="#" className="w-8 h-8 rounded-lg bg-[#2b4c85] hover:bg-[#6cb166] hover:text-white flex items-center justify-center text-white/90 transition-colors border border-white/10">
@@ -60,22 +57,21 @@ export function Footer() {
             <h4 className="font-headline font-bold text-xs mb-4 uppercase tracking-widest text-white">Sitemap</h4>
             <ul className="space-y-2.5 text-xs font-body">
               <li><Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/about" className="text-white/80 hover:text-white transition-colors">About Association</Link></li>
-              <li><Link href="/services" className="text-white/80 hover:text-white transition-colors">Services & Standards</Link></li>
-              <li><Link href="/dashboard" className="text-white/80 hover:text-white transition-colors">Impact Dashboard</Link></li>
-              <li><Link href="/compliance" className="text-white/80 hover:text-white transition-colors">Compliance AI Engine</Link></li>
+              <li><Link href="/about" className="text-white/80 hover:text-white transition-colors">Who is ASSSERVA?</Link></li>
+              <li><Link href="/compliance" className="text-white/80 hover:text-white transition-colors">Organization Objectives</Link></li>
+              <li><Link href="/services" className="text-white/80 hover:text-white transition-colors">Areas of Operation</Link></li>
+              <li><Link href="/dashboard" className="text-white/80 hover:text-white transition-colors">Member Companies</Link></li>
             </ul>
           </div>
 
-          {/* Col 3: Resources & News */}
+          {/* Col 3: Resources & Contact */}
           <div>
-            <h4 className="font-headline font-bold text-xs mb-4 uppercase tracking-widest text-white">Publications</h4>
+            <h4 className="font-headline font-bold text-xs mb-4 uppercase tracking-widest text-white">Information</h4>
             <ul className="space-y-2.5 text-xs font-body">
-              <li><Link href="/resources" className="text-white/80 hover:text-white transition-colors">Knowledge Repository</Link></li>
-              <li><Link href="/news" className="text-white/80 hover:text-white transition-colors">Advocacy & News</Link></li>
-              <li><Link href="/gallery" className="text-white/80 hover:text-white transition-colors">Impact Gallery</Link></li>
-              <li><Link href="/register" className="text-white/80 hover:text-white transition-colors">Membership Portal</Link></li>
-              <li><Link href="/contact" className="text-white/80 hover:text-white transition-colors">Partnership Inquiries</Link></li>
+              <li><Link href="/resources" className="text-white/80 hover:text-white transition-colors">Documentation</Link></li>
+              <li><Link href="/news" className="text-white/80 hover:text-white transition-colors">Advocacy & Updates</Link></li>
+              <li><Link href="/gallery" className="text-white/80 hover:text-white transition-colors">Sanitation Gallery</Link></li>
+              <li><Link href="/contact" className="text-white/80 hover:text-white transition-colors">Contact Headquarters</Link></li>
             </ul>
           </div>
 
@@ -85,26 +81,26 @@ export function Footer() {
             <ul className="space-y-3 text-xs font-body">
               <li className="flex items-start gap-2.5 text-white/80">
                 <MapPin className="h-4 w-4 mt-0.5 text-[#6cb166] shrink-0" />
-                <span>Nyarugenge District, KN 2 St<br/>Kigali, Rwanda</span>
+                <span>Irembo House, Gishushu Road,<br/>Nyarutarama Village, Rukiri Cell,<br/>Remera Sector, Gasabo District,<br/>Kigali City, Rwanda</span>
               </li>
               <li className="flex items-center gap-2.5 text-white/80">
                 <Phone className="h-4 w-4 text-[#6cb166] shrink-0" />
-                <span>+250 788 000 000</span>
+                <span>+250 784 246 216</span>
               </li>
               <li className="flex items-center gap-2.5 text-white/80">
                 <Mail className="h-4 w-4 text-[#6cb166] shrink-0" />
-                <span>info@asserwa.org.rw</span>
+                <span>assservarwanda@gmail.com</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Copyright & SDG Bar */}
+        {/* Bottom Copyright */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-white/80 font-headline uppercase tracking-wider">
-          <p>© {new Date().getFullYear()} Association of Sewage Emptiers in Rwanda (ASSERWA). All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Association of Sewage Emptiers in Rwanda (ASSSERVA). All rights reserved.</p>
           <div className="flex items-center gap-2 text-white">
             <Globe className="w-3.5 h-3.5 text-[#6cb166]" />
-            <span>Aligned with UN SDG Goal 6: Clean Water & Sanitation</span>
+            <span>Promoting Hygiene, Sanitation & Environmental Protection</span>
           </div>
         </div>
       </div>

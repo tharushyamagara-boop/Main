@@ -10,9 +10,9 @@ import { Button } from '@/components/ui/button';
 const navLinks = [
   { name: 'HOME', href: '/' },
   { name: 'ABOUT US', href: '/about' },
+  { name: 'OBJECTIVES', href: '/compliance' },
   { name: 'SERVICES', href: '/services' },
-  { name: 'IMPACT DASHBOARD', href: '/dashboard' },
-  { name: 'COMPLIANCE AI', href: '/compliance', isBadge: true },
+  { name: 'MEMBER NETWORK', href: '/dashboard' },
   { name: 'RESOURCES', href: '/resources' },
   { name: 'ADVOCACY & NEWS', href: '/news' },
   { name: 'GALLERY', href: '/gallery' },
@@ -31,21 +31,21 @@ export function Navbar() {
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
               <MapPin className="h-3.5 w-3.5 text-[#6cb166]" />
-              <span>Nyarugenge, KN 2 St, Kigali, Rwanda</span>
+              <span>Remera Sector, Gasabo District, Kigali, Rwanda</span>
             </span>
             <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
               <Phone className="h-3.5 w-3.5 text-[#6cb166]" />
-              <span>+250 788 000 000</span>
+              <span>+250 784 246 216</span>
             </span>
             <span className="flex items-center gap-1.5 hover:text-[#3b66b0] transition-colors">
               <Mail className="h-3.5 w-3.5 text-[#6cb166]" />
-              <span>info@asserwa.org.rw</span>
+              <span>assservarwanda@gmail.com</span>
             </span>
           </div>
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-1 bg-[#6cb166]/10 border border-[#6cb166]/30 text-[#4d8748] px-2.5 py-0.5 rounded-full text-[11px] font-semibold">
               <ShieldCheck className="w-3 h-3 text-[#6cb166]" />
-              Official National Association
+              Non-Governmental Organization
             </span>
           </div>
         </div>
@@ -61,10 +61,10 @@ export function Navbar() {
             </div>
             <div className="flex flex-col">
               <span className="font-headline font-bold text-xl tracking-tight text-[#3b66b0] group-hover:text-[#2b4c85] transition-colors">
-                ASSERWA
+                ASSSERVA
               </span>
               <span className="text-[10px] text-slate-500 font-body uppercase tracking-wider font-semibold">
-                Sewage Emptiers Association Rwanda
+                Association of Sewage Emptiers in Rwanda
               </span>
             </div>
           </Link>
@@ -83,11 +83,6 @@ export function Navbar() {
                   )}
                 >
                   {link.name}
-                  {link.isBadge && (
-                    <span className="bg-[#6cb166] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full tracking-normal">
-                      AI
-                    </span>
-                  )}
                   {isActive && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#3b66b0] rounded-full" />
                   )}
@@ -100,7 +95,7 @@ export function Navbar() {
           <div className="hidden lg:flex items-center">
             <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-5 shadow-sm">
               <Link href="/contact" className="flex items-center gap-1.5">
-                Inquire <ArrowRight className="w-3.5 h-3.5" />
+                Contact Us <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </Button>
           </div>
@@ -131,18 +126,13 @@ export function Navbar() {
                   )}
                 >
                   <span>{link.name}</span>
-                  {link.isBadge && (
-                    <span className="bg-[#6cb166] text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full">
-                      GenAI
-                    </span>
-                  )}
                 </Link>
               );
             })}
             <div className="pt-3 border-t border-slate-200 mt-2">
               <Button asChild className="w-full bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold">
                 <Link href="/contact" onClick={() => setIsOpen(false)}>
-                  Partner With ASSERWA
+                  Contact ASSSERVA
                 </Link>
               </Button>
             </div>
