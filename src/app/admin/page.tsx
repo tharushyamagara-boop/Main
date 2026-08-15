@@ -86,13 +86,13 @@ export default function AdminDashboardPage() {
       title: "New Hero Slide ",
       titleHighlight: "Highlight Text",
       description: "Promoting hygiene, sanitation, and environmental protection in Rwanda.",
-      imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1600&q=80",
+      imageUrl: "",
       mediaType: 'image'
     };
     setSlideshows([...slideshows, newSlide]);
     toast({
       title: "New Slide Added",
-      description: "A new slide has been added to the hero slideshow.",
+      description: "A new slide has been added to the hero slideshow. Please upload a photo/video file.",
     });
   };
 
@@ -119,13 +119,13 @@ export default function AdminDashboardPage() {
     const newItem: GalleryItem = {
       id: `gal-${Date.now()}`,
       description: "New Sanitation Field Activity Caption",
-      imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "",
       mediaType: 'image'
     };
     setGallery([...gallery, newItem]);
     toast({
       title: "Gallery Item Added",
-      description: "New photo/video item added to the sanitation gallery.",
+      description: "New item added to gallery. Please upload your photo or video.",
     });
   };
 
@@ -148,13 +148,13 @@ export default function AdminDashboardPage() {
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
       author: "ASSERWA Secretariat",
       tag: "Advocacy",
-      imageUrl: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "",
       mediaType: 'image'
     };
     setNews([...news, newItem]);
     toast({
       title: "Article Added",
-      description: "New news article added to the site.",
+      description: "New news article added. Please upload your photo/video file.",
     });
   };
 

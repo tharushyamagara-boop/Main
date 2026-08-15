@@ -344,6 +344,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       if (Array.isArray(data.news)) setNews(data.news);
       if (Array.isArray(data.gallery)) setGallery(data.gallery);
       if (data.contactInfo) setContactInfo(data.contactInfo);
+
+      // Save remote Firestore snapshot to local cache
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
     });
 
     const handleStorageEvent = (e: StorageEvent) => {
@@ -359,7 +364,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Save to localStorage & Cloud Firestore on change (only after initial load has completed)
+  // Save to localStorage on local state changes (Cloud Firestore is updated explicitly when saved in admin)
   useEffect(() => {
     if (!isLoaded) return;
     try {
@@ -375,9 +380,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         contactInfo
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-      saveContentToFirestore(dataToSave);
     } catch (e) {
-      console.error("Error saving cms store", e);
+      console.error("Error saving cms store to localStorage", e);
     }
   }, [isLoaded, slideshows, aboutUs, objectives, services, memberNetwork, resources, news, gallery, contactInfo]);
 
