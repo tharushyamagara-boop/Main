@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { saveContentToFirestore, subscribeToFirestoreContent } from '@/lib/firebase';
 
 export type SlideshowItem = {
   id: string;
@@ -303,7 +304,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount and listen for storage sync events live
+  // Load from localStorage on mount & subscribe to live Firebase Cloud Firestore updates
   useEffect(() => {
     const loadStore = () => {
       try {
@@ -330,17 +331,35 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadStore();
+
+    // Live subscription to Firebase Cloud Firestore database
+    const unsubscribe = subscribeToFirestoreContent((data) => {
+      if (!data) return;
+      if (Array.isArray(data.slideshows)) setSlideshows(data.slideshows);
+      if (data.aboutUs) setAboutUs(data.aboutUs);
+      if (data.objectives) setObjectives(data.objectives);
+      if (data.services) setServices(data.services);
+      if (data.memberNetwork) setMemberNetwork(data.memberNetwork);
+      if (data.resources) setResources(data.resources);
+      if (Array.isArray(data.news)) setNews(data.news);
+      if (Array.isArray(data.gallery)) setGallery(data.gallery);
+      if (data.contactInfo) setContactInfo(data.contactInfo);
+    });
+
     const handleStorageEvent = (e: StorageEvent) => {
-      // Only reload on real cross-tab storage events with matching key
       if (e.key === STORAGE_KEY || e.key === 'assserva_cms_content_v4') {
         loadStore();
       }
     };
     window.addEventListener('storage', handleStorageEvent);
-    return () => window.removeEventListener('storage', handleStorageEvent);
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener('storage', handleStorageEvent);
+    };
   }, []);
 
-  // Save to localStorage on change (only after initial load has completed)
+  // Save to localStorage & Cloud Firestore on change (only after initial load has completed)
   useEffect(() => {
     if (!isLoaded) return;
     try {
@@ -356,8 +375,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         contactInfo
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      saveContentToFirestore(dataToSave);
     } catch (e) {
-      console.error("Error saving cms store to localStorage", e);
+      console.error("Error saving cms store", e);
     }
   }, [isLoaded, slideshows, aboutUs, objectives, services, memberNetwork, resources, news, gallery, contactInfo]);
 

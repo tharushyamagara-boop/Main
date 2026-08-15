@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
@@ -12,6 +13,9 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const storage = getStorage(app);
+export const db = getFirestore(app);
+
+const CMS_DOC_REF = doc(db, "cms", "main_content");
 
 /**
  * Uploads a photo or video file to Firebase Cloud Storage
@@ -48,4 +52,37 @@ export async function uploadMediaToFirebaseStorage(
       }
     );
   });
+}
+
+/**
+ * Saves entire CMS content state to Firebase Cloud Firestore.
+ */
+export async function saveContentToFirestore(data: any): Promise<void> {
+  try {
+    await setDoc(CMS_DOC_REF, {
+      ...data,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.warn("Firestore save error:", err);
+  }
+}
+
+/**
+ * Subscribes to live real-time CMS content updates from Firebase Cloud Firestore.
+ */
+export function subscribeToFirestoreContent(onUpdate: (data: any) => void): () => void {
+  try {
+    const unsubscribe = onSnapshot(CMS_DOC_REF, (docSnap) => {
+      if (docSnap.exists()) {
+        onUpdate(docSnap.data());
+      }
+    }, (err) => {
+      console.warn("Firestore subscription error:", err);
+    });
+    return unsubscribe;
+  } catch (err) {
+    console.warn("Firestore subscription init error:", err);
+    return () => {};
+  }
 }

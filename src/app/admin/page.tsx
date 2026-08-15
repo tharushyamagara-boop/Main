@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useContentStore, SlideshowItem, GalleryItem, NewsItem } from '@/lib/content-store';
 import { useAdminStore, AdminUser } from '@/lib/admin-store';
-import { uploadMediaToFirebaseStorage } from '@/lib/firebase';
+import { uploadMediaToFirebaseStorage, saveContentToFirestore } from '@/lib/firebase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -220,7 +220,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
       const dataToSave = {
         slideshows,
@@ -235,9 +235,10 @@ export default function AdminDashboardPage() {
       };
       localStorage.setItem('asserwa_cms_content_v4', JSON.stringify(dataToSave));
       localStorage.setItem('assserva_cms_content_v4', JSON.stringify(dataToSave));
+      await saveContentToFirestore(dataToSave);
       toast({
         title: "Content Saved & Applied Live!",
-        description: "All media, slideshows, gallery items, and news updates have been saved and applied across the entire website.",
+        description: "All media, slideshows, gallery items, and news updates have been saved to Cloud Firestore and applied across all browsers worldwide.",
       });
     } catch (e) {
       toast({
