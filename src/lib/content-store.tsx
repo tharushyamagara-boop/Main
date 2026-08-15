@@ -40,7 +40,7 @@ export const defaultSlideshows: SlideshowItem[] = [
     title: "Advancing Rwanda's ",
     titleHighlight: "Hygiene & Sanitation",
     description: "Let us work together to promote hygiene, sanitation, and environmental protection.",
-    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: "",
     mediaType: 'image'
   },
   {
@@ -48,7 +48,7 @@ export const defaultSlideshows: SlideshowItem[] = [
     title: "Professionalizing ",
     titleHighlight: "Sanitation Service Providers",
     description: "ASSERWA brings together sewage emptiers and sanitation practitioners in Rwanda to protect public health and safeguard the environment.",
-    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "",
     mediaType: 'image'
   },
   {
@@ -56,7 +56,7 @@ export const defaultSlideshows: SlideshowItem[] = [
     title: "Safeguarding Our ",
     titleHighlight: "Environment & Community Health",
     description: "Advocating for proper operation, maintenance, and construction of sanitation infrastructure across all provinces.",
-    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "",
     mediaType: 'image'
   }
 ];
@@ -67,7 +67,7 @@ export const defaultAboutUs = {
   description: "ASSERWA (Association of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda.",
   mission: "To promote a culture of hygiene and sanitation among members and the wider community.",
   objectiveScope: "The organization works to improve sanitation services, protect public health, and safeguard the environment across all provinces of Rwanda.",
-  imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80"
+  imageUrl: ""
 };
 
 export const defaultObjectives = [
@@ -199,7 +199,7 @@ export const defaultNews: NewsItem[] = [
     date: "May 24, 2024",
     author: "ASSERWA Secretariat",
     tag: "Advocacy",
-    imageUrl: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "",
     mediaType: 'image'
   },
   {
@@ -209,7 +209,7 @@ export const defaultNews: NewsItem[] = [
     date: "June 12, 2024",
     author: "ASSERWA Secretariat",
     tag: "Infrastructure",
-    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "",
     mediaType: 'image'
   },
   {
@@ -219,7 +219,7 @@ export const defaultNews: NewsItem[] = [
     date: "June 05, 2024",
     author: "ASSERWA Secretariat",
     tag: "Community",
-    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: "",
     mediaType: 'image'
   }
 ];
@@ -228,32 +228,32 @@ export const defaultGallery: GalleryItem[] = [
   {
     id: 'gal-1',
     description: "Modern Waste Treatment & Infrastructure Inspection",
-    imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: ""
   },
   {
     id: 'gal-2',
     description: "Environmental Safety & Field Compliance Verification",
-    imageUrl: "https://images.unsplash.com/photo-1584467735871-8e85353a8413?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: ""
   },
   {
     id: 'gal-3',
     description: "ASSERWA Operational Headquarters & Administration",
-    imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: ""
   },
   {
     id: 'gal-4',
     description: "National Stakeholder & Partner Policy Consultation",
-    imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: ""
   },
   {
     id: 'gal-5',
     description: "Standardized Equipment & Health Protocols Verification",
-    imageUrl: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: ""
   },
   {
     id: 'gal-6',
     description: "Community Hygiene & District Outreach Program",
-    imageUrl: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1200&q=80"
+    imageUrl: ""
   }
 ];
 
@@ -291,6 +291,18 @@ const ContentStoreContext = createContext<ContentStoreContextType | undefined>(u
 
 const STORAGE_KEY = 'asserwa_cms_content_v4';
 
+const cleanUnsplashUrl = (url: string) => {
+  if (url && url.includes("images.unsplash.com")) return "";
+  return url || "";
+};
+
+const sanitizeItems = <T extends { imageUrl?: string }>(items: T[]): T[] => {
+  return items.map(item => ({
+    ...item,
+    imageUrl: cleanUnsplashUrl(item.imageUrl || "")
+  }));
+};
+
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [slideshows, setSlideshows] = useState(defaultSlideshows);
   const [aboutUs, setAboutUs] = useState(defaultAboutUs);
@@ -313,14 +325,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                       localStorage.getItem('assserva_cms_content_v3');
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed.slideshows)) setSlideshows(parsed.slideshows);
-          if (parsed.aboutUs) setAboutUs(parsed.aboutUs);
+          if (Array.isArray(parsed.slideshows)) setSlideshows(sanitizeItems(parsed.slideshows));
+          if (parsed.aboutUs) setAboutUs({ ...parsed.aboutUs, imageUrl: cleanUnsplashUrl(parsed.aboutUs.imageUrl) });
           if (parsed.objectives) setObjectives(parsed.objectives);
           if (parsed.services) setServices(parsed.services);
           if (parsed.memberNetwork) setMemberNetwork(parsed.memberNetwork);
           if (parsed.resources) setResources(parsed.resources);
-          if (Array.isArray(parsed.news)) setNews(parsed.news);
-          if (Array.isArray(parsed.gallery)) setGallery(parsed.gallery);
+          if (Array.isArray(parsed.news)) setNews(sanitizeItems(parsed.news));
+          if (Array.isArray(parsed.gallery)) setGallery(sanitizeItems(parsed.gallery));
           if (parsed.contactInfo) setContactInfo(parsed.contactInfo);
         }
       } catch (e) {
@@ -335,14 +347,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // Live subscription to Firebase Cloud Firestore database
     const unsubscribe = subscribeToFirestoreContent((data) => {
       if (!data) return;
-      if (Array.isArray(data.slideshows)) setSlideshows(data.slideshows);
-      if (data.aboutUs) setAboutUs(data.aboutUs);
+      if (Array.isArray(data.slideshows)) setSlideshows(sanitizeItems(data.slideshows));
+      if (data.aboutUs) setAboutUs({ ...data.aboutUs, imageUrl: cleanUnsplashUrl(data.aboutUs.imageUrl) });
       if (data.objectives) setObjectives(data.objectives);
       if (data.services) setServices(data.services);
       if (data.memberNetwork) setMemberNetwork(data.memberNetwork);
       if (data.resources) setResources(data.resources);
-      if (Array.isArray(data.news)) setNews(data.news);
-      if (Array.isArray(data.gallery)) setGallery(data.gallery);
+      if (Array.isArray(data.news)) setNews(sanitizeItems(data.news));
+      if (Array.isArray(data.gallery)) setGallery(sanitizeItems(data.gallery));
       if (data.contactInfo) setContactInfo(data.contactInfo);
 
       // Save remote Firestore snapshot to local cache
