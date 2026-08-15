@@ -17,31 +17,19 @@ const heroSlides = [
     title: "Advancing Rwanda's ",
     titleHighlight: "Sanitation Excellence",
     description: "Empowering professional sewage emptiers through advocacy, technical training, and standardized compliance to ensure a cleaner, healthier Rwanda for everyone.",
-    imgId: "hero-sanitation",
-    ctaPrimary: "Partner With Us",
-    ctaSecondary: "View Impact Dashboard",
-    hrefPrimary: "/contact",
-    hrefSecondary: "/dashboard"
+    imgId: "hero-sanitation"
   },
   {
     title: "Professionalizing the ",
     titleHighlight: "Sanitation Sector",
     description: "Providing technical training and national certifications to ensure the highest standards of environmental safety and hygiene across all 30 districts.",
-    imgId: "member-training",
-    ctaPrimary: "Explore Our Services",
-    ctaSecondary: "Knowledge Repository",
-    hrefPrimary: "/services",
-    hrefSecondary: "/resources"
+    imgId: "member-training"
   },
   {
     title: "Protecting Our ",
     titleHighlight: "Environment & Health",
     description: "Working alongside national regulators (RURA, WASAC) to protect public health through professionalized waste management and decentralized infrastructure.",
-    imgId: "community-impact",
-    ctaPrimary: "Get in Touch",
-    ctaSecondary: "Compliance AI Check",
-    hrefPrimary: "/contact",
-    hrefSecondary: "/compliance"
+    imgId: "community-impact"
   }
 ];
 
@@ -51,14 +39,14 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full bg-slate-50/50 min-h-screen">
       {/* 100% Full Width Hero Slideshow Section */}
-      <section className="relative w-full overflow-hidden bg-transparent">
+      <section className="relative w-full overflow-hidden bg-slate-100">
         <Carousel className="w-full" opts={{ loop: true }}>
           <CarouselContent>
             {heroSlides.map((slide, index) => {
               const slideImg = PlaceHolderImages.find(img => img.id === slide.imgId);
               return (
                 <CarouselItem key={index}>
-                  <div className="relative h-[620px] md:h-[680px] w-full flex items-center">
+                  <div className="relative h-[480px] md:h-[540px] w-full flex items-center">
                     {/* Background Image spanning 100% full viewport width */}
                     <div className="absolute inset-0 z-0">
                       {slideImg && (
@@ -73,29 +61,19 @@ export default function Home() {
                       )}
                     </div>
 
-                    {/* Slide Content */}
-                    <div className="container mx-auto px-6 lg:px-12 z-10 text-white relative">
-                      <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[#3b66b0]/90 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/20 shadow-2xl">
-                        <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 px-3.5 py-1.5 rounded-full text-white font-headline font-bold text-xs tracking-wide">
-                          <ShieldCheck className="w-4 h-4 text-[#6cb166]" />
+                    {/* Compact White Background Slide Overlay */}
+                    <div className="container mx-auto px-6 lg:px-12 z-10 relative">
+                      <div className="max-w-lg space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-xl">
+                        <div className="inline-flex items-center gap-1.5 bg-[#6cb166]/10 border border-[#6cb166]/30 px-2.5 py-1 rounded-full text-[#4d8748] font-headline font-bold text-[11px] tracking-wide">
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#6cb166]" />
                           <span>Official Association of Sewage Emptiers in Rwanda</span>
                         </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-extrabold leading-[1.15] text-white tracking-tight">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-headline font-extrabold leading-tight text-slate-900 tracking-tight">
                           {slide.title}<span className="text-[#6cb166]">{slide.titleHighlight}</span>
                         </h1>
-                        <p className="text-base sm:text-lg lg:text-xl font-body text-white/95 max-w-2xl leading-relaxed">
+                        <p className="text-xs sm:text-sm font-body text-slate-600 leading-relaxed">
                           {slide.description}
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                          <Button asChild size="lg" className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline font-bold px-8 shadow-lg">
-                            <Link href={slide.hrefPrimary} className="flex items-center gap-2">
-                              {slide.ctaPrimary} <ArrowRight className="w-4 h-4" />
-                            </Link>
-                          </Button>
-                          <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/40 text-white hover:bg-white/20 font-headline px-8">
-                            <Link href={slide.hrefSecondary}>{slide.ctaSecondary}</Link>
-                          </Button>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -104,16 +82,16 @@ export default function Home() {
             })}
           </CarouselContent>
           
-          <div className="absolute bottom-8 right-6 md:right-12 flex gap-3 z-20">
-            <CarouselPrevious className="static translate-y-0 bg-[#3b66b0] border-white/20 text-white hover:bg-[#2b4c85] h-11 w-11 rounded-xl shadow-lg transition-colors" />
-            <CarouselNext className="static translate-y-0 bg-[#3b66b0] border-white/20 text-white hover:bg-[#2b4c85] h-11 w-11 rounded-xl shadow-lg transition-colors" />
+          <div className="absolute bottom-6 right-6 md:right-12 flex gap-2.5 z-20">
+            <CarouselPrevious className="static translate-y-0 bg-white/90 border-slate-200 text-slate-800 hover:bg-[#3b66b0] hover:text-white hover:border-[#3b66b0] h-10 w-10 rounded-xl shadow-md transition-colors" />
+            <CarouselNext className="static translate-y-0 bg-white/90 border-slate-200 text-slate-800 hover:bg-[#3b66b0] hover:text-white hover:border-[#3b66b0] h-10 w-10 rounded-xl shadow-md transition-colors" />
           </div>
         </Carousel>
       </section>
 
       {/* Institutional Partner Bar with Margins */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
-        <div className="py-6 px-8 bg-[#3b66b0] text-white text-xs font-headline font-bold rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="py-5 px-8 bg-[#3b66b0] text-white text-xs font-headline font-bold rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-white">
             <Building2 className="w-4 h-4 text-[#6cb166]" />
             <span>REGULATORY COLLABORATION & GOVERNANCE</span>
@@ -136,8 +114,8 @@ export default function Home() {
       </section>
 
       {/* Quick Impact Stats with Margins */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
-        <div className="py-16 px-8 bg-[#6cb166] text-white rounded-3xl shadow-xl relative overflow-hidden">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
+        <div className="py-14 px-8 bg-[#6cb166] text-white rounded-3xl shadow-xl relative overflow-hidden">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-center backdrop-blur-sm">
               <div className="text-4xl md:text-5xl font-headline font-extrabold text-white mb-2">
