@@ -696,6 +696,15 @@ export default function AdminDashboardPage() {
                         value={net.companies.join('\n')} 
                         onChange={(e) => {
                           const updated = [...memberNetwork];
+                          // Preserve all lines (including empty ones from pressing Enter)
+                          // Only filter out blank entries when the value is read back
+                          const lines = e.target.value.split('\n');
+                          updated[idx].companies = lines;
+                          setMemberNetwork(updated);
+                        }}
+                        onBlur={(e) => {
+                          // Clean up empty lines when the user leaves the field
+                          const updated = [...memberNetwork];
                           updated[idx].companies = e.target.value.split('\n').filter(c => c.trim());
                           setMemberNetwork(updated);
                         }}
