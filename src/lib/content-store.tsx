@@ -155,7 +155,9 @@ export const defaultMemberNetwork = [
       "Sima Vidura",
       "Camel Motor Group Ltd",
       "Pit Vidura",
-      "SANEX COMPANY LTD"
+      "SANEX COMPANY LTD",
+      "Midas Spare parts and Service Ltd",
+      "Certified Company"
     ]
   }
 ];
