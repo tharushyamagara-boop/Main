@@ -22,7 +22,7 @@ export function Footer() {
               <div className="flex flex-col">
                 <span className="font-headline font-bold text-xl text-white tracking-tight">ASSERWA</span>
                 <span className="text-[10px] text-white/80 font-body uppercase tracking-wider font-semibold">
-                  Association of Sewage Emptiers in Rwanda
+                  Forum of Sewage Emptiers in Rwanda
                 </span>
               </div>
             </div>
@@ -73,7 +73,7 @@ export function Footer() {
 
         {/* Bottom Copyright */}
         <div className="mt-[30px] pt-[30px] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-white/80 font-headline uppercase tracking-wider">
-          <p>© {new Date().getFullYear()} Association of Sewage Emptiers in Rwanda (ASSERWA). All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Forum of Sewage Emptiers in Rwanda (ASSERWA). All rights reserved.</p>
           <div className="text-white">
             <span>Promoting Hygiene, Sanitation & Environmental Protection</span>
           </div>

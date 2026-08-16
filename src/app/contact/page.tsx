@@ -36,7 +36,7 @@ export default function ContactPage() {
               </span>
               <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Contact ASSERWA</h1>
               <p className="text-slate-600 font-body text-base leading-relaxed">
-                Association of Sewage Emptiers in Rwanda. Reach out to our headquarters for inquiries, advocacy, or technical partnerships.
+                Forum of Sewage Emptiers in Rwanda. Reach out to our headquarters for inquiries, advocacy, or technical partnerships.
               </p>
             </div>
 

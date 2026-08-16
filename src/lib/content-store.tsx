@@ -64,7 +64,7 @@ export const defaultSlideshows: SlideshowItem[] = [
 export const defaultAboutUs = {
   headerTag: "Official Profile",
   title: "Who is ASSERWA?",
-  description: "ASSERWA (Association of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda.",
+  description: "ASSERWA (Forum of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda.",
   mission: "To promote a culture of hygiene and sanitation among members and the wider community.",
   objectiveScope: "The organization works to improve sanitation services, protect public health, and safeguard the environment across all provinces of Rwanda.",
   imageUrl: ""

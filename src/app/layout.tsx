@@ -7,7 +7,7 @@ import { ContentProvider } from '@/lib/content-store';
 import { AdminProvider } from '@/lib/admin-store';
 
 export const metadata: Metadata = {
-  title: 'ASSERWA | Association of Sewage Emptiers in Rwanda',
+  title: 'ASSERWA | Forum of Sewage Emptiers in Rwanda',
   description: 'Promoting hygiene, sanitation, and environmental protection in Rwanda.',
   icons: {
     icon: [

@@ -55,7 +55,7 @@ export function Navbar() {
                   ASSERWA
                 </span>
                 <span className="text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold">
-                  Association of Sewage Emptiers in Rwanda
+                  Forum of Sewage Emptiers in Rwanda
                 </span>
               </div>
             </Link>
