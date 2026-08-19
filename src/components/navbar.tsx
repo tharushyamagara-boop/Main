@@ -30,39 +30,39 @@ export function Navbar() {
   return (
     <div className="w-full">
       {/* Top Header Bar (Contact Information) */}
-      <div className="w-full bg-transparent text-slate-700 text-xs py-2.5 px-6 lg:px-12 border-b border-slate-200/60 hidden sm:block">
+      <div className="w-full bg-transparent text-slate-700 text-xs py-2.5 px-4 lg:px-8 xl:px-12 border-b border-slate-200/60 hidden sm:block">
         <div className="w-full flex justify-between items-center">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 text-xs">
             <span className="truncate max-w-xs md:max-w-md">{contactInfo.address}</span>
             <span className="text-slate-300">•</span>
-            <span>{contactInfo.phone}</span>
+            <span className="whitespace-nowrap">{contactInfo.phone}</span>
             <span className="text-slate-300">•</span>
-            <span>{contactInfo.email}</span>
+            <span className="whitespace-nowrap">{contactInfo.email}</span>
           </div>
         </div>
       </div>
 
       {/* Sticky Main Navigation Header */}
       <header className="sticky top-0 z-50 w-full shadow-md bg-[#6cb166]">
-        <nav className="w-full bg-[#6cb166] text-white px-6 lg:px-12">
-          <div className="w-full flex h-20 items-center justify-between">
+        <nav className="w-full bg-[#6cb166] text-white px-4 lg:px-8 xl:px-12">
+          <div className="w-full flex h-20 items-center justify-between gap-2">
             {/* Brand Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1">
+            <Link href="/" className="flex items-center gap-2.5 2xl:gap-3 group shrink-0">
+              <div className="w-11 h-11 2xl:w-12 2xl:h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1">
                 <Image src="/logo.png" alt="ASSERWA Logo" width={48} height={48} className="object-contain w-full h-full" />
               </div>
               <div className="flex flex-col">
-                <span className="font-headline font-bold text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm">
+                <span className="font-headline font-bold text-lg 2xl:text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm leading-tight">
                   ASSERWA
                 </span>
-                <span className="text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold">
+                <span className="text-[9px] 2xl:text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold whitespace-nowrap leading-tight">
                   Forum of Sewage Emptiers in Rwanda
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Nav Links */}
-            <div className="hidden lg:flex items-center gap-5">
+            {/* Desktop Nav Links - Always on Single Line */}
+            <div className="hidden xl:flex items-center gap-2.5 2xl:gap-4 flex-nowrap shrink-0">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -70,11 +70,11 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "text-xs font-bold tracking-wider transition-all duration-200 relative py-2 hover:text-white flex items-center gap-1.5",
+                      "text-[11px] 2xl:text-xs font-bold tracking-tight 2xl:tracking-wider whitespace-nowrap transition-all duration-200 relative py-2 px-1 hover:text-white flex items-center shrink-0",
                       isActive ? "text-white font-extrabold" : "text-white/85"
                     )}
                   >
-                    {link.name}
+                    <span>{link.name}</span>
                     {isActive && (
                       <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full" />
                     )}
@@ -84,17 +84,17 @@ export function Navbar() {
             </div>
 
             {/* Desktop Primary CTA */}
-            <div className="hidden lg:flex items-center">
-              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-5 shadow-md">
+            <div className="hidden xl:flex items-center shrink-0">
+              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-3.5 2xl:px-5 shadow-md whitespace-nowrap">
                 <Link href="/contact">
                   Contact Us
                 </Link>
               </Button>
             </div>
 
-            {/* Mobile Nav Toggle */}
+            {/* Mobile / Tablet Nav Toggle Button */}
             <button
-              className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg focus:outline-none"
+              className="xl:hidden p-2 text-white hover:bg-white/10 rounded-lg focus:outline-none shrink-0"
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle Navigation"
             >
@@ -102,9 +102,9 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile Dropdown Menu */}
+          {/* Mobile / Tablet Dropdown Menu */}
           {isOpen && (
-            <div className="lg:hidden border-t border-white/10 bg-[#6cb166] p-4 flex flex-col gap-1 animate-in slide-in-from-top-2 duration-300">
+            <div className="xl:hidden border-t border-white/10 bg-[#6cb166] p-4 flex flex-col gap-1 animate-in slide-in-from-top-2 duration-300">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
