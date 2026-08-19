@@ -47,24 +47,24 @@ export function Navbar() {
         <nav className="w-full bg-[#6cb166] text-white px-5 lg:px-8 xl:px-12">
           <div className="w-full flex h-20 items-center justify-between">
             
-            {/* Brand Logo Group - with generous margin right */}
-            <Link href="/" className="flex items-center gap-3 group shrink-0 mr-6 lg:mr-10 xl:mr-14">
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1 shrink-0">
-                <Image src="/logo.png" alt="ASSERWA Logo" width={48} height={48} className="object-contain w-full h-full" />
+            {/* Brand Logo Group - 2-line subtitle for clean fit without overflow */}
+            <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 mr-3 lg:mr-5">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1 shrink-0">
+                <Image src="/logo.png" alt="ASSERWA Logo" width={48} height={48} className="object-contain w-full h-full" priority />
               </div>
-              <div className="flex flex-col">
-                <span className="font-headline font-bold text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm leading-tight">
+              <div className="flex flex-col max-w-[140px] sm:max-w-[170px]">
+                <span className="font-headline font-bold text-lg sm:text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm leading-tight">
                   ASSERWA
                 </span>
-                <span className="text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold whitespace-nowrap leading-tight">
+                <span className="text-[9px] sm:text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold leading-tight">
                   Forum of Sewage Emptiers in Rwanda
                 </span>
               </div>
             </Link>
 
             {/* Desktop Navigation Group (Links + CTA) */}
-            <div className="hidden xl:flex items-center gap-3 2xl:gap-5 flex-nowrap shrink-0 ml-auto">
-              <div className="flex items-center gap-2 xl:gap-2.5 2xl:gap-4 flex-nowrap">
+            <div className="hidden xl:flex items-center gap-2 2xl:gap-4 flex-nowrap shrink-0 ml-auto">
+              <div className="flex items-center gap-1.5 xl:gap-2 2xl:gap-3.5 flex-nowrap">
                 {navLinks.map((link) => {
                   const isActive = pathname === link.href;
 
@@ -74,7 +74,7 @@ export function Navbar() {
                         key={link.href}
                         href={link.href}
                         className={cn(
-                          "text-[10px] 2xl:text-xs font-headline font-bold px-2.5 py-1 rounded-full whitespace-nowrap transition-all duration-200 flex items-center gap-1 shrink-0 shadow-sm",
+                          "text-[10px] 2xl:text-xs font-headline font-bold px-2 py-1 2xl:px-2.5 rounded-full whitespace-nowrap transition-all duration-200 flex items-center gap-1 shrink-0 shadow-sm",
                           isActive
                             ? "bg-white text-[#3b66b0] shadow-md"
                             : "bg-[#3b66b0]/40 text-white hover:bg-[#3b66b0]/70 border border-white/20"
@@ -105,7 +105,7 @@ export function Navbar() {
               </div>
 
               {/* Desktop Primary CTA Button */}
-              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-4 2xl:px-5 shadow-md whitespace-nowrap shrink-0 ml-1 2xl:ml-2">
+              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-3.5 2xl:px-5 shadow-md whitespace-nowrap shrink-0 ml-1">
                 <Link href="/contact">
                   Contact Us
                 </Link>
