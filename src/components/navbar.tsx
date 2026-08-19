@@ -18,6 +18,7 @@ const navLinks = [
   { name: 'RESOURCES', href: '/resources' },
   { name: 'ADVOCACY & NEWS', href: '/news' },
   { name: 'GALLERY', href: '/gallery' },
+  { name: 'SYMPOSIUM 2026', href: '/register' },
   { name: 'CONTACT', href: '/contact' },
 ];
 

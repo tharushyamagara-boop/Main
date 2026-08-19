@@ -1,9 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useContentStore, SlideshowItem, GalleryItem, NewsItem } from '@/lib/content-store';
 import { useAdminStore, AdminUser } from '@/lib/admin-store';
-import { uploadMediaToFirebaseStorage, saveContentToFirestore } from '@/lib/firebase';
+import { 
+  uploadMediaToFirebaseStorage, 
+  saveContentToFirestore, 
+  SymposiumVisitor, 
+  subscribeToSymposiumVisitors, 
+  deleteSymposiumVisitor 
+} from '@/lib/firebase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { Download, Trash2, Search, Users, Globe, Building, Sparkles, UserCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
@@ -38,6 +45,65 @@ export default function AdminDashboardPage() {
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
   const [newRole, setNewRole] = useState<AdminUser['role']>('Editor');
+
+  // Symposium 2026 Visitors State
+  const [visitors, setVisitors] = useState<SymposiumVisitor[]>([]);
+  const [visitorSearch, setVisitorSearch] = useState('');
+
+  // Subscribe to real-time booth visitors
+  useEffect(() => {
+    const unsubscribe = subscribeToSymposiumVisitors((data) => {
+      setVisitors(data);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleExportCSV = () => {
+    if (visitors.length === 0) {
+      toast({
+        title: "No Visitors to Export",
+        description: "There are no registered symposium visitors yet.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const headers = ["ID", "Full Name", "Contact Phone", "Email Address", "Country of Origin", "Organization", "Job Title", "Registration Date"];
+    const rows = visitors.map(v => [
+      `"${v.id}"`,
+      `"${(v.fullName || '').replace(/"/g, '""')}"`,
+      `"${(v.phone || '').replace(/"/g, '""')}"`,
+      `"${(v.email || '').replace(/"/g, '""')}"`,
+      `"${(v.country || '').replace(/"/g, '""')}"`,
+      `"${(v.organization || '').replace(/"/g, '""')}"`,
+      `"${(v.title || '').replace(/"/g, '""')}"`,
+      `"${v.createdAt || ''}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `ASSERWA_Symposium_2026_Visitors_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "CSV Export Complete",
+      description: `Exported ${visitors.length} symposium attendee records.`,
+    });
+  };
+
+  const handleDeleteVisitor = async (id: string, name: string) => {
+    if (confirm(`Are you sure you want to remove visitor record for "${name}"?`)) {
+      await deleteSymposiumVisitor(id);
+      toast({
+        title: "Visitor Removed",
+        description: `Record for ${name} deleted.`,
+      });
+    }
+  };
 
   // Media File Upload Helper (Firebase Storage + Fallback Data URL)
   const handleMediaFileUpload = async (
@@ -376,6 +442,13 @@ export default function AdminDashboardPage() {
             </TabsTrigger>
             <TabsTrigger value="users" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
               10. Admin Users
+            </TabsTrigger>
+            <TabsTrigger value="visitors" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#6cb166]" />
+              <span>11. Symposium 2026 Visitors</span>
+              <span className="bg-[#6cb166] text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
+                {visitors.length}
+              </span>
             </TabsTrigger>
           </TabsList>
 
@@ -1175,6 +1248,191 @@ export default function AdminDashboardPage() {
                     })}
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab 11: Symposium 2026 Visitors */}
+          <TabsContent value="visitors">
+            <Card className="shadow-md border border-slate-200 rounded-3xl overflow-hidden bg-white">
+              <CardHeader className="bg-gradient-to-r from-[#3b66b0] to-[#2e5291] text-white p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 bg-white/10 px-2.5 py-0.5 rounded-full text-[11px] font-headline font-bold text-[#6cb166] border border-white/10">
+                    <Sparkles className="w-3 h-3" />
+                    <span>Africa Water & Sanitation Systems Leadership Symposium 2026</span>
+                  </div>
+                  <CardTitle className="font-headline text-lg md:text-xl text-white">
+                    Booth Visitors Roster
+                  </CardTitle>
+                  <CardDescription className="text-white/80 text-xs font-body">
+                    Live attendee registry submitted through the public booth registration page.
+                  </CardDescription>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={handleExportCSV}
+                    className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold px-4 py-2 shadow-md flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export to CSV / Excel</span>
+                  </Button>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-6 space-y-6">
+                {/* Stats Metric Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-100 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#3b66b0] text-white flex items-center justify-center shrink-0">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Visitors</span>
+                      <span className="text-xl font-headline font-extrabold text-[#3b66b0]">{visitors.length}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-100 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#6cb166] text-white flex items-center justify-center shrink-0">
+                      <Globe className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Countries</span>
+                      <span className="text-xl font-headline font-extrabold text-[#488443]">
+                        {new Set(visitors.map(v => v.country).filter(Boolean)).size}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-purple-50/80 border border-purple-100 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0">
+                      <Building className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Organizations</span>
+                      <span className="text-xl font-headline font-extrabold text-purple-700">
+                        {new Set(visitors.map(v => v.organization).filter(Boolean)).size}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Input
+                      placeholder="Search by name, email, phone, country, or organization..."
+                      value={visitorSearch}
+                      onChange={(e) => setVisitorSearch(e.target.value)}
+                      className="pl-10 text-xs bg-slate-50 border-slate-200 h-10"
+                    />
+                  </div>
+                  {visitorSearch && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setVisitorSearch('')}
+                      className="text-xs font-bold"
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </div>
+
+                {/* Visitors Table / List */}
+                {(() => {
+                  const filtered = visitors.filter(v => {
+                    if (!visitorSearch.trim()) return true;
+                    const q = visitorSearch.toLowerCase();
+                    return (
+                      (v.fullName && v.fullName.toLowerCase().includes(q)) ||
+                      (v.email && v.email.toLowerCase().includes(q)) ||
+                      (v.phone && v.phone.toLowerCase().includes(q)) ||
+                      (v.country && v.country.toLowerCase().includes(q)) ||
+                      (v.organization && v.organization.toLowerCase().includes(q)) ||
+                      (v.title && v.title.toLowerCase().includes(q))
+                    );
+                  });
+
+                  if (filtered.length === 0) {
+                    return (
+                      <div className="text-center py-12 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-2">
+                        <UserCheck className="w-10 h-10 text-slate-300 mx-auto" />
+                        <p className="font-headline font-bold text-slate-700 text-sm">
+                          {visitorSearch ? "No visitors match your search criteria" : "No symposium visitors registered yet"}
+                        </p>
+                        <p className="text-xs text-slate-500 font-body">
+                          Visitors will appear here instantly when registered at <Link href="/register" target="_blank" className="text-[#3b66b0] underline font-bold">/register</Link>.
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-headline font-bold uppercase tracking-wider">
+                            <tr>
+                              <th className="py-3 px-4">Visitor</th>
+                              <th className="py-3 px-4">Contact Phone</th>
+                              <th className="py-3 px-4">Email</th>
+                              <th className="py-3 px-4">Country</th>
+                              <th className="py-3 px-4">Organization / Title</th>
+                              <th className="py-3 px-4">Date</th>
+                              <th className="py-3 px-4 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 font-body bg-white">
+                            {filtered.map((v) => (
+                              <tr key={v.id} className="hover:bg-slate-50/80 transition-colors">
+                                <td className="py-3.5 px-4 font-headline font-bold text-slate-900">
+                                  {v.fullName}
+                                </td>
+                                <td className="py-3.5 px-4 font-mono text-slate-700">
+                                  {v.phone}
+                                </td>
+                                <td className="py-3.5 px-4 text-[#3b66b0]">
+                                  {v.email}
+                                </td>
+                                <td className="py-3.5 px-4">
+                                  <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 px-2 py-0.5 rounded-full text-[11px] font-medium">
+                                    {v.country}
+                                  </span>
+                                </td>
+                                <td className="py-3.5 px-4 text-slate-600">
+                                  {v.organization ? (
+                                    <div>
+                                      <span className="font-semibold text-slate-800 block">{v.organization}</span>
+                                      {v.title && <span className="text-[11px] text-slate-500">{v.title}</span>}
+                                    </div>
+                                  ) : (
+                                    <span className="text-slate-400 italic">—</span>
+                                  )}
+                                </td>
+                                <td className="py-3.5 px-4 text-slate-500 text-[11px] whitespace-nowrap">
+                                  {v.createdAt ? new Date(v.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                                </td>
+                                <td className="py-3.5 px-4 text-right">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleDeleteVisitor(v.id, v.fullName)}
+                                    className="border-red-200 text-red-600 hover:bg-red-50 text-xs h-7 px-2"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
