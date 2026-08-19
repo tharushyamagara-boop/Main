@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useContentStore } from '@/lib/content-store';
@@ -18,7 +18,7 @@ const navLinks = [
   { name: 'RESOURCES', href: '/resources' },
   { name: 'ADVOCACY & NEWS', href: '/news' },
   { name: 'GALLERY', href: '/gallery' },
-  { name: 'SYMPOSIUM 2026', href: '/register' },
+  { name: 'SYMPOSIUM 2026', href: '/register', isBadge: true },
   { name: 'CONTACT', href: '/contact' },
 ];
 
@@ -30,7 +30,7 @@ export function Navbar() {
   return (
     <div className="w-full">
       {/* Top Header Bar (Contact Information) */}
-      <div className="w-full bg-transparent text-slate-700 text-xs py-2.5 px-4 lg:px-8 xl:px-12 border-b border-slate-200/60 hidden sm:block">
+      <div className="w-full bg-transparent text-slate-700 text-xs py-2.5 px-6 lg:px-12 border-b border-slate-200/60 hidden sm:block">
         <div className="w-full flex justify-between items-center">
           <div className="flex items-center gap-6 text-xs">
             <span className="truncate max-w-xs md:max-w-md">{contactInfo.address}</span>
@@ -44,48 +44,68 @@ export function Navbar() {
 
       {/* Sticky Main Navigation Header */}
       <header className="sticky top-0 z-50 w-full shadow-md bg-[#6cb166]">
-        <nav className="w-full bg-[#6cb166] text-white px-4 lg:px-8 xl:px-12">
-          <div className="w-full flex h-20 items-center justify-between gap-2">
-            {/* Brand Logo */}
-            <Link href="/" className="flex items-center gap-2.5 2xl:gap-3 group shrink-0">
-              <div className="w-11 h-11 2xl:w-12 2xl:h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1">
+        <nav className="w-full bg-[#6cb166] text-white px-5 lg:px-8 xl:px-12">
+          <div className="w-full flex h-20 items-center justify-between">
+            
+            {/* Brand Logo Group - with generous margin right */}
+            <Link href="/" className="flex items-center gap-3 group shrink-0 mr-6 lg:mr-10 xl:mr-14">
+              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform overflow-hidden p-1 shrink-0">
                 <Image src="/logo.png" alt="ASSERWA Logo" width={48} height={48} className="object-contain w-full h-full" />
               </div>
               <div className="flex flex-col">
-                <span className="font-headline font-bold text-lg 2xl:text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm leading-tight">
+                <span className="font-headline font-bold text-xl tracking-tight text-[#3b66b0] group-hover:opacity-90 transition-opacity drop-shadow-sm leading-tight">
                   ASSERWA
                 </span>
-                <span className="text-[9px] 2xl:text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold whitespace-nowrap leading-tight">
+                <span className="text-[10px] text-white/90 font-body uppercase tracking-wider font-semibold whitespace-nowrap leading-tight">
                   Forum of Sewage Emptiers in Rwanda
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Nav Links - Always on Single Line */}
-            <div className="hidden xl:flex items-center gap-2.5 2xl:gap-4 flex-nowrap shrink-0">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "text-[11px] 2xl:text-xs font-bold tracking-tight 2xl:tracking-wider whitespace-nowrap transition-all duration-200 relative py-2 px-1 hover:text-white flex items-center shrink-0",
-                      isActive ? "text-white font-extrabold" : "text-white/85"
-                    )}
-                  >
-                    <span>{link.name}</span>
-                    {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full" />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
+            {/* Desktop Navigation Group (Links + CTA) */}
+            <div className="hidden xl:flex items-center gap-3 2xl:gap-5 flex-nowrap shrink-0 ml-auto">
+              <div className="flex items-center gap-2 xl:gap-2.5 2xl:gap-4 flex-nowrap">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href;
 
-            {/* Desktop Primary CTA */}
-            <div className="hidden xl:flex items-center shrink-0">
-              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-3.5 2xl:px-5 shadow-md whitespace-nowrap">
+                  if (link.isBadge) {
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                          "text-[10px] 2xl:text-xs font-headline font-bold px-2.5 py-1 rounded-full whitespace-nowrap transition-all duration-200 flex items-center gap-1 shrink-0 shadow-sm",
+                          isActive
+                            ? "bg-white text-[#3b66b0] shadow-md"
+                            : "bg-[#3b66b0]/40 text-white hover:bg-[#3b66b0]/70 border border-white/20"
+                        )}
+                      >
+                        <Sparkles className="w-3 h-3 text-amber-300" />
+                        <span>{link.name}</span>
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "text-[11px] 2xl:text-xs font-bold tracking-tight 2xl:tracking-wider whitespace-nowrap transition-all duration-200 relative py-2 px-1 hover:text-white flex items-center shrink-0",
+                        isActive ? "text-white font-extrabold" : "text-white/85"
+                      )}
+                    >
+                      <span>{link.name}</span>
+                      {isActive && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Desktop Primary CTA Button */}
+              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-4 2xl:px-5 shadow-md whitespace-nowrap shrink-0 ml-1 2xl:ml-2">
                 <Link href="/contact">
                   Contact Us
                 </Link>
@@ -118,6 +138,11 @@ export function Navbar() {
                     )}
                   >
                     <span>{link.name}</span>
+                    {link.isBadge && (
+                      <span className="bg-amber-400 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        Event
+                      </span>
+                    )}
                   </Link>
                 );
               })}
