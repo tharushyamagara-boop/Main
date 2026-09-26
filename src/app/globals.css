@@ -56,13 +56,21 @@
   * {
     @apply border-border;
   }
+  *::selection {
+    background-color: #2b4c85 !important;
+    color: #ffffff !important;
+  }
+  *::-moz-selection {
+    background-color: #2b4c85 !important;
+    color: #ffffff !important;
+  }
   html {
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100vw;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary;
+    @apply bg-background text-foreground font-body antialiased selection:bg-[#2b4c85] selection:text-white;
     overflow-x: hidden;
     max-width: 100vw;
   }
