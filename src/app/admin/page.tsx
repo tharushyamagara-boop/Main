@@ -16,9 +16,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Download, Trash2, Search, Users, Globe, Building, Sparkles, UserCheck } from 'lucide-react';
+import { 
+  Download, Trash2, Search, Users, Globe, Building, Sparkles, UserCheck, 
+  Eye, EyeOff, Sliders, ArrowUp, ArrowDown, ExternalLink, Plus, RefreshCw, CheckCircle2 
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
@@ -32,6 +37,13 @@ export default function AdminDashboardPage() {
     news, setNews,
     gallery, setGallery,
     contactInfo, setContactInfo,
+    navMenuItems, setNavMenuItems,
+    toggleMenuVisibility,
+    updateMenuItem,
+    addMenuItem,
+    deleteMenuItem,
+    reorderMenuItems,
+    resetNavMenuItems,
     resetToDefaults
   } = useContentStore();
 
@@ -49,6 +61,12 @@ export default function AdminDashboardPage() {
   // Symposium 2026 Visitors State
   const [visitors, setVisitors] = useState<SymposiumVisitor[]>([]);
   const [visitorSearch, setVisitorSearch] = useState('');
+
+  // Navigation Menu Form State
+  const [newMenuName, setNewMenuName] = useState('');
+  const [newMenuHref, setNewMenuHref] = useState('');
+  const [newMenuIsBadge, setNewMenuIsBadge] = useState(false);
+  const [menuSearch, setMenuSearch] = useState('');
 
   // Subscribe to real-time booth visitors
   useEffect(() => {
@@ -286,6 +304,109 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleToggleMenu = async (id: string, currentVisible: boolean) => {
+    const updated = navMenuItems.map(m => m.id === id ? { ...m, visible: !currentVisible } : m);
+    setNavMenuItems(updated);
+
+    try {
+      const dataToSave = {
+        slideshows,
+        aboutUs,
+        objectives,
+        services,
+        memberNetwork,
+        resources,
+        news,
+        gallery,
+        contactInfo,
+        navMenuItems: updated
+      };
+      localStorage.setItem('asserwa_cms_content_v4', JSON.stringify(dataToSave));
+      localStorage.setItem('assserva_cms_content_v4', JSON.stringify(dataToSave));
+      await saveContentToFirestore(dataToSave);
+
+      const target = updated.find(m => m.id === id);
+      toast({
+        title: target?.visible ? "Menu Set to Visible" : "Menu Hidden from Public",
+        description: `"${target?.name}" is now ${target?.visible ? 'visible' : 'hidden'} on the navigation bar.`,
+      });
+    } catch (e) {
+      console.warn("Auto save error:", e);
+    }
+  };
+
+  const handleShowAllMenus = async () => {
+    const updated = navMenuItems.map(m => ({ ...m, visible: true }));
+    setNavMenuItems(updated);
+    try {
+      const dataToSave = {
+        slideshows, aboutUs, objectives, services, memberNetwork, resources, news, gallery, contactInfo,
+        navMenuItems: updated
+      };
+      localStorage.setItem('asserwa_cms_content_v4', JSON.stringify(dataToSave));
+      localStorage.setItem('assserva_cms_content_v4', JSON.stringify(dataToSave));
+      await saveContentToFirestore(dataToSave);
+      toast({
+        title: "All Menus Shown",
+        description: "All navigation menus are now visible on the website.",
+      });
+    } catch (e) {}
+  };
+
+  const handleResetMenus = async () => {
+    if (confirm("Are you sure you want to reset navigation menus to default configuration?")) {
+      resetNavMenuItems();
+      toast({
+        title: "Menus Reset",
+        description: "Default navigation menu structure restored.",
+      });
+    }
+  };
+
+  const handleMoveMenu = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= navMenuItems.length) return;
+    reorderMenuItems(index, targetIndex);
+  };
+
+  const handleAddCustomMenu = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMenuName.trim() || !newMenuHref.trim()) {
+      toast({
+        title: "Incomplete Details",
+        description: "Please specify both menu label and route link URL.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addMenuItem({
+      name: newMenuName.trim().toUpperCase(),
+      href: newMenuHref.trim(),
+      visible: true,
+      isBadge: newMenuIsBadge
+    });
+
+    setNewMenuName('');
+    setNewMenuHref('');
+    setNewMenuIsBadge(false);
+
+    toast({
+      title: "Menu Item Added",
+      description: `"${newMenuName.trim().toUpperCase()}" was added. Click "Save All Changes" to persist.`,
+    });
+  };
+
+  const handleDeleteMenu = (id: string, name: string) => {
+    if (confirm(`Are you sure you want to permanently remove custom menu "${name}"?`)) {
+      deleteMenuItem(id);
+      toast({
+        title: "Menu Item Removed",
+        description: `"${name}" was deleted from navigation.`,
+      });
+    }
+  };
+
   const handleSave = async () => {
     try {
       const dataToSave = {
@@ -297,14 +418,15 @@ export default function AdminDashboardPage() {
         resources,
         news,
         gallery,
-        contactInfo
+        contactInfo,
+        navMenuItems
       };
       localStorage.setItem('asserwa_cms_content_v4', JSON.stringify(dataToSave));
       localStorage.setItem('assserva_cms_content_v4', JSON.stringify(dataToSave));
       await saveContentToFirestore(dataToSave);
       toast({
         title: "Content Saved & Applied Live!",
-        description: "All media, slideshows, gallery items, and news updates have been saved to Cloud Firestore and applied across all browsers worldwide.",
+        description: "All media, menus, slideshows, gallery items, and news updates have been saved to Cloud Firestore and applied across all browsers worldwide.",
       });
     } catch (e) {
       toast({
@@ -416,36 +538,43 @@ export default function AdminDashboardPage() {
             <TabsTrigger value="slideshows" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
               1. Slideshows
             </TabsTrigger>
+            <TabsTrigger value="menus" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl flex items-center gap-1.5">
+              <Sliders className="w-3.5 h-3.5" />
+              <span>2. Navigation Menus</span>
+              <span className="bg-[#6cb166] text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
+                {navMenuItems.filter(m => m.visible !== false).length}/{navMenuItems.length}
+              </span>
+            </TabsTrigger>
             <TabsTrigger value="about" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              2. About Us
+              3. About Us
             </TabsTrigger>
             <TabsTrigger value="objectives" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              3. Objectives
+              4. Objectives
             </TabsTrigger>
             <TabsTrigger value="services" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              4. Services
+              5. Services
             </TabsTrigger>
             <TabsTrigger value="members" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              5. Members Network
+              6. Members Network
             </TabsTrigger>
             <TabsTrigger value="resources" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              6. Resources
+              7. Resources
             </TabsTrigger>
             <TabsTrigger value="news" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              7. Advocacy & News
+              8. Advocacy & News
             </TabsTrigger>
             <TabsTrigger value="gallery" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              8. Gallery
+              9. Gallery
             </TabsTrigger>
             <TabsTrigger value="contact" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              9. Contact Info
+              10. Contact Info
             </TabsTrigger>
             <TabsTrigger value="users" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl">
-              10. Admin Users
+              11. Admin Users
             </TabsTrigger>
             <TabsTrigger value="visitors" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#6cb166]" />
-              <span>11. Symposium 2026 Visitors</span>
+              <span>12. Symposium 2026 Visitors</span>
               <span className="bg-[#6cb166] text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
                 {visitors.length}
               </span>
@@ -585,7 +714,361 @@ export default function AdminDashboardPage() {
             </Card>
           </TabsContent>
 
-          {/* Tab 2: About Us */}
+          {/* Tab 2: Navigation Menus Control (Hide/Show Menus) */}
+          <TabsContent value="menus" className="space-y-6">
+            <Card className="shadow-md border border-slate-200 rounded-3xl overflow-hidden bg-white">
+              <CardHeader className="bg-slate-50 border-b p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Sliders className="w-5 h-5 text-[#3b66b0]" />
+                    <CardTitle className="font-headline text-lg text-slate-900">
+                      Header & Navigation Menu Control
+                    </CardTitle>
+                  </div>
+                  <CardDescription className="text-xs mt-1">
+                    Toggle visibility to hide or show individual menus on the website header navigation and footer sitemap in real time.
+                  </CardDescription>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleShowAllMenus}
+                    className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-xs font-bold font-headline h-9"
+                  >
+                    <Eye className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Show All Menus
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetMenus}
+                    className="border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold font-headline h-9"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 mr-1 text-slate-500" /> Reset Defaults
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleSave}
+                    className="bg-[#6cb166] hover:bg-[#5aa054] text-white text-xs font-bold font-headline h-9 shadow-sm"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Save All Changes
+                  </Button>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-6 space-y-6">
+                {/* Metric Summary Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] font-headline font-bold text-slate-500 uppercase tracking-wider">Total Defined Menus</p>
+                      <p className="text-2xl font-headline font-extrabold text-slate-900">{navMenuItems.length}</p>
+                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-slate-200/80 flex items-center justify-center text-slate-600">
+                      <Sliders className="w-5 h-5" />
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/50 flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] font-headline font-bold text-emerald-700 uppercase tracking-wider">Visible to Public</p>
+                      <p className="text-2xl font-headline font-extrabold text-emerald-900">
+                        {navMenuItems.filter(m => m.visible !== false).length}
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700">
+                      <Eye className="w-5 h-5" />
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl border border-amber-200 bg-amber-50/50 flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] font-headline font-bold text-amber-700 uppercase tracking-wider">Hidden from Public</p>
+                      <p className="text-2xl font-headline font-extrabold text-amber-900">
+                        {navMenuItems.filter(m => m.visible === false).length}
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700">
+                      <EyeOff className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Real-Time Public Visitor Navbar Simulation Preview */}
+                <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-900 text-white space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-xs font-headline font-bold uppercase tracking-wider text-slate-200">
+                        Live Public Visitor Navbar Simulation
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-slate-400">
+                      Updates instantly as you toggle show/hide switches below
+                    </span>
+                  </div>
+
+                  {/* Simulated Navbar Header */}
+                  <div className="bg-[#6cb166] rounded-xl p-3 sm:p-4 text-white shadow-inner flex flex-wrap items-center justify-between gap-3">
+                    {/* Simulated Logo */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center shadow-sm">
+                        <img src="/logo.png" alt="ASSERWA Logo" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="font-headline font-bold text-sm tracking-tight text-[#3b66b0]">ASSERWA</span>
+                    </div>
+
+                    {/* Simulated Nav Links */}
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                      {navMenuItems.filter(m => m.visible !== false).length === 0 ? (
+                        <span className="text-xs text-white/70 italic px-2 py-1 bg-black/20 rounded-md">
+                          (All menus currently hidden — only logo & contact button will show)
+                        </span>
+                      ) : (
+                        navMenuItems.filter(m => m.visible !== false).map(m => (
+                          m.isBadge ? (
+                            <span
+                              key={m.id}
+                              className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#3b66b0] text-white flex items-center gap-1 shadow-sm"
+                            >
+                              <Sparkles className="w-2.5 h-2.5 text-amber-300" />
+                              {m.name}
+                            </span>
+                          ) : (
+                            <span
+                              key={m.id}
+                              className="text-[10px] font-bold tracking-tight text-white/95 px-1.5 py-0.5 rounded hover:bg-white/10"
+                            >
+                              {m.name}
+                            </span>
+                          )
+                        ))
+                      )}
+                    </div>
+
+                    {/* Simulated CTA */}
+                    <span className="text-[10px] font-headline font-bold bg-[#3b66b0] text-white px-3 py-1 rounded-md shadow-sm shrink-0">
+                      Contact Us
+                    </span>
+                  </div>
+                </div>
+
+                {/* Filter and Search */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                  <div className="relative w-full sm:w-80">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Input
+                      placeholder="Search menu name or URL path..."
+                      value={menuSearch}
+                      onChange={(e) => setMenuSearch(e.target.value)}
+                      className="pl-9 text-xs h-10 bg-slate-50 border-slate-200"
+                    />
+                  </div>
+                  <div className="text-xs text-slate-500 font-body">
+                    Use the switches below to toggle menu visibility on the live site.
+                  </div>
+                </div>
+
+                {/* Menu Items Table / Cards */}
+                <div className="space-y-3">
+                  {navMenuItems
+                    .map((menu, index) => ({ menu, index }))
+                    .filter(({ menu }) => 
+                      !menuSearch.trim() || 
+                      menu.name.toLowerCase().includes(menuSearch.toLowerCase()) || 
+                      menu.href.toLowerCase().includes(menuSearch.toLowerCase())
+                    )
+                    .map(({ menu, index }) => {
+                      const isVisible = menu.visible !== false;
+
+                      return (
+                        <div
+                          key={menu.id}
+                          className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                            isVisible
+                              ? 'bg-white border-slate-200 shadow-sm hover:border-[#6cb166]/50'
+                              : 'bg-slate-50/80 border-dashed border-slate-300 opacity-80'
+                          }`}
+                        >
+                          {/* Left: Reorder & Name & URL */}
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            {/* Reorder Buttons */}
+                            <div className="flex flex-col gap-0.5 shrink-0">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                disabled={index === 0}
+                                onClick={() => handleMoveMenu(index, 'up')}
+                                className="h-6 w-6 p-0 hover:bg-slate-200 text-slate-600 disabled:opacity-30"
+                                title="Move Menu Up"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                disabled={index === navMenuItems.length - 1}
+                                onClick={() => handleMoveMenu(index, 'down')}
+                                className="h-6 w-6 p-0 hover:bg-slate-200 text-slate-600 disabled:opacity-30"
+                                title="Move Menu Down"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+
+                            {/* Position Index Badge */}
+                            <span className="text-[11px] font-mono font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded shrink-0">
+                              #{index + 1}
+                            </span>
+
+                            {/* Menu Title Input */}
+                            <div className="space-y-1 min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  value={menu.name}
+                                  onChange={(e) => updateMenuItem(menu.id, { name: e.target.value })}
+                                  className="h-8 font-headline font-bold text-xs max-w-xs bg-white border-slate-200"
+                                  placeholder="Menu Label"
+                                />
+                                {menu.isBadge && (
+                                  <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[10px] gap-1 shrink-0 font-bold">
+                                    <Sparkles className="w-2.5 h-2.5 text-amber-600" /> Event Badge
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-mono text-slate-500 truncate max-w-xs">
+                                  Path: <strong className="text-slate-700">{menu.href}</strong>
+                                </span>
+                                <Link
+                                  href={menu.href}
+                                  target="_blank"
+                                  className="text-slate-400 hover:text-[#3b66b0] transition-colors"
+                                  title="Test route in new tab"
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Middle: Badge Switch */}
+                          <div className="flex items-center gap-2 shrink-0 md:px-4 md:border-l md:border-r border-slate-100">
+                            <Label htmlFor={`badge-${menu.id}`} className="text-[11px] text-slate-600 cursor-pointer whitespace-nowrap">
+                              Featured Badge
+                            </Label>
+                            <Switch
+                              id={`badge-${menu.id}`}
+                              checked={Boolean(menu.isBadge)}
+                              onCheckedChange={(checked) => updateMenuItem(menu.id, { isBadge: checked })}
+                            />
+                          </div>
+
+                          {/* Right: Show / Hide Toggle Switch */}
+                          <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                id={`vis-${menu.id}`}
+                                checked={isVisible}
+                                onCheckedChange={() => handleToggleMenu(menu.id, isVisible)}
+                                className="data-[state=checked]:bg-[#6cb166]"
+                              />
+                              <Label
+                                htmlFor={`vis-${menu.id}`}
+                                className={`text-xs font-headline font-bold cursor-pointer min-w-[130px] flex items-center gap-1.5 ${
+                                  isVisible ? 'text-emerald-700' : 'text-slate-500'
+                                }`}
+                              >
+                                {isVisible ? (
+                                  <>
+                                    <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                                    <span>Visible to Public</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <EyeOff className="w-3.5 h-3.5 text-amber-600" />
+                                    <span>Hidden from Public</span>
+                                  </>
+                                )}
+                              </Label>
+                            </div>
+
+                            {/* Delete custom menu button */}
+                            {menu.id.startsWith('menu-custom') && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteMenu(menu.id, menu.name)}
+                                className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
+                                title="Delete Custom Menu"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                {/* Add Custom Menu Item Box */}
+                <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4 mt-6">
+                  <div className="flex items-center gap-2">
+                    <Plus className="w-4 h-4 text-[#3b66b0]" />
+                    <h4 className="font-headline font-bold text-xs uppercase tracking-wider text-slate-800">
+                      Add New Custom Navigation Menu
+                    </h4>
+                  </div>
+                  <form onSubmit={handleAddCustomMenu} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                    <div className="space-y-1">
+                      <Label className="text-xs font-bold">Menu Label</Label>
+                      <Input
+                        placeholder="e.g. ANNUAL REPORT"
+                        value={newMenuName}
+                        onChange={(e) => setNewMenuName(e.target.value)}
+                        className="bg-white text-xs h-9 uppercase"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs font-bold">Route Path or URL</Label>
+                      <Input
+                        placeholder="e.g. /report or /partners"
+                        value={newMenuHref}
+                        onChange={(e) => setNewMenuHref(e.target.value)}
+                        className="bg-white text-xs h-9"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 pb-2">
+                      <Switch
+                        id="newMenuBadge"
+                        checked={newMenuIsBadge}
+                        onCheckedChange={setNewMenuIsBadge}
+                      />
+                      <Label htmlFor="newMenuBadge" className="text-xs font-medium text-slate-700 cursor-pointer">
+                        Featured Event Badge
+                      </Label>
+                    </div>
+                    <div>
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#3b66b0] hover:bg-[#2e5291] text-white text-xs font-bold font-headline h-9"
+                      >
+                        + Add Menu to Header
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab 3: About Us */}
           <TabsContent value="about">
             <Card className="shadow-md border border-slate-200 rounded-3xl overflow-hidden bg-white">
               <CardHeader className="bg-slate-50 border-b p-6">

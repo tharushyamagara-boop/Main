@@ -33,6 +33,27 @@ export type NewsItem = {
   videoUrl?: string;
 };
 
+export type NavMenuItem = {
+  id: string;
+  name: string;
+  href: string;
+  visible: boolean;
+  isBadge?: boolean;
+};
+
+export const defaultNavMenuItems: NavMenuItem[] = [
+  { id: 'menu-home', name: 'HOME', href: '/', visible: true },
+  { id: 'menu-about', name: 'ABOUT US', href: '/about', visible: true },
+  { id: 'menu-objectives', name: 'OBJECTIVES', href: '/compliance', visible: true },
+  { id: 'menu-services', name: 'SERVICES', href: '/services', visible: true },
+  { id: 'menu-members', name: 'MEMBER NETWORK', href: '/dashboard', visible: true },
+  { id: 'menu-resources', name: 'RESOURCES', href: '/resources', visible: true },
+  { id: 'menu-news', name: 'ADVOCACY & NEWS', href: '/news', visible: true },
+  { id: 'menu-gallery', name: 'GALLERY', href: '/gallery', visible: true },
+  { id: 'menu-symposium', name: 'SYMPOSIUM 2026', href: '/register', visible: true, isBadge: true },
+  { id: 'menu-contact', name: 'CONTACT', href: '/contact', visible: true },
+];
+
 // Default Brochure Data Constants
 export const defaultSlideshows: SlideshowItem[] = [
   {
@@ -275,6 +296,7 @@ type ContentStoreContextType = {
   news: typeof defaultNews;
   gallery: typeof defaultGallery;
   contactInfo: typeof defaultContactInfo;
+  navMenuItems: NavMenuItem[];
   
   setSlideshows: React.Dispatch<React.SetStateAction<typeof defaultSlideshows>>;
   setAboutUs: React.Dispatch<React.SetStateAction<typeof defaultAboutUs>>;
@@ -285,7 +307,14 @@ type ContentStoreContextType = {
   setNews: React.Dispatch<React.SetStateAction<typeof defaultNews>>;
   setGallery: React.Dispatch<React.SetStateAction<typeof defaultGallery>>;
   setContactInfo: React.Dispatch<React.SetStateAction<typeof defaultContactInfo>>;
-  
+  setNavMenuItems: React.Dispatch<React.SetStateAction<NavMenuItem[]>>;
+
+  toggleMenuVisibility: (id: string) => void;
+  updateMenuItem: (id: string, updates: Partial<NavMenuItem>) => void;
+  addMenuItem: (item: Omit<NavMenuItem, 'id'>) => void;
+  deleteMenuItem: (id: string) => void;
+  reorderMenuItems: (fromIndex: number, toIndex: number) => void;
+  resetNavMenuItems: () => void;
   resetToDefaults: () => void;
 };
 
@@ -305,6 +334,41 @@ const sanitizeItems = <T extends { imageUrl?: string }>(items: T[]): T[] => {
   }));
 };
 
+const mergeNavMenuItems = (savedItems: any[]): NavMenuItem[] => {
+  if (!Array.isArray(savedItems)) return defaultNavMenuItems;
+
+  const loadedMap = new Map<string, any>();
+  savedItems.forEach(item => {
+    if (item && typeof item === 'object') {
+      if (item.id) loadedMap.set(item.id, item);
+      if (item.href) loadedMap.set(item.href, item);
+    }
+  });
+
+  const mergedDefaults = defaultNavMenuItems.map(def => {
+    const saved = loadedMap.get(def.id) || loadedMap.get(def.href);
+    if (!saved) return def;
+    return {
+      ...def,
+      name: typeof saved.name === 'string' && saved.name.trim() ? saved.name : def.name,
+      visible: typeof saved.visible === 'boolean' ? saved.visible : true,
+      isBadge: typeof saved.isBadge === 'boolean' ? saved.isBadge : def.isBadge
+    };
+  });
+
+  const customItems: NavMenuItem[] = savedItems.filter((item: any) => 
+    item && item.id && !defaultNavMenuItems.some(def => def.id === item.id || def.href === item.href)
+  ).map((item: any) => ({
+    id: item.id || `menu-${Date.now()}`,
+    name: item.name || 'Menu Item',
+    href: item.href || '/',
+    visible: typeof item.visible === 'boolean' ? item.visible : true,
+    isBadge: Boolean(item.isBadge)
+  }));
+
+  return [...mergedDefaults, ...customItems];
+};
+
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [slideshows, setSlideshows] = useState(defaultSlideshows);
   const [aboutUs, setAboutUs] = useState(defaultAboutUs);
@@ -315,6 +379,41 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [news, setNews] = useState(defaultNews);
   const [gallery, setGallery] = useState(defaultGallery);
   const [contactInfo, setContactInfo] = useState(defaultContactInfo);
+  const [navMenuItems, setNavMenuItems] = useState<NavMenuItem[]>(defaultNavMenuItems);
+
+  const toggleMenuVisibility = (id: string) => {
+    setNavMenuItems(prev => prev.map(m => m.id === id ? { ...m, visible: !m.visible } : m));
+  };
+
+  const updateMenuItem = (id: string, updates: Partial<NavMenuItem>) => {
+    setNavMenuItems(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+  };
+
+  const addMenuItem = (item: Omit<NavMenuItem, 'id'>) => {
+    const newItem: NavMenuItem = {
+      ...item,
+      id: `menu-custom-${Date.now()}`
+    };
+    setNavMenuItems(prev => [...prev, newItem]);
+  };
+
+  const deleteMenuItem = (id: string) => {
+    setNavMenuItems(prev => prev.filter(m => m.id !== id));
+  };
+
+  const reorderMenuItems = (fromIndex: number, toIndex: number) => {
+    setNavMenuItems(prev => {
+      if (fromIndex < 0 || fromIndex >= prev.length || toIndex < 0 || toIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const [moved] = copy.splice(fromIndex, 1);
+      copy.splice(toIndex, 0, moved);
+      return copy;
+    });
+  };
+
+  const resetNavMenuItems = () => {
+    setNavMenuItems(defaultNavMenuItems);
+  };
 
   // Load from localStorage on mount & subscribe to live Firebase Cloud Firestore updates
   useEffect(() => {
@@ -334,6 +433,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           if (Array.isArray(parsed.news)) setNews(sanitizeItems(parsed.news));
           if (Array.isArray(parsed.gallery)) setGallery(sanitizeItems(parsed.gallery));
           if (parsed.contactInfo) setContactInfo(parsed.contactInfo);
+          if (Array.isArray(parsed.navMenuItems)) {
+            setNavMenuItems(mergeNavMenuItems(parsed.navMenuItems));
+          }
         }
       } catch (e) {
         console.error("Error reading cms store from localStorage", e);
@@ -354,6 +456,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       if (Array.isArray(data.news)) setNews(sanitizeItems(data.news));
       if (Array.isArray(data.gallery)) setGallery(sanitizeItems(data.gallery));
       if (data.contactInfo) setContactInfo(data.contactInfo);
+      if (Array.isArray(data.navMenuItems)) {
+        setNavMenuItems(mergeNavMenuItems(data.navMenuItems));
+      }
 
       // Save remote Firestore snapshot to local cache
       try {
@@ -374,9 +479,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-
-
-
   const resetToDefaults = () => {
     setSlideshows(defaultSlideshows);
     setAboutUs(defaultAboutUs);
@@ -387,6 +489,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     setNews(defaultNews);
     setGallery(defaultGallery);
     setContactInfo(defaultContactInfo);
+    setNavMenuItems(defaultNavMenuItems);
     localStorage.removeItem(STORAGE_KEY);
   };
 
@@ -402,6 +505,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         news,
         gallery,
         contactInfo,
+        navMenuItems,
         setSlideshows,
         setAboutUs,
         setObjectives,
@@ -411,6 +515,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         setNews,
         setGallery,
         setContactInfo,
+        setNavMenuItems,
+        toggleMenuVisibility,
+        updateMenuItem,
+        addMenuItem,
+        deleteMenuItem,
+        reorderMenuItems,
+        resetNavMenuItems,
         resetToDefaults
       }}
     >

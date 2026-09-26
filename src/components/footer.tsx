@@ -5,7 +5,13 @@ import Image from 'next/image';
 import { useContentStore } from '@/lib/content-store';
 
 export function Footer() {
-  const { contactInfo } = useContentStore();
+  const { contactInfo, navMenuItems } = useContentStore();
+
+  const isVisible = (href: string) => {
+    if (!navMenuItems || navMenuItems.length === 0) return true;
+    const item = navMenuItems.find((m) => m.href === href);
+    return item ? item.visible !== false : true;
+  };
 
   return (
     <footer className="w-full bg-[#3b66b0] text-white border-t border-white/10">
@@ -35,11 +41,11 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-bold text-xs mb-4 uppercase tracking-widest text-white">Sitemap</h4>
             <ul className="space-y-2.5 text-xs font-body">
-              <li><Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/about" className="text-white/80 hover:text-white transition-colors">Who is ASSERWA?</Link></li>
-              <li><Link href="/compliance" className="text-white/80 hover:text-white transition-colors">Organization Objectives</Link></li>
-              <li><Link href="/services" className="text-white/80 hover:text-white transition-colors">Areas of Operation</Link></li>
-              <li><Link href="/dashboard" className="text-white/80 hover:text-white transition-colors">Member Companies</Link></li>
+              {isVisible('/') && <li><Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>}
+              {isVisible('/about') && <li><Link href="/about" className="text-white/80 hover:text-white transition-colors">Who is ASSERWA?</Link></li>}
+              {isVisible('/compliance') && <li><Link href="/compliance" className="text-white/80 hover:text-white transition-colors">Organization Objectives</Link></li>}
+              {isVisible('/services') && <li><Link href="/services" className="text-white/80 hover:text-white transition-colors">Areas of Operation</Link></li>}
+              {isVisible('/dashboard') && <li><Link href="/dashboard" className="text-white/80 hover:text-white transition-colors">Member Companies</Link></li>}
             </ul>
           </div>
 
@@ -47,10 +53,11 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-bold text-xs mb-4 uppercase tracking-widest text-white">Administration</h4>
             <ul className="space-y-2.5 text-xs font-body">
-              <li><Link href="/resources" className="text-white/80 hover:text-white transition-colors">Documentation</Link></li>
-              <li><Link href="/news" className="text-white/80 hover:text-white transition-colors">Advocacy & Updates</Link></li>
-              <li><Link href="/gallery" className="text-white/80 hover:text-white transition-colors">Sanitation Gallery</Link></li>
-              <li><Link href="/contact" className="text-white/80 hover:text-white transition-colors">Contact Headquarters</Link></li>
+              {isVisible('/resources') && <li><Link href="/resources" className="text-white/80 hover:text-white transition-colors">Documentation</Link></li>}
+              {isVisible('/news') && <li><Link href="/news" className="text-white/80 hover:text-white transition-colors">Advocacy & Updates</Link></li>}
+              {isVisible('/gallery') && <li><Link href="/gallery" className="text-white/80 hover:text-white transition-colors">Sanitation Gallery</Link></li>}
+              {isVisible('/register') && <li><Link href="/register" className="text-white/80 hover:text-white transition-colors">Symposium 2026</Link></li>}
+              {isVisible('/contact') && <li><Link href="/contact" className="text-white/80 hover:text-white transition-colors">Contact Headquarters</Link></li>}
             </ul>
           </div>
 

@@ -7,30 +7,24 @@ import { cn } from '@/lib/utils';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useContentStore } from '@/lib/content-store';
-
-const navLinks = [
-  { name: 'HOME', href: '/' },
-  { name: 'ABOUT US', href: '/about' },
-  { name: 'OBJECTIVES', href: '/compliance' },
-  { name: 'SERVICES', href: '/services' },
-  { name: 'MEMBER NETWORK', href: '/dashboard' },
-  { name: 'RESOURCES', href: '/resources' },
-  { name: 'ADVOCACY & NEWS', href: '/news' },
-  { name: 'GALLERY', href: '/gallery' },
-  { name: 'SYMPOSIUM 2026', href: '/register', isBadge: true },
-  { name: 'CONTACT', href: '/contact' },
-];
+import { useContentStore, defaultNavMenuItems } from '@/lib/content-store';
+import { useAdminStore } from '@/lib/admin-store';
+import { EyeOff, Settings } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { contactInfo } = useContentStore();
+  const { contactInfo, navMenuItems } = useContentStore();
+  const { currentAdmin } = useAdminStore();
+
+  const links = (navMenuItems && navMenuItems.length > 0) ? navMenuItems : defaultNavMenuItems;
+  const visibleLinks = links.filter((link) => link.visible !== false);
+  const hiddenCount = links.length - visibleLinks.length;
 
   return (
     <div className="w-full">
       {/* Top Header Bar (Contact Information) */}
-      <div className="w-full bg-transparent text-slate-700 text-xs py-2.5 px-6 lg:px-12 border-b border-slate-200/60 hidden sm:block">
+      <div className="w-full bg-transparent text-slate-700 text-xs py-2 px-6 lg:px-12 border-b border-slate-200/60 hidden sm:block">
         <div className="w-full flex justify-between items-center">
           <div className="flex items-center gap-6 text-xs">
             <span className="truncate max-w-xs md:max-w-md">{contactInfo.address}</span>
@@ -39,6 +33,22 @@ export function Navbar() {
             <span className="text-slate-300">•</span>
             <span className="whitespace-nowrap">{contactInfo.email}</span>
           </div>
+          {currentAdmin && (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin"
+                className="flex items-center gap-1.5 text-[11px] font-headline font-bold text-[#3b66b0] hover:text-[#2b4c85] bg-blue-50/80 px-2.5 py-1 rounded-full border border-blue-200/60 transition-colors"
+              >
+                <Settings className="w-3 h-3 text-[#3b66b0]" />
+                <span>Admin: {currentAdmin.name.split(' ')[0]}</span>
+                {hiddenCount > 0 && (
+                  <span className="flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.2 rounded-full font-mono">
+                    <EyeOff className="w-2.5 h-2.5" /> {hiddenCount} hidden
+                  </span>
+                )}
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -65,13 +75,13 @@ export function Navbar() {
             {/* Desktop Navigation Group (Links + CTA) */}
             <div className="hidden xl:flex items-center gap-2 2xl:gap-4 flex-nowrap shrink-0 ml-auto">
               <div className="flex items-center gap-1.5 xl:gap-2 2xl:gap-3.5 flex-nowrap">
-                {navLinks.map((link) => {
+                {visibleLinks.map((link) => {
                   const isActive = pathname === link.href;
 
                   if (link.isBadge) {
                     return (
                       <Link
-                        key={link.href}
+                        key={link.id || link.href}
                         href={link.href}
                         className={cn(
                           "text-[10px] 2xl:text-xs font-headline font-bold px-2 py-1 2xl:px-2.5 rounded-full whitespace-nowrap transition-all duration-200 flex items-center gap-1 shrink-0 shadow-sm",
@@ -88,7 +98,7 @@ export function Navbar() {
 
                   return (
                     <Link
-                      key={link.href}
+                      key={link.id || link.href}
                       href={link.href}
                       className={cn(
                         "text-[11px] 2xl:text-xs font-bold tracking-tight 2xl:tracking-wider whitespace-nowrap transition-all duration-200 relative py-2 px-1 hover:text-white flex items-center shrink-0",
@@ -125,11 +135,11 @@ export function Navbar() {
           {/* Mobile / Tablet Dropdown Menu */}
           {isOpen && (
             <div className="xl:hidden border-t border-white/10 bg-[#6cb166] p-4 flex flex-col gap-1 animate-in slide-in-from-top-2 duration-300">
-              {navLinks.map((link) => {
+              {visibleLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
                   <Link
-                    key={link.href}
+                    key={link.id || link.href}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
                     className={cn(
@@ -146,6 +156,24 @@ export function Navbar() {
                   </Link>
                 );
               })}
+              {currentAdmin && (
+                <div className="pt-2">
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-between py-2 px-4 rounded-lg bg-white/10 text-white text-xs font-bold font-headline"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Settings className="w-3.5 h-3.5" /> Admin: Manage Menus
+                    </span>
+                    {hiddenCount > 0 && (
+                      <span className="text-[10px] bg-amber-400 text-slate-900 px-1.5 py-0.5 rounded font-bold">
+                        {hiddenCount} hidden
+                      </span>
+                    )}
+                  </Link>
+                </div>
+              )}
               <div className="pt-3 border-t border-white/10 mt-2">
                 <Button asChild className="w-full bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold">
                   <Link href="/contact" onClick={() => setIsOpen(false)}>
