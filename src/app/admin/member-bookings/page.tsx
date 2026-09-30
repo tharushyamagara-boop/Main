@@ -79,7 +79,7 @@ function AdminMemberBookingsContent() {
   // Admin Auth Store
   const { currentAdmin, login } = useAdminStore();
   const [authChecked, setAuthChecked] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('tharushyamagara@gmail.com');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
@@ -256,8 +256,17 @@ function AdminMemberBookingsContent() {
 
           <form onSubmit={(e) => {
             e.preventDefault();
-            const success = login(loginEmail, loginPassword);
-            if (!success) setLoginError('Invalid administrator credentials.');
+            setLoginError('');
+            if (!loginEmail.trim() || !loginPassword.trim()) {
+              setLoginError('Please enter both your administrator email and password.');
+              return;
+            }
+            const success = login(loginEmail.trim(), loginPassword.trim());
+            if (!success) {
+              setLoginError('Invalid administrator credentials.');
+            } else {
+              setLoginPassword('');
+            }
           }} className="space-y-4">
             <div className="space-y-1">
               <label className="text-xs font-semibold text-slate-700">Admin Email</label>
@@ -265,6 +274,7 @@ function AdminMemberBookingsContent() {
                 type="email"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@asserwa.rw"
                 className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-10"
                 required
               />
@@ -275,6 +285,7 @@ function AdminMemberBookingsContent() {
                 type="password"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Enter your password"
                 className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-10"
                 required
               />
@@ -333,7 +344,7 @@ function AdminMemberBookingsContent() {
                 <span>Member Bookings & Dispatch Console</span>
               </h1>
               <p className="text-[11px] text-slate-500 hidden sm:block">
-                View service bookings assigned to individual ASSERWA certified member companies
+                View service bookings assigned to individual ASSERWA member companies
               </p>
             </div>
           </div>
@@ -507,13 +518,6 @@ function AdminMemberBookingsContent() {
                             <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[10px] font-bold flex items-center gap-1">
                               <EyeOff className="w-3 h-3 text-amber-700" />
                               <span>Hidden from Public</span>
-                            </Badge>
-                          )}
-
-                          {currentMember.verified && (
-                            <Badge className="bg-blue-50 text-[#3b66b0] border-blue-200 text-[10px] font-bold flex items-center gap-1">
-                              <ShieldCheck className="w-3 h-3 text-[#3b66b0]" />
-                              <span>Verified Member</span>
                             </Badge>
                           )}
                         </div>

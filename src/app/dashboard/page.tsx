@@ -56,10 +56,10 @@ export default function DashboardPage() {
             <span>Official ASSERWA Member Directory</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-headline font-extrabold text-slate-900">
-            Certified Member Companies & Service Providers
+            Member Companies & Service Providers
           </h1>
           <p className="text-slate-600 font-body text-base max-w-2xl leading-relaxed">
-            Verified roster of certified sanitation companies, vacuum tanker operators, and fecal sludge management enterprises affiliated with ASSERWA across Rwanda.
+            Official roster of sanitation companies, vacuum tanker operators, and fecal sludge management enterprises affiliated with ASSERWA across Rwanda.
           </p>
         </div>
 
@@ -123,13 +123,6 @@ export default function DashboardPage() {
                       </span>
                     </div>
                   </div>
-                  
-                  {member.verified && (
-                    <Badge className="bg-emerald-50 text-emerald-800 border-emerald-200 text-[10px] shrink-0 font-bold flex items-center gap-1 px-2 py-0.5">
-                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                      <span>Certified</span>
-                    </Badge>
-                  )}
                 </div>
               </CardHeader>
 
@@ -159,7 +152,7 @@ export default function DashboardPage() {
 
                 {/* Actions: Visit Website & Book Service */}
                 <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
-                  {member.websiteUrl ? (
+                  {member.websiteUrl && member.websiteUrl !== '#' && member.showWebsite !== false ? (
                     <a
                       href={member.websiteUrl}
                       target="_blank"
@@ -171,7 +164,7 @@ export default function DashboardPage() {
                     </a>
                   ) : (
                     <div className="flex-1 text-center py-2 text-[11px] text-slate-400 font-medium">
-                      ASSERWA Certified Member
+                      ASSERWA Member
                     </div>
                   )}
 
@@ -192,7 +185,7 @@ export default function DashboardPage() {
           <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mx-auto text-white">
             <ShieldCheck className="w-6 h-6 text-[#6cb166]" />
           </div>
-          <h3 className="text-xl font-headline font-bold">Verified Professional Membership Standards</h3>
+          <h3 className="text-xl font-headline font-bold">Professional Membership Standards</h3>
           <p className="text-xs font-body text-white/90 leading-relaxed max-w-xl mx-auto">
             All member companies listed in the ASSERWA directory adhere to national environmental guidelines, RURA sanitation regulatory standards, and public health safety protocols across Rwanda.
           </p>

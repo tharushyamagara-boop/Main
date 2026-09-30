@@ -25,7 +25,7 @@ import { toast } from '@/hooks/use-toast';
 import { 
   Download, Trash2, Search, Users, Globe, Building, Sparkles, UserCheck, 
   Eye, EyeOff, Sliders, ArrowUp, ArrowDown, ExternalLink, Plus, RefreshCw, CheckCircle2, CalendarClock,
-  Menu, X, ImageIcon, Upload 
+  Menu, X, ImageIcon, Upload, KeyRound, AlertCircle, ShieldAlert 
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -65,13 +65,15 @@ function AdminDashboardContent() {
     resetToDefaults
   } = useContentStore();
 
-  const { admins, currentAdmin, login, logout, addAdmin, removeAdmin } = useAdminStore();
+  const { admins, currentAdmin, login, logout, addAdmin, removeAdmin, changePassword, resetAdminPassword } = useAdminStore();
   const searchParams = useSearchParams();
   const urlTab = searchParams?.get('tab');
 
   const [activeTab, setActiveTab] = useState(urlTab || 'slideshows');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('tharushyamagara@gmail.com');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
 
   // Sync activeTab when URL tab parameter changes
@@ -85,6 +87,17 @@ function AdminDashboardContent() {
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
   const [newRole, setNewRole] = useState<AdminUser['role']>('Editor');
+  const [newPassword, setNewPassword] = useState('');
+
+  // Password Management State
+  const [oldPasswordInput, setOldPasswordInput] = useState('');
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
+  const [passwordChangeStatus, setPasswordChangeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Admin Reset Password Dialog State
+  const [resetTargetAdmin, setResetTargetAdmin] = useState<AdminUser | null>(null);
+  const [adminResetNewPass, setAdminResetNewPass] = useState('');
 
   // Symposium 2026 Visitors State
   const [visitors, setVisitors] = useState<SymposiumVisitor[]>([]);
@@ -284,32 +297,101 @@ function AdminDashboardContent() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
-    const success = login(loginEmail, '');
+
+    const cleanEmail = loginEmail.trim();
+    const cleanPass = loginPassword.trim();
+
+    if (!cleanEmail || !cleanPass) {
+      setLoginError('Please provide both your administrator email and password.');
+      return;
+    }
+
+    const success = login(cleanEmail, cleanPass);
     if (success) {
       toast({
         title: "Welcome Back, Admin!",
-        description: `Successfully authenticated as ${loginEmail}.`,
+        description: `Successfully authenticated as ${cleanEmail}.`,
       });
+      setLoginPassword('');
     } else {
-      setLoginError(`Access Denied: "${loginEmail}" is not authorized as an admin user.`);
+      setLoginError('Access Denied: Invalid administrator email or password.');
     }
   };
 
   const handleAddUserSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmail) return;
-    const success = addAdmin(newEmail, newName, newRole);
+    const assignedPass = newPassword.trim() || 'AsserwaAdmin2026!';
+    const success = addAdmin(newEmail, newName, newRole, assignedPass);
     if (success) {
       toast({
         title: "Admin User Added",
-        description: `${newEmail} has been granted admin access.`,
+        description: `${newEmail} has been granted admin access. Initial password: ${assignedPass}`,
       });
       setNewEmail('');
       setNewName('');
+      setNewPassword('');
     } else {
       toast({
         title: "Failed to Add User",
         description: `User ${newEmail} is already registered as an admin.`,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleChangePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordChangeStatus(null);
+
+    if (!currentAdmin) return;
+    if (newPasswordInput !== confirmPasswordInput) {
+      setPasswordChangeStatus({ type: 'error', message: 'New passwords do not match.' });
+      return;
+    }
+    if (newPasswordInput.length < 6) {
+      setPasswordChangeStatus({ type: 'error', message: 'New password must be at least 6 characters long.' });
+      return;
+    }
+
+    const result = changePassword(currentAdmin.email, oldPasswordInput, newPasswordInput);
+    if (result.success) {
+      setPasswordChangeStatus({ type: 'success', message: result.message });
+      setOldPasswordInput('');
+      setNewPasswordInput('');
+      setConfirmPasswordInput('');
+      toast({
+        title: "Password Updated",
+        description: "Your administrator password has been updated successfully.",
+      });
+    } else {
+      setPasswordChangeStatus({ type: 'error', message: result.message });
+    }
+  };
+
+  const handleAdminResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetTargetAdmin) return;
+    if (adminResetNewPass.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "New password must be at least 6 characters long.",
+        variant: "destructive"
+      });
+      return;
+    }
+    const result = resetAdminPassword(resetTargetAdmin.id, adminResetNewPass);
+    if (result.success) {
+      toast({
+        title: "Password Reset Complete",
+        description: result.message,
+      });
+      setResetTargetAdmin(null);
+      setAdminResetNewPass('');
+    } else {
+      toast({
+        title: "Reset Failed",
+        description: result.message,
         variant: "destructive"
       });
     }
@@ -487,14 +569,15 @@ function AdminDashboardContent() {
             </span>
             <CardTitle className="font-headline text-2xl text-white">ASSERWA Admin Login</CardTitle>
             <CardDescription className="text-white/80 text-xs font-body">
-              Sign in with your authorized admin email address
+              Sign in with your authorized administrator email and password
             </CardDescription>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleLoginSubmit} className="space-y-5">
               {loginError && (
-                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-headline font-bold">
-                  {loginError}
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-headline font-bold flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-red-600 shrink-0" />
+                  <span>{loginError}</span>
                 </div>
               )}
               <div className="space-y-2">
@@ -506,13 +589,45 @@ function AdminDashboardContent() {
                   type="email"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="tharushyamagara@gmail.com"
+                  placeholder="admin@asserwa.rw"
                   required
                   className="h-11 font-body text-sm"
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-sm font-bold py-6 shadow-md">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="adminPassword" className="text-xs font-bold font-headline text-slate-800">
+                    Administrator Password
+                  </Label>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="adminPassword"
+                    type={showLoginPassword ? 'text' : 'password'}
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                    className="h-11 font-body text-sm pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-hidden"
+                    tabIndex={-1}
+                    aria-label={showLoginPassword ? "Hide password" : "Show password"}
+                  >
+                    {showLoginPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-sm font-bold py-6 shadow-md transition-all">
                 Authenticate & Enter Portal
               </Button>
             </form>
@@ -1791,101 +1906,230 @@ function AdminDashboardContent() {
 
           {/* Tab 10: Admin Users Management */}
           <TabsContent value="users">
-            <Card className="shadow-md border border-slate-200 rounded-3xl overflow-hidden bg-white space-y-6">
-              <CardHeader className="bg-slate-50 border-b p-6">
-                <CardTitle className="font-headline text-lg text-slate-900">
-                  Admin User Access Manager
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Authorized admin users who can log in and manage ASSERWA website content.
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="p-6 space-y-8">
-                {/* Form to Grant New Admin Access */}
-                <form onSubmit={handleAddUserSubmit} className="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4">
-                  <h4 className="font-headline font-bold text-sm text-[#3b66b0]">Grant Admin Access to User</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-bold">User Email Address</Label>
-                      <Input
-                        type="email"
-                        placeholder="user@domain.com"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        required
-                        className="bg-white text-xs"
-                      />
+            <div className="space-y-6">
+              {/* Change Password Card for Logged In Admin */}
+              <Card className="shadow-md border border-slate-200 rounded-3xl overflow-hidden bg-white">
+                <CardHeader className="bg-slate-50 border-b p-6">
+                  <CardTitle className="font-headline text-base text-slate-900 flex items-center gap-2">
+                    <KeyRound className="w-4 h-4 text-[#3b66b0]" />
+                    <span>Change Your Password</span>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Update your personal administrator account credentials for {currentAdmin?.email}.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  {passwordChangeStatus && (
+                    <div className={`mb-4 p-3 rounded-xl border text-xs font-medium flex items-center gap-2 ${
+                      passwordChangeStatus.type === 'success' 
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+                        : 'bg-red-50 border-red-200 text-red-800'
+                    }`}>
+                      {passwordChangeStatus.type === 'success' ? (
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                      ) : (
+                        <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                      )}
+                      <span>{passwordChangeStatus.message}</span>
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-bold">Full Name</Label>
-                      <Input
-                        type="text"
-                        placeholder="Full Name"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        className="bg-white text-xs"
-                      />
+                  )}
+                  <form onSubmit={handleChangePasswordSubmit} className="space-y-4 max-w-xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">Current Password</Label>
+                        <Input
+                          type="password"
+                          placeholder="Current password"
+                          value={oldPasswordInput}
+                          onChange={(e) => setOldPasswordInput(e.target.value)}
+                          required
+                          className="text-xs bg-slate-50"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">New Password</Label>
+                        <Input
+                          type="password"
+                          placeholder="Min 6 characters"
+                          value={newPasswordInput}
+                          onChange={(e) => setNewPasswordInput(e.target.value)}
+                          required
+                          className="text-xs bg-slate-50"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">Confirm Password</Label>
+                        <Input
+                          type="password"
+                          placeholder="Re-type new password"
+                          value={confirmPasswordInput}
+                          onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                          required
+                          className="text-xs bg-slate-50"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-bold">Role Privilege</Label>
-                      <Select value={newRole} onValueChange={(val: AdminUser['role']) => setNewRole(val)}>
-                        <SelectTrigger className="bg-white text-xs h-9">
-                          <SelectValue placeholder="Select Role" />
-                        </SelectTrigger>
-                        <SelectContent className="text-xs font-body">
-                          <SelectItem value="Super Admin">Super Admin</SelectItem>
-                          <SelectItem value="Content Manager">Content Manager</SelectItem>
-                          <SelectItem value="Editor">Editor</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <Button type="submit" className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold px-6">
-                    Grant Admin Access
-                  </Button>
-                </form>
+                    <Button type="submit" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white text-xs font-bold">
+                      Update My Password
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
 
-                {/* Roster of Authorized Admin Users */}
-                <div className="space-y-3">
-                  <h4 className="font-headline font-bold text-sm text-slate-900">Authorized Admin Users Roster ({admins.length})</h4>
-                  <div className="divide-y divide-slate-200 border border-slate-200 rounded-2xl overflow-hidden bg-white">
-                    {admins.map((adm) => {
-                      const isPrimarySuperAdmin = adm.email.toLowerCase() === 'tharushyamagara@gmail.com';
-                      return (
-                        <div key={adm.id} className="p-4 flex items-center justify-between gap-4">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-headline font-bold text-sm text-slate-900">{adm.name}</span>
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                isPrimarySuperAdmin ? 'bg-[#3b66b0]/10 text-[#3b66b0] border border-[#3b66b0]/30' : 'bg-slate-100 text-slate-700 border border-slate-200'
-                              }`}>
-                                {adm.role}
-                              </span>
+              {/* Admin User Access Manager */}
+              <Card className="shadow-md border border-slate-200 rounded-3xl overflow-hidden bg-white space-y-6">
+                <CardHeader className="bg-slate-50 border-b p-6">
+                  <CardTitle className="font-headline text-lg text-slate-900">
+                    Admin User Access Manager
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Authorized admin users who can log in and manage ASSERWA website content.
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="p-6 space-y-8">
+                  {/* Form to Grant New Admin Access */}
+                  <form onSubmit={handleAddUserSubmit} className="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4">
+                    <h4 className="font-headline font-bold text-sm text-[#3b66b0]">Grant Admin Access to User</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">User Email Address</Label>
+                        <Input
+                          type="email"
+                          placeholder="user@domain.com"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          required
+                          className="bg-white text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">Full Name</Label>
+                        <Input
+                          type="text"
+                          placeholder="Full Name"
+                          value={newName}
+                          onChange={(e) => setNewName(e.target.value)}
+                          className="bg-white text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">Role Privilege</Label>
+                        <Select value={newRole} onValueChange={(val: AdminUser['role']) => setNewRole(val)}>
+                          <SelectTrigger className="bg-white text-xs h-9">
+                            <SelectValue placeholder="Select Role" />
+                          </SelectTrigger>
+                          <SelectContent className="text-xs font-body">
+                            <SelectItem value="Super Admin">Super Admin</SelectItem>
+                            <SelectItem value="Content Manager">Content Manager</SelectItem>
+                            <SelectItem value="Editor">Editor</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold">Initial Password</Label>
+                        <Input
+                          type="password"
+                          placeholder="Default: AsserwaAdmin2026!"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="bg-white text-xs"
+                        />
+                      </div>
+                    </div>
+                    <Button type="submit" className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold px-6">
+                      Grant Admin Access
+                    </Button>
+                  </form>
+
+                  {/* Reset Password Modal / Form for Super Admin */}
+                  {resetTargetAdmin && (
+                    <div className="p-4 rounded-2xl border border-amber-200 bg-amber-50/70 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-headline font-bold text-xs text-amber-900">
+                          Reset Password for: {resetTargetAdmin.name} ({resetTargetAdmin.email})
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => { setResetTargetAdmin(null); setAdminResetNewPass(''); }}
+                          className="text-xs text-slate-500 hover:text-slate-800 font-bold"
+                        >
+                          ✕ Cancel
+                        </button>
+                      </div>
+                      <form onSubmit={handleAdminResetPassword} className="flex flex-col sm:flex-row gap-2">
+                        <Input
+                          type="password"
+                          placeholder="Enter new password (min 6 chars)"
+                          value={adminResetNewPass}
+                          onChange={(e) => setAdminResetNewPass(e.target.value)}
+                          required
+                          className="bg-white text-xs h-9"
+                        />
+                        <Button type="submit" size="sm" className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shrink-0">
+                          Save New Password
+                        </Button>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* Roster of Authorized Admin Users */}
+                  <div className="space-y-3">
+                    <h4 className="font-headline font-bold text-sm text-slate-900">Authorized Admin Users Roster ({admins.length})</h4>
+                    <div className="divide-y divide-slate-200 border border-slate-200 rounded-2xl overflow-hidden bg-white">
+                      {admins.map((adm) => {
+                        const isPrimarySuperAdmin = adm.email.toLowerCase() === 'tharushyamagara@gmail.com';
+                        const isCurrentAdmin = currentAdmin?.email.toLowerCase() === adm.email.toLowerCase();
+                        return (
+                          <div key={adm.id} className="p-4 flex items-center justify-between gap-4">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-headline font-bold text-sm text-slate-900">{adm.name}</span>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                  isPrimarySuperAdmin ? 'bg-[#3b66b0]/10 text-[#3b66b0] border border-[#3b66b0]/30' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                }`}>
+                                  {adm.role}
+                                </span>
+                                {isCurrentAdmin && (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    You
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-slate-500 font-body mt-0.5">{adm.email}</p>
                             </div>
-                            <p className="text-xs text-slate-500 font-body mt-0.5">{adm.email}</p>
+                            <div className="flex items-center gap-2">
+                              {currentAdmin?.role === 'Super Admin' && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => { setResetTargetAdmin(adm); setAdminResetNewPass(''); }}
+                                  className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold h-8"
+                                >
+                                  Reset Password
+                                </Button>
+                              )}
+                              {isPrimarySuperAdmin ? (
+                                <span className="text-xs font-bold text-slate-400 italic">Primary Super Admin</span>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleRemoveUser(adm.id, adm.email)}
+                                  className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold"
+                                >
+                                  Revoke Access
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            {isPrimarySuperAdmin ? (
-                              <span className="text-xs font-bold text-slate-400 italic">Primary Super Admin</span>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleRemoveUser(adm.id, adm.email)}
-                                className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold"
-                              >
-                                Revoke Access
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Tab 11: Symposium 2026 Visitors */}

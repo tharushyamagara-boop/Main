@@ -164,7 +164,7 @@ export const defaultServices = [
 export const defaultMemberNetwork = [
   {
     region: "Official Member Companies",
-    description: "Full roster of ASSERWA certified member companies and sanitation service providers in Rwanda",
+    description: "Full roster of ASSERWA member companies and sanitation service providers in Rwanda",
     companies: [
       "Kigali Septic Service",
       "Nganila Co LTD",
@@ -178,7 +178,7 @@ export const defaultMemberNetwork = [
       "Pit Vidura",
       "SANEX COMPANY LTD",
       "Midas Spare parts and Service Ltd",
-      "Certified Company"
+      "Kigali Sanitation Logistics Ltd"
     ]
   }
 ];

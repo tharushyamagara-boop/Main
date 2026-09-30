@@ -106,18 +106,18 @@ export async function POST(req: NextRequest) {
           + `Reference Number: #${bookingId}\n\n`
           + `An official environmental compliance certificate & service receipt will be archived in accordance with Rwanda sanitation standards.\n\n`
           + `We value your feedback. If you have any questions or feedback about our team's performance, please let us know at contact@asserwa.rw.\n\n`
-          + `Thank you for choosing ASSERWA certified emptiers!`;
+          + `Thank you for choosing ASSERWA emptiers!`;
 
         emailHtml = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff;">
             <div style="background: #16a34a; padding: 24px; text-align: center;">
               <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 700;">Service Successfully Completed</h1>
-              <p style="color: #dcfce7; margin: 4px 0 0 0; font-size: 13px;">ASSERWA Certified Sanitation Team</p>
+              <p style="color: #dcfce7; margin: 4px 0 0 0; font-size: 13px;">ASSERWA Sanitation Team</p>
             </div>
             <div style="padding: 28px 24px;">
               <p style="color: #475569; font-size: 14px; line-height: 1.6;">
                 Dear <strong>${cleanName}</strong>,<br/>
-                Your requested sanitation operation for <strong>${cleanService}</strong> has been concluded and verified by our certified technicians.
+                Your requested sanitation operation for <strong>${cleanService}</strong> has been concluded by our field technicians.
               </p>
               
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin: 20px 0;">

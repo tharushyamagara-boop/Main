@@ -808,7 +808,8 @@ export default function BookServicePage() {
                 )}
 
                 {/* Clickable Website Link or Fallback */}
-                {selectedMember.websiteUrl && 
+                {selectedMember.showWebsite !== false &&
+                 selectedMember.websiteUrl && 
                  selectedMember.websiteUrl.trim() !== '' && 
                  selectedMember.websiteUrl !== '#' && 
                  selectedMember.websiteUrl.startsWith('http') ? (
@@ -841,7 +842,7 @@ export default function BookServicePage() {
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <Badge className="bg-blue-50 text-[#3b66b0] border-blue-200 text-[10px] font-bold flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Certified Member Network</span>
+                    <span>Member Network</span>
                   </Badge>
                   <span className="text-[10px] text-slate-400 font-mono">
                     {memberCompanies.length} Members
@@ -853,14 +854,14 @@ export default function BookServicePage() {
                     Select a Service Provider
                   </h3>
                   <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                    Choose an ASSERWA certified member company from the dropdown to load their profile, verified capabilities, and official website.
+                    Choose an ASSERWA member company from the dropdown to load their profile, operational capabilities, and official website.
                   </p>
                 </div>
 
                 {/* Member Network Preview Chips */}
                 <div className="space-y-1.5 pt-1">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                    Certified Members:
+                    Member Companies:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {memberCompanies.map((m) => (

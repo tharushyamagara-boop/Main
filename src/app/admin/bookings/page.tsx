@@ -105,7 +105,7 @@ function AdminBookingsContent() {
   // Admin Auth Store
   const { currentAdmin, login } = useAdminStore();
   const [authChecked, setAuthChecked] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('tharushyamagara@gmail.com');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
@@ -429,14 +429,19 @@ function AdminBookingsContent() {
   const handleInlineLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
-    const success = login(loginEmail, loginPassword);
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError('Please enter both your administrator email and password.');
+      return;
+    }
+    const success = login(loginEmail.trim(), loginPassword.trim());
     if (!success) {
-      setLoginError('Invalid administrator credentials or unauthorized email.');
+      setLoginError('Invalid administrator credentials.');
     } else {
       toast({
         title: "Welcome back!",
-        description: `Signed in as ${loginEmail}.`,
+        description: `Signed in as ${loginEmail.trim()}.`,
       });
+      setLoginPassword('');
     }
   };
 
@@ -483,20 +488,21 @@ function AdminBookingsContent() {
                 type="email"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="tharushyamagara@gmail.com"
+                placeholder="admin@asserwa.rw"
                 className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-10"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Access Key / Passphrase</label>
+              <label className="text-xs font-semibold text-slate-700">Password</label>
               <Input
                 type="password"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="Enter admin password or press login"
+                placeholder="Enter admin password"
                 className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-10"
+                required
               />
             </div>
 

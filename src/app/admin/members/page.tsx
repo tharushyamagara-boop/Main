@@ -40,6 +40,7 @@ import {
   saveMemberCompanyRecord, 
   deleteMemberCompanyRecord,
   toggleMemberVisibility,
+  toggleMemberWebsiteVisibility,
   setLocalMemberCompanies 
 } from '@/lib/members';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
@@ -90,7 +91,7 @@ function AdminMembersContent() {
   // Admin Auth Store
   const { currentAdmin, login } = useAdminStore();
   const [authChecked, setAuthChecked] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('tharushyamagara@gmail.com');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
@@ -122,6 +123,7 @@ function AdminMembersContent() {
   const [formDescription, setFormDescription] = useState('');
   const [formBriefDescription, setFormBriefDescription] = useState('');
   const [formWebsite, setFormWebsite] = useState('');
+  const [formShowWebsite, setFormShowWebsite] = useState(true);
   const [formLogoUrl, setFormLogoUrl] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formEmail, setFormEmail] = useState('');
@@ -249,7 +251,8 @@ function AdminMembersContent() {
     setFormCategory('Vacuum Truck Haulage & Sludge Evacuation');
     setFormDescription('');
     setFormBriefDescription('');
-    setFormWebsite('https://');
+    setFormWebsite('');
+    setFormShowWebsite(true);
     setFormLogoUrl('');
     setFormPhone('+250 788 ');
     setFormEmail('');
@@ -268,7 +271,8 @@ function AdminMembersContent() {
     setFormCategory(member.category || '');
     setFormDescription(member.description || '');
     setFormBriefDescription(member.briefDescription || '');
-    setFormWebsite(member.websiteUrl || 'https://');
+    setFormWebsite(member.websiteUrl || '');
+    setFormShowWebsite(member.showWebsite !== false && Boolean(member.websiteUrl));
     setFormLogoUrl(member.logoUrl || '');
     setFormPhone(member.phone || '');
     setFormEmail(member.email || '');
@@ -280,6 +284,28 @@ function AdminMembersContent() {
     setIsModalOpen(true);
   };
 
+  // Toggle Website Visibility
+  const handleToggleWebsiteVisibility = async (member: MemberCompany) => {
+    if (!member.websiteUrl || member.websiteUrl.trim() === '') {
+      toast({
+        title: "No Website Configured",
+        description: `"${member.name}" does not have a website URL set. Edit the member to add one.`,
+      });
+      return;
+    }
+    const currentShow = member.showWebsite !== false;
+    const newShow = !currentShow;
+    const success = await toggleMemberWebsiteVisibility(member.id);
+    if (success) {
+      toast({
+        title: newShow ? "Website Display Enabled" : "Website Display Hidden",
+        description: newShow
+          ? `The website for "${member.name}" is now visible on public pages.`
+          : `The website for "${member.name}" is now hidden from public pages.`,
+      });
+    }
+  };
+
   // Submit Member Form
   const handleSaveMember = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -289,8 +315,11 @@ function AdminMembersContent() {
       errors.name = 'Company name is required.';
     }
 
-    if (!formWebsite.trim() || !formWebsite.startsWith('http')) {
-      errors.website = 'Valid website URL starting with https:// is required.';
+    let cleanWebsite = formWebsite.trim();
+    if (cleanWebsite) {
+      if (!cleanWebsite.startsWith('http://') && !cleanWebsite.startsWith('https://')) {
+        cleanWebsite = `https://${cleanWebsite}`;
+      }
     }
 
     if (Object.keys(errors).length > 0) {
@@ -309,7 +338,8 @@ function AdminMembersContent() {
       category: formCategory.trim() || 'Sanitation Service Provider',
       description: formDescription.trim(),
       briefDescription: formBriefDescription.trim() || formDescription.trim().substring(0, 130),
-      websiteUrl: formWebsite.trim(),
+      websiteUrl: cleanWebsite,
+      showWebsite: cleanWebsite ? formShowWebsite : false,
       logoUrl: formLogoUrl.trim(),
       phone: formPhone.trim(),
       email: formEmail.trim(),
@@ -377,14 +407,19 @@ function AdminMembersContent() {
   const handleInlineLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
-    const success = login(loginEmail, loginPassword);
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError('Please enter both your administrator email and password.');
+      return;
+    }
+    const success = login(loginEmail.trim(), loginPassword.trim());
     if (!success) {
       setLoginError('Invalid administrator credentials.');
     } else {
       toast({
         title: "Welcome back!",
-        description: `Signed in as ${loginEmail}.`,
+        description: `Signed in as ${loginEmail.trim()}.`,
       });
+      setLoginPassword('');
     }
   };
 
@@ -429,20 +464,21 @@ function AdminMembersContent() {
                 type="email"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="tharushyamagara@gmail.com"
+                placeholder="admin@asserwa.rw"
                 className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-10"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Access Key</label>
+              <label className="text-xs font-semibold text-slate-700">Password</label>
               <Input
                 type="password"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Enter admin password"
                 className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-10"
+                required
               />
             </div>
 
@@ -512,11 +548,11 @@ function AdminMembersContent() {
                   Member Companies & Service Providers
                 </h1>
                 <Badge className="bg-blue-50 text-[#3b66b0] border border-blue-200 text-[10px] hidden sm:inline-flex">
-                  {members.length} Certified Members
+                  {members.length} Members
                 </Badge>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block">
-                Manage certified ASSERWA member companies selectable by clients during online booking.
+                Manage ASSERWA member companies selectable by clients during online booking.
               </p>
             </div>
           </div>
@@ -714,14 +750,9 @@ function AdminMembersContent() {
                               <div className="min-w-0">
                                 <button
                                   onClick={() => handleOpenDetailModal(member)}
-                                  className="font-headline font-bold text-slate-900 text-xs truncate text-left hover:text-[#3b66b0] hover:underline flex items-center gap-1.5"
+                                  className="font-headline font-bold text-slate-900 text-xs truncate text-left hover:text-[#3b66b0] hover:underline"
                                 >
                                   <span>{member.name}</span>
-                                  {member.verified && (
-                                    <span title="Verified ASSERWA Member">
-                                      <ShieldCheck className="w-3.5 h-3.5 text-[#3b66b0] shrink-0" />
-                                    </span>
-                                  )}
                                 </button>
                                 <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500">
                                   {member.establishedYear && (
@@ -765,16 +796,41 @@ function AdminMembersContent() {
                                 </div>
                               )}
                               {member.websiteUrl ? (
-                                <a
-                                  href={member.websiteUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-[#3b66b0] hover:underline font-medium truncate max-w-[150px]"
-                                >
-                                  <Globe className="w-3 h-3 shrink-0" />
-                                  <span className="truncate">{member.websiteUrl.replace(/^https?:\/\//, '')}</span>
-                                  <ExternalLink className="w-2.5 h-2.5 shrink-0" />
-                                </a>
+                                <div className="flex items-center gap-1.5">
+                                  <a
+                                    href={member.websiteUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={cn(
+                                      "flex items-center gap-1 font-medium truncate max-w-[120px]",
+                                      member.showWebsite !== false 
+                                        ? "text-[#3b66b0] hover:underline" 
+                                        : "text-slate-400 line-through opacity-75"
+                                    )}
+                                    title={member.showWebsite !== false ? "Website visible publicly" : "Website hidden from public"}
+                                  >
+                                    <Globe className="w-3 h-3 shrink-0" />
+                                    <span className="truncate">{member.websiteUrl.replace(/^https?:\/\//, '')}</span>
+                                    <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleWebsiteVisibility(member)}
+                                    title={member.showWebsite !== false ? "Website is visible on public site. Click to hide" : "Website is hidden from public site. Click to show"}
+                                    className={cn(
+                                      "p-1 rounded-md text-[10px] font-bold transition-colors shrink-0",
+                                      member.showWebsite !== false
+                                        ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                                        : "text-amber-700 bg-amber-50 hover:bg-amber-100"
+                                    )}
+                                  >
+                                    {member.showWebsite !== false ? (
+                                      <Eye className="w-3 h-3" />
+                                    ) : (
+                                      <EyeOff className="w-3 h-3" />
+                                    )}
+                                  </button>
+                                </div>
                               ) : (
                                 <span className="text-slate-400 italic text-[10px]">No website</span>
                               )}
@@ -1008,15 +1064,30 @@ function AdminMembersContent() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Website URL *</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-700">Website URL (Optional)</label>
+                  {formWebsite.trim() && (
+                    <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-medium text-slate-600 select-none">
+                      <input
+                        type="checkbox"
+                        checked={formShowWebsite}
+                        onChange={(e) => setFormShowWebsite(e.target.checked)}
+                        className="rounded border-slate-300 text-[#3b66b0] focus:ring-[#3b66b0] w-3.5 h-3.5"
+                      />
+                      <span>Show on public site</span>
+                    </label>
+                  )}
+                </div>
                 <Input
-                  type="url"
+                  type="text"
                   value={formWebsite}
                   onChange={(e) => setFormWebsite(e.target.value)}
-                  placeholder="https://kigaliseptic.rw"
+                  placeholder="https://kigaliseptic.rw (Optional)"
                   className="bg-slate-50 border-slate-200 text-slate-900 text-xs h-9"
-                  required
                 />
+                <p className="text-[10px] text-slate-400">
+                  Optional. Leave blank if not available. {formWebsite.trim() && (formShowWebsite ? "• Visible on public site" : "• Hidden from public site")}
+                </p>
                 {formErrors.website && <p className="text-[11px] text-red-600">{formErrors.website}</p>}
               </div>
             </div>
@@ -1232,12 +1303,6 @@ function AdminMembersContent() {
                         <DialogDescription className="sr-only">
                           Profile details for {selectedMemberForDetail.name}
                         </DialogDescription>
-                        {selectedMemberForDetail.verified && (
-                          <Badge className="bg-blue-50 text-[#3b66b0] border border-blue-200 text-[10px] flex items-center gap-1 font-semibold">
-                            <ShieldCheck className="w-3 h-3 text-[#3b66b0]" />
-                            <span>Verified ASSERWA</span>
-                          </Badge>
-                        )}
                       </div>
                       <p className="text-xs text-[#3b66b0] font-semibold mt-0.5">
                         {selectedMemberForDetail.category}
@@ -1319,18 +1384,42 @@ function AdminMembersContent() {
                     </div>
 
                     <div>
-                      <span className="text-slate-400 text-[10px] block">Website</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400 text-[10px] block">Website</span>
+                        {selectedMemberForDetail.websiteUrl && (
+                          <span className={cn(
+                            "text-[9px] px-1.5 py-0.5 rounded-full font-bold",
+                            selectedMemberForDetail.showWebsite !== false 
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                              : "bg-amber-50 text-amber-700 border border-amber-200"
+                          )}>
+                            {selectedMemberForDetail.showWebsite !== false ? "Visible" : "Hidden"}
+                          </span>
+                        )}
+                      </div>
                       {selectedMemberForDetail.websiteUrl ? (
-                        <a
-                          href={selectedMemberForDetail.websiteUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-[#3b66b0] hover:underline font-semibold mt-0.5 truncate"
-                        >
-                          <Globe className="w-3 h-3" />
-                          <span className="truncate">{selectedMemberForDetail.websiteUrl.replace(/^https?:\/\//, '')}</span>
-                          <ExternalLink className="w-2.5 h-2.5" />
-                        </a>
+                        <div className="flex items-center justify-between gap-2 mt-0.5">
+                          <a
+                            href={selectedMemberForDetail.websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-[#3b66b0] hover:underline font-semibold truncate"
+                          >
+                            <Globe className="w-3 h-3 shrink-0" />
+                            <span className="truncate">{selectedMemberForDetail.websiteUrl.replace(/^https?:\/\//, '')}</span>
+                            <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                          </a>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await handleToggleWebsiteVisibility(selectedMemberForDetail);
+                              setSelectedMemberForDetail(prev => prev ? ({ ...prev, showWebsite: prev.showWebsite === false ? true : false }) : null);
+                            }}
+                            className="text-[10px] text-[#3b66b0] hover:underline font-bold shrink-0"
+                          >
+                            {selectedMemberForDetail.showWebsite !== false ? "Hide URL" : "Show URL"}
+                          </button>
+                        </div>
                       ) : (
                         <span className="text-slate-400 italic text-[11px]">None provided</span>
                       )}

@@ -23,9 +23,6 @@ export default function ServicesPage() {
             <Card key={service.id || idx} className="flex flex-col border border-slate-200 hover:border-[#6cb166]/50 hover:shadow-xl transition-all duration-300 rounded-2xl bg-white overflow-hidden p-[30px] space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-headline font-bold text-xl text-slate-900 leading-snug">{service.title}</h3>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80 shrink-0">
-                  Certified
-                </span>
               </div>
               <p className="font-body text-slate-600 text-sm leading-relaxed flex-1">{service.description}</p>
               <div className="pt-2 flex flex-wrap items-center gap-2.5">

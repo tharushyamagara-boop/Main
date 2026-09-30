@@ -14,7 +14,8 @@ export interface MemberCompany {
   category: string;
   description: string;
   briefDescription?: string;
-  websiteUrl: string;
+  websiteUrl?: string;
+  showWebsite?: boolean;
   logoUrl?: string;
   phone: string;
   email: string;
@@ -147,8 +148,8 @@ export const DEFAULT_MEMBER_COMPANIES: MemberCompany[] = [
     id: "mem-sewage-septic",
     name: "Sewage Septic Services",
     category: "Municipal Waste Emptiers & Treatment Logistics",
-    description: "Fully certified emptier operating under City of Kigali and RURA sanitation mandates for residential estates and multi-story commercial facilities.",
-    briefDescription: "City of Kigali certified septic emptying, high-pressure jetting, and drain clearing for residential estates.",
+    description: "Fully licensed emptier operating under City of Kigali and RURA sanitation mandates for residential estates and multi-story commercial facilities.",
+    briefDescription: "City of Kigali authorized septic emptying, high-pressure jetting, and drain clearing for residential estates.",
     websiteUrl: "https://sewageseptic.rw",
     logoUrl: generateCompanyLogoSvg("Sewage Septic Services", "SSS", "#0284c7"),
     phone: "+250 788 901 234",
@@ -367,7 +368,8 @@ export function subscribeToMemberCompanies(callback: (members: MemberCompany[]) 
               category: data.category || "Sanitation Provider",
               description: data.description || "",
               briefDescription: data.briefDescription || (data.description ? data.description.substring(0, 120) : ""),
-              websiteUrl: data.websiteUrl || "#",
+              websiteUrl: data.websiteUrl || "",
+              showWebsite: data.showWebsite !== false,
               logoUrl: data.logoUrl || generateCompanyLogoSvg(data.name || "Member", data.logoText),
               phone: data.phone || "",
               email: data.email || "",
@@ -477,6 +479,22 @@ export async function toggleMemberVisibility(id: string): Promise<boolean> {
   const updatedTarget: MemberCompany = {
     ...target,
     active: newActiveState,
+    updatedAt: Date.now()
+  };
+
+  return saveMemberCompanyRecord(updatedTarget);
+}
+
+// Toggle Member Website Visibility (Show / Hide website URL on public site)
+export async function toggleMemberWebsiteVisibility(id: string): Promise<boolean> {
+  const localList = getLocalMemberCompanies();
+  const target = localList.find(m => m.id === id);
+  if (!target) return false;
+
+  const currentShow = target.showWebsite !== false;
+  const updatedTarget: MemberCompany = {
+    ...target,
+    showWebsite: !currentShow,
     updatedAt: Date.now()
   };
 
