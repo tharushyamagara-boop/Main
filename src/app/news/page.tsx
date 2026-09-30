@@ -13,9 +13,6 @@ export default function NewsPage() {
     <div className="bg-slate-50/50 py-[30px]">
       <div className="container mx-auto px-4 max-w-6xl space-y-[30px]">
         <div className="max-w-3xl space-y-4">
-          <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-            Official News
-          </span>
           <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Advocacy & News</h1>
           <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
             Stay informed on institutional engagements, professional standards, and community initiatives from ASSERWA.

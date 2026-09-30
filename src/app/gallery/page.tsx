@@ -51,9 +51,6 @@ export default function GalleryPage() {
     <div className="bg-slate-50/50 py-[30px]">
       <div className="container mx-auto px-4 max-w-6xl space-y-[30px]">
         <div className="max-w-3xl space-y-4">
-          <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-            Field Documentation
-          </span>
           <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Impact Gallery</h1>
           <p className="text-slate-600 font-body text-base md:text-lg leading-relaxed">
             Visual record of ASSERWA field projects, facility inspections, capacity building workshops, and community sanitation outreach across Rwanda.

@@ -42,9 +42,6 @@ export default function ObjectivesPage() {
     <div className="bg-slate-50/50 py-[30px]">
       <div className="container mx-auto px-4 max-w-5xl space-y-[30px]">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-            Institutional Directives
-          </span>
           <h1 className="text-3xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">
             Organization Objectives & Standards
           </h1>

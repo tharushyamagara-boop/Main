@@ -33,6 +33,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { registerSymposiumVisitor } from '@/lib/firebase';
 import { PRIORITY_AFRICAN_COUNTRIES, OTHER_GLOBAL_COUNTRIES, ALL_COUNTRIES } from '@/lib/countries';
+import { getStoredPlatformAttribution } from '@/lib/tracking';
 
 export default function SymposiumRegistrationPage() {
   const [fullName, setFullName] = useState('');
@@ -42,6 +43,7 @@ export default function SymposiumRegistrationPage() {
   const [country, setCountry] = useState('Rwanda');
   const [organization, setOrganization] = useState('');
   const [title, setTitle] = useState('');
+  const [referralSource, setReferralSource] = useState('Website / Direct');
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedData, setSubmittedData] = useState<{
@@ -52,6 +54,14 @@ export default function SymposiumRegistrationPage() {
     organization?: string;
     title?: string;
   } | null>(null);
+
+  // Auto-detect acquisition origin on mount
+  React.useEffect(() => {
+    const attr = getStoredPlatformAttribution();
+    if (attr && attr.channel && attr.channel !== 'Direct Website Visit') {
+      setReferralSource(attr.channel);
+    }
+  }, []);
 
   // Auto-sync country phone dial code when country changes
   const handleCountryChange = (selectedCountryName: string) => {
@@ -112,7 +122,8 @@ export default function SymposiumRegistrationPage() {
         phone: fullContactPhone,
         country: country,
         organization: organization.trim() || undefined,
-        title: title.trim() || undefined
+        title: title.trim() || undefined,
+        referralSource: referralSource.trim() || 'Website / Direct'
       });
 
       setSubmittedData({

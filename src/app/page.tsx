@@ -1,9 +1,13 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ExternalLink, Building2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useContentStore } from '@/lib/content-store';
+import { MemberCompany, subscribeToMemberCompanies, DEFAULT_MEMBER_COMPANIES } from '@/lib/members';
 import {
   Carousel,
   CarouselContent,
@@ -14,6 +18,16 @@ import {
 
 export default function Home() {
   const { slideshows, memberNetwork, objectives, contactInfo, services } = useContentStore();
+  const [members, setMembers] = useState<MemberCompany[]>(
+    DEFAULT_MEMBER_COMPANIES.filter(m => m.active !== false)
+  );
+
+  useEffect(() => {
+    const unsub = subscribeToMemberCompanies((data) => {
+      setMembers(data.filter(m => m.active !== false));
+    });
+    return () => unsub();
+  }, []);
 
   return (
     <div className="flex flex-col w-full bg-slate-50/50 min-h-screen">
@@ -100,23 +114,104 @@ export default function Home() {
       </section>
 
       {/* Official Member Companies */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-[30px] w-full">
-        <div className="p-[30px] bg-[#6cb166] text-white rounded-3xl shadow-xl space-y-[30px]">
-          <div className="max-w-3xl space-y-2">
-            <h2 className="text-3xl font-headline font-bold text-white">Official Member Companies</h2>
-            <p className="text-white/90 font-body text-sm">
-              Official roster of certified member companies and sanitation service providers affiliated with ASSERWA in Rwanda:
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3 py-1 rounded-full border border-[#3b66b0]/20">
+              <Building2 className="w-3.5 h-3.5 text-[#3b66b0]" />
+              <span>Certified Provider Network</span>
+            </div>
+            <h2 className="text-3xl font-headline font-extrabold text-slate-900">
+              Official ASSERWA Member Companies
+            </h2>
+            <p className="text-slate-600 font-body text-sm max-w-2xl">
+              Roster of certified sanitation operators and vacuum emptiers adhering to RURA sanitation standards and environmental guidelines across Rwanda.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {memberNetwork.flatMap(item => item.companies).map((comp, cIdx) => (
-              <div key={cIdx} className="p-4 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm flex items-center gap-3 font-headline font-bold text-sm text-white">
-                <span className="w-2 h-2 rounded-full bg-white shrink-0" />
-                <span>{comp}</span>
+          <Button asChild variant="outline" size="sm" className="bg-white border-slate-200 text-slate-700 hover:text-[#3b66b0] hover:bg-slate-50 text-xs shrink-0">
+            <Link href="/dashboard" className="flex items-center gap-1.5">
+              <span>View Full Directory ({members.length})</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </Button>
+        </div>
+
+        {/* Member Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {members.slice(0, 6).map((comp) => (
+            <div
+              key={comp.id}
+              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+            >
+              <div className="space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {comp.logoUrl ? (
+                      <img
+                        src={comp.logoUrl}
+                        alt={comp.name}
+                        className="w-12 h-12 rounded-xl object-contain bg-slate-50 border border-slate-200 p-0.5 shrink-0 shadow-2xs"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3b66b0] to-[#1e3a6e] text-white flex items-center justify-center font-bold text-sm font-headline shadow-2xs shrink-0">
+                        {comp.logoText || comp.name.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <h3 className="font-headline font-bold text-slate-900 text-sm truncate group-hover:text-[#3b66b0] transition-colors">
+                        {comp.name}
+                      </h3>
+                      <p className="text-[11px] text-[#3b66b0] font-semibold truncate mt-0.5">
+                        {comp.category}
+                      </p>
+                    </div>
+                  </div>
+
+                  {comp.verified && (
+                    <Badge className="bg-emerald-50 text-emerald-800 border-emerald-200 text-[10px] shrink-0 flex items-center gap-1 font-bold px-2 py-0.5">
+                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                      <span>Certified</span>
+                    </Badge>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                  {comp.briefDescription || comp.description}
+                </p>
+
+                <div className="text-[11px] text-slate-500 font-medium">
+                  <span>HQ: </span>
+                  <span className="text-slate-700">{comp.headquarters}</span>
+                </div>
               </div>
-            ))}
-          </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                {comp.websiteUrl ? (
+                  <a
+                    href={comp.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-[#3b66b0] font-semibold hover:underline"
+                    title={`Open ${comp.name} website in new tab`}
+                  >
+                    <span>Visit Website</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                ) : (
+                  <span className="text-[11px] text-slate-400">ASSERWA Member</span>
+                )}
+
+                <Button asChild size="sm" className="h-7 px-3 text-xs bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-semibold rounded-lg shadow-2xs">
+                  <Link href={`/book?memberId=${comp.id}`}>
+                    <span>Book Service</span>
+                    <ArrowRight className="w-3 h-3 ml-1" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

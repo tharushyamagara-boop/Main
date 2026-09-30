@@ -31,9 +31,6 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div className="lg:col-span-5 space-y-[30px]">
             <div className="space-y-4">
-              <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-                Official Contact
-              </span>
               <h1 className="text-4xl md:text-5xl font-headline font-extrabold text-slate-900 tracking-tight">Contact ASSERWA</h1>
               <p className="text-slate-600 font-body text-base leading-relaxed">
                 Forum of Sewage Emptiers in Rwanda. Reach out to our headquarters for inquiries, advocacy, or technical partnerships.

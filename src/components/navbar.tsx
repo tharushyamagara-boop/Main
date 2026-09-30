@@ -24,14 +24,14 @@ export function Navbar() {
   return (
     <div className="w-full">
       {/* Top Header Bar (Contact Information) */}
-      <div className="w-full bg-transparent text-slate-700 text-xs py-2 px-6 lg:px-12 border-b border-slate-200/60 hidden sm:block">
+      <div className="w-full bg-[#3b66b0] text-white text-xs py-2 px-6 lg:px-12 border-y border-blue-400/70 shadow-[0_0_12px_rgba(59,102,176,0.6)] hidden sm:block relative z-50">
         <div className="w-full flex justify-between items-center">
-          <div className="flex items-center gap-6 text-xs">
-            <span className="truncate max-w-xs md:max-w-md">{contactInfo.address}</span>
-            <span className="text-slate-300">•</span>
-            <span className="whitespace-nowrap">{contactInfo.phone}</span>
-            <span className="text-slate-300">•</span>
-            <span className="whitespace-nowrap">{contactInfo.email}</span>
+          <div className="flex items-center gap-6 text-xs drop-shadow-sm">
+            <span className="truncate max-w-xs md:max-w-md font-medium">{contactInfo.address}</span>
+            <span className="text-blue-300">•</span>
+            <span className="whitespace-nowrap font-medium">{contactInfo.phone}</span>
+            <span className="text-blue-300">•</span>
+            <span className="whitespace-nowrap font-medium">{contactInfo.email}</span>
           </div>
           {currentAdmin && (
             <div className="flex items-center gap-3">
@@ -114,12 +114,19 @@ export function Navbar() {
                 })}
               </div>
 
-              {/* Desktop Primary CTA Button */}
-              <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-3.5 2xl:px-5 shadow-md whitespace-nowrap shrink-0 ml-1">
-                <Link href="/contact">
-                  Contact Us
-                </Link>
-              </Button>
+              {/* Desktop CTA Buttons */}
+              <div className="flex items-center gap-2 shrink-0 ml-1">
+                <Button asChild size="sm" className="bg-white hover:bg-slate-50 text-[#3b66b0] font-headline text-xs font-bold px-3.5 shadow-sm whitespace-nowrap">
+                  <Link href="/book">
+                    Book Service
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-3.5 2xl:px-4 shadow-md whitespace-nowrap">
+                  <Link href="/contact">
+                    Contact Us
+                  </Link>
+                </Button>
+              </div>
             </div>
 
             {/* Mobile / Tablet Nav Toggle Button */}
@@ -174,13 +181,35 @@ export function Navbar() {
                   </Link>
                 </div>
               )}
-              <div className="pt-3 border-t border-white/10 mt-2">
+              <div className="pt-3 border-t border-white/10 mt-2 space-y-2">
+                <Button asChild className="w-full bg-white hover:bg-slate-50 text-[#3b66b0] font-headline text-xs font-bold shadow-sm">
+                  <Link href="/book" onClick={() => setIsOpen(false)}>
+                    Book Service Online
+                  </Link>
+                </Button>
                 <Button asChild className="w-full bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold">
                   <Link href="/contact" onClick={() => setIsOpen(false)}>
                     Contact ASSERWA
                   </Link>
                 </Button>
               </div>
+
+              {currentAdmin && (
+                <div className="pt-2 border-t border-white/10 mt-2 flex flex-col gap-1.5">
+                  <Link
+                    href="/admin/bookings"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-between py-2 px-3 rounded-lg bg-blue-900/60 text-white text-xs font-bold font-headline"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Settings className="w-3.5 h-3.5 text-blue-300" /> Bookings & Dispatch Console
+                    </span>
+                    <span className="text-[10px] bg-amber-400 text-slate-900 px-1.5 py-0.5 rounded font-bold">
+                      Control
+                    </span>
+                  </Link>
+                </div>
+              )}
             </div>
           )}
         </nav>

@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { ContentProvider } from '@/lib/content-store';
 import { AdminProvider } from '@/lib/admin-store';
+import { PlatformTracker } from '@/components/tracking/PlatformTracker';
 
 export const metadata: Metadata = {
   title: 'ASSERWA | Forum of Sewage Emptiers in Rwanda',
@@ -35,6 +36,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen bg-slate-50/50 text-slate-900">
+        <PlatformTracker />
         <AdminProvider>
           <ContentProvider>
             <Navbar />

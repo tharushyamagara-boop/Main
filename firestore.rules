@@ -9,5 +9,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true;
     }
+    match /bookings/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /member_companies/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }

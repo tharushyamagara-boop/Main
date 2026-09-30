@@ -20,9 +20,6 @@ export default function ResourcesPage() {
       <div className="container mx-auto px-4 max-w-6xl space-y-[30px]">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3.5 py-1 rounded-full border border-[#3b66b0]/30">
-              Documentation
-            </span>
             <h1 className="text-3xl md:text-4xl font-headline font-extrabold text-slate-900">Technical Guidelines & Manuals</h1>
             <p className="text-slate-600 font-body text-base">
               Access official guidelines, sanitation manuals, and advocacy publications from ASSERWA.

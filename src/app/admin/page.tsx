@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useContentStore, SlideshowItem, GalleryItem, NewsItem } from '@/lib/content-store';
 import { useAdminStore, AdminUser } from '@/lib/admin-store';
 import { 
@@ -10,6 +11,7 @@ import {
   subscribeToSymposiumVisitors, 
   deleteSymposiumVisitor 
 } from '@/lib/firebase';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,11 +24,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast';
 import { 
   Download, Trash2, Search, Users, Globe, Building, Sparkles, UserCheck, 
-  Eye, EyeOff, Sliders, ArrowUp, ArrowDown, ExternalLink, Plus, RefreshCw, CheckCircle2 
+  Eye, EyeOff, Sliders, ArrowUp, ArrowDown, ExternalLink, Plus, RefreshCw, CheckCircle2, CalendarClock,
+  Menu, X, ImageIcon, Upload 
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-700">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-[#3b66b0]/20 border-t-[#3b66b0] rounded-full animate-spin" />
+          <p className="text-xs text-slate-500 font-medium">Loading Admin Control Center...</p>
+        </div>
+      </div>
+    }>
+      <AdminDashboardContent />
+    </Suspense>
+  );
+}
+
+function AdminDashboardContent() {
   const {
     slideshows, setSlideshows,
     aboutUs, setAboutUs,
@@ -48,10 +66,20 @@ export default function AdminDashboardPage() {
   } = useContentStore();
 
   const { admins, currentAdmin, login, logout, addAdmin, removeAdmin } = useAdminStore();
+  const searchParams = useSearchParams();
+  const urlTab = searchParams?.get('tab');
 
-  const [activeTab, setActiveTab] = useState('slideshows');
+  const [activeTab, setActiveTab] = useState(urlTab || 'slideshows');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [loginEmail, setLoginEmail] = useState('tharushyamagara@gmail.com');
   const [loginError, setLoginError] = useState('');
+
+  // Sync activeTab when URL tab parameter changes
+  useEffect(() => {
+    if (urlTab) {
+      setActiveTab(urlTab);
+    }
+  }, [urlTab]);
 
   // Add User Form State
   const [newEmail, setNewEmail] = useState('');
@@ -86,7 +114,7 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    const headers = ["ID", "Full Name", "Contact Phone", "Email Address", "Country of Origin", "Organization", "Job Title", "Registration Date"];
+    const headers = ["ID", "Full Name", "Contact Phone", "Email Address", "Country of Origin", "Organization", "Job Title", "Acquisition Source", "Registration Date"];
     const rows = visitors.map(v => [
       `"${v.id}"`,
       `"${(v.fullName || '').replace(/"/g, '""')}"`,
@@ -95,6 +123,7 @@ export default function AdminDashboardPage() {
       `"${(v.country || '').replace(/"/g, '""')}"`,
       `"${(v.organization || '').replace(/"/g, '""')}"`,
       `"${(v.title || '').replace(/"/g, '""')}"`,
+      `"${(v.referralSource || 'Direct').replace(/"/g, '""')}"`,
       `"${v.createdAt || ''}"`
     ]);
 
@@ -421,9 +450,9 @@ export default function AdminDashboardPage() {
         contactInfo,
         navMenuItems
       };
+      await saveContentToFirestore(dataToSave);
       localStorage.setItem('asserwa_cms_content_v4', JSON.stringify(dataToSave));
       localStorage.setItem('assserva_cms_content_v4', JSON.stringify(dataToSave));
-      await saveContentToFirestore(dataToSave);
       toast({
         title: "Content Saved & Applied Live!",
         description: "All media, menus, slideshows, gallery items, and news updates have been saved to Cloud Firestore and applied across all browsers worldwide.",
@@ -499,28 +528,67 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="bg-slate-50/50 py-12 min-h-screen">
-      <div className="container mx-auto px-4 max-w-6xl space-y-8">
-        {/* Top Header Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3 py-0.5 rounded-full border border-[#3b66b0]/30 inline-block">
-                Content Management System
-              </span>
-              <span className="text-xs font-headline font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                {currentAdmin.email} ({currentAdmin.role})
-              </span>
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 flex flex-col lg:flex-row font-body">
+      {/* Desktop Persistent Left Side Menu */}
+      <AdminSidebar className="hidden lg:flex" />
+
+      {/* Mobile Drawer */}
+      {isMobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setIsMobileSidebarOpen(false)} />
+          <div className="relative z-10 w-72 bg-white h-full shadow-2xl animate-in slide-in-from-left duration-200">
+            <div className="absolute top-4 right-4 z-20">
+              <button 
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700"
+                aria-label="Close Admin Menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <h1 className="text-2xl md:text-3xl font-headline font-extrabold text-slate-900">
-              ASSERWA Admin Control Panel
-            </h1>
-            <p className="text-slate-500 font-body text-xs md:text-sm">
-              Manage and edit all front-end content live across all site sections.
-            </p>
+            <AdminSidebar onCloseMobile={() => setIsMobileSidebarOpen(false)} />
           </div>
-          <div className="flex items-center gap-3">
-            <Button onClick={handleReset} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 font-headline text-xs font-bold">
+        </div>
+      )}
+
+      {/* Main Admin Workspace */}
+      <main className="flex-1 flex flex-col min-w-0 bg-slate-50/70 text-slate-900 py-6 sm:py-8 px-4 sm:px-8 overflow-y-auto min-h-screen">
+        <div className="max-w-6xl w-full mx-auto space-y-6">
+          {/* Top Header Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden p-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200"
+                aria-label="Open Admin Menu"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-headline font-bold uppercase tracking-widest text-[#3b66b0] bg-[#3b66b0]/10 px-3 py-0.5 rounded-full border border-[#3b66b0]/30 inline-block">
+                    Content Management System
+                  </span>
+                  <span className="text-xs font-headline font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                    {currentAdmin.email} ({currentAdmin.role})
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold text-slate-900">
+                  ASSERWA Admin Control Panel
+                </h1>
+                <p className="text-slate-500 font-body text-xs md:text-sm">
+                  Manage and edit all front-end content live across all site sections.
+                </p>
+              </div>
+            </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button asChild className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white font-headline text-xs font-bold px-3.5 shadow-md">
+              <Link href="/admin/bookings" className="flex items-center gap-1.5">
+                <CalendarClock className="w-3.5 h-3.5 text-blue-200" />
+                <span>Bookings & Dispatch</span>
+              </Link>
+            </Button>
+            <Button onClick={handleReset} variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-100 font-headline text-xs font-bold">
               Reset Defaults
             </Button>
             <Button onClick={handleSave} className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold px-6 shadow-md">
@@ -573,7 +641,7 @@ export default function AdminDashboardPage() {
               11. Admin Users
             </TabsTrigger>
             <TabsTrigger value="visitors" className="text-xs font-bold font-headline py-2 px-3 data-[state=active]:bg-[#3b66b0] data-[state=active]:text-white rounded-xl flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#6cb166]" />
+              <Sparkles className="w-3.5 h-3.5 text-slate-400 data-[state=active]:text-white" />
               <span>12. Symposium 2026 Visitors</span>
               <span className="bg-[#6cb166] text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
                 {visitors.length}
@@ -606,7 +674,7 @@ export default function AdminDashboardPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteSlide(slide.id)}
-                        className="border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold h-8 px-3"
+                        className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold h-8 px-3"
                       >
                         Delete Slide
                       </Button>
@@ -735,9 +803,9 @@ export default function AdminDashboardPage() {
                     variant="outline"
                     size="sm"
                     onClick={handleShowAllMenus}
-                    className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-xs font-bold font-headline h-9"
+                    className="border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold font-headline h-9"
                   >
-                    <Eye className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Show All Menus
+                    <Eye className="w-3.5 h-3.5 mr-1 text-slate-400" /> Show All Menus
                   </Button>
                   <Button
                     type="button"
@@ -746,7 +814,7 @@ export default function AdminDashboardPage() {
                     onClick={handleResetMenus}
                     className="border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold font-headline h-9"
                   >
-                    <RefreshCw className="w-3.5 h-3.5 mr-1 text-slate-500" /> Reset Defaults
+                    <RefreshCw className="w-3.5 h-3.5 mr-1 text-slate-400" /> Reset Defaults
                   </Button>
                   <Button
                     type="button"
@@ -768,31 +836,31 @@ export default function AdminDashboardPage() {
                       <p className="text-2xl font-headline font-extrabold text-slate-900">{navMenuItems.length}</p>
                     </div>
                     <div className="w-10 h-10 rounded-xl bg-slate-200/80 flex items-center justify-center text-slate-600">
-                      <Sliders className="w-5 h-5" />
+                      <Sliders className="w-5 h-5 text-slate-500" />
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/50 flex items-center justify-between">
+                  <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 flex items-center justify-between">
                     <div>
-                      <p className="text-[11px] font-headline font-bold text-emerald-700 uppercase tracking-wider">Visible to Public</p>
-                      <p className="text-2xl font-headline font-extrabold text-emerald-900">
+                      <p className="text-[11px] font-headline font-bold text-[#6cb166] uppercase tracking-wider">Visible to Public</p>
+                      <p className="text-2xl font-headline font-extrabold text-slate-900">
                         {navMenuItems.filter(m => m.visible !== false).length}
                       </p>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700">
-                      <Eye className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-xl bg-[#6cb166]/10 flex items-center justify-center text-[#6cb166]">
+                      <Eye className="w-5 h-5 text-[#6cb166]" />
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-amber-200 bg-amber-50/50 flex items-center justify-between">
+                  <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 flex items-center justify-between">
                     <div>
-                      <p className="text-[11px] font-headline font-bold text-amber-700 uppercase tracking-wider">Hidden from Public</p>
-                      <p className="text-2xl font-headline font-extrabold text-amber-900">
+                      <p className="text-[11px] font-headline font-bold text-slate-500 uppercase tracking-wider">Hidden from Public</p>
+                      <p className="text-2xl font-headline font-extrabold text-slate-900">
                         {navMenuItems.filter(m => m.visible === false).length}
                       </p>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700">
-                      <EyeOff className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-xl bg-slate-200/80 flex items-center justify-center text-slate-600">
+                      <EyeOff className="w-5 h-5 text-slate-500" />
                     </div>
                   </div>
                 </div>
@@ -801,7 +869,7 @@ export default function AdminDashboardPage() {
                 <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-900 text-white space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#6cb166] animate-pulse" />
                       <span className="text-xs font-headline font-bold uppercase tracking-wider text-slate-200">
                         Live Public Visitor Navbar Simulation
                       </span>
@@ -834,7 +902,7 @@ export default function AdminDashboardPage() {
                               key={m.id}
                               className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#3b66b0] text-white flex items-center gap-1 shadow-sm"
                             >
-                              <Sparkles className="w-2.5 h-2.5 text-amber-300" />
+                              <Sparkles className="w-2.5 h-2.5 text-white/80" />
                               {m.name}
                             </span>
                           ) : (
@@ -936,8 +1004,8 @@ export default function AdminDashboardPage() {
                                   placeholder="Menu Label"
                                 />
                                 {menu.isBadge && (
-                                  <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[10px] gap-1 shrink-0 font-bold">
-                                    <Sparkles className="w-2.5 h-2.5 text-amber-600" /> Event Badge
+                                  <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-[10px] gap-1 shrink-0 font-bold">
+                                    <Sparkles className="w-2.5 h-2.5 text-slate-400" /> Event Badge
                                   </Badge>
                                 )}
                               </div>
@@ -951,7 +1019,7 @@ export default function AdminDashboardPage() {
                                   className="text-slate-400 hover:text-[#3b66b0] transition-colors"
                                   title="Test route in new tab"
                                 >
-                                  <ExternalLink className="w-3 h-3" />
+                                  <ExternalLink className="w-3 h-3 text-slate-400" />
                                 </Link>
                               </div>
                             </div>
@@ -981,17 +1049,17 @@ export default function AdminDashboardPage() {
                               <Label
                                 htmlFor={`vis-${menu.id}`}
                                 className={`text-xs font-headline font-bold cursor-pointer min-w-[130px] flex items-center gap-1.5 ${
-                                  isVisible ? 'text-emerald-700' : 'text-slate-500'
+                                  isVisible ? 'text-[#6cb166]' : 'text-slate-500'
                                 }`}
                               >
                                 {isVisible ? (
                                   <>
-                                    <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                                    <Eye className="w-3.5 h-3.5 text-[#6cb166]" />
                                     <span>Visible to Public</span>
                                   </>
                                 ) : (
                                   <>
-                                    <EyeOff className="w-3.5 h-3.5 text-amber-600" />
+                                    <EyeOff className="w-3.5 h-3.5 text-slate-400" />
                                     <span>Hidden from Public</span>
                                   </>
                                 )}
@@ -1005,7 +1073,7 @@ export default function AdminDashboardPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDeleteMenu(menu.id, menu.name)}
-                                className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
+                                className="h-8 w-8 p-0 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
                                 title="Delete Custom Menu"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -1119,6 +1187,91 @@ export default function AdminDashboardPage() {
                     onChange={(e) => setAboutUs({ ...aboutUs, objectiveScope: e.target.value })}
                     className="bg-white text-xs min-h-[60px]"
                   />
+                </div>
+
+                {/* About Us Featured Photo Manager */}
+                <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h4 className="font-headline font-bold text-sm text-[#3b66b0] flex items-center gap-1.5">
+                        <ImageIcon className="w-4 h-4" />
+                        <span>About Section Featured Photo</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Photo displayed in the card beside "Main Mission" and "Main Objective & Scope" on the About Us page.
+                      </p>
+                    </div>
+                    {aboutUs.imageUrl && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setAboutUs({ ...aboutUs, imageUrl: "" })}
+                        className="text-xs text-red-600 border-red-200 hover:bg-red-50 h-8 self-start sm:self-auto"
+                      >
+                        Remove Photo
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                    {/* Live Thumbnail Preview */}
+                    <div className="md:col-span-4 relative h-48 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center shadow-xs">
+                      {aboutUs.imageUrl ? (
+                        <img
+                          src={aboutUs.imageUrl}
+                          alt="About Us Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-center p-4 text-slate-400 space-y-1">
+                          <ImageIcon className="w-8 h-8 text-slate-300 mx-auto" />
+                          <span className="text-xs font-medium block">No photo selected</span>
+                          <span className="text-[10px] text-slate-400">Empty photo holder active</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Upload Controls */}
+                    <div className="md:col-span-8 space-y-3">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-slate-700">Upload New Photo File</Label>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleMediaFileUpload(e, (dataUrl) => {
+                              setAboutUs({ ...aboutUs, imageUrl: dataUrl });
+                            });
+                          }}
+                          className="bg-white text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#3b66b0] file:text-white hover:file:bg-[#2e5291] cursor-pointer h-10"
+                        />
+                        <p className="text-[11px] text-slate-500">
+                          Uploads directly to Cloud Storage and updates the live About Us page.
+                        </p>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-slate-700">Or Paste Image URL</Label>
+                        <Input
+                          type="text"
+                          value={aboutUs.imageUrl || ''}
+                          onChange={(e) => setAboutUs({ ...aboutUs, imageUrl: e.target.value })}
+                          placeholder="/images/about-asserwa.jpg or https://example.com/photo.jpg"
+                          className="bg-white text-xs h-9"
+                        />
+                      </div>
+                      
+                      <div className="pt-2">
+                        <Button 
+                          onClick={handleSave} 
+                          className="w-full bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold shadow-md"
+                        >
+                          Save About Us Photo
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1352,7 +1505,7 @@ export default function AdminDashboardPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteNewsItem(item.id)}
-                        className="border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold h-8 px-3"
+                        className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold h-8 px-3"
                       >
                         Delete Article
                       </Button>
@@ -1513,7 +1666,7 @@ export default function AdminDashboardPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteGalleryItem(gal.id)}
-                        className="border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold h-8 px-3"
+                        className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold h-8 px-3"
                       >
                         Delete Item
                       </Button>
@@ -1705,7 +1858,7 @@ export default function AdminDashboardPage() {
                             <div className="flex items-center gap-2">
                               <span className="font-headline font-bold text-sm text-slate-900">{adm.name}</span>
                               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                isPrimarySuperAdmin ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                isPrimarySuperAdmin ? 'bg-[#3b66b0]/10 text-[#3b66b0] border border-[#3b66b0]/30' : 'bg-slate-100 text-slate-700 border border-slate-200'
                               }`}>
                                 {adm.role}
                               </span>
@@ -1720,7 +1873,7 @@ export default function AdminDashboardPage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleRemoveUser(adm.id, adm.email)}
-                                className="border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold"
+                                className="border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold"
                               >
                                 Revoke Access
                               </Button>
@@ -1776,25 +1929,25 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-100 flex items-center gap-3">
+                  <div className="p-4 rounded-2xl bg-[#6cb166]/10 border border-[#6cb166]/20 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-[#6cb166] text-white flex items-center justify-center shrink-0">
-                      <Globe className="w-5 h-5" />
+                      <Globe className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Countries</span>
-                      <span className="text-xl font-headline font-extrabold text-[#488443]">
+                      <span className="text-xl font-headline font-extrabold text-[#6cb166]">
                         {new Set(visitors.map(v => v.country).filter(Boolean)).size}
                       </span>
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-purple-50/80 border border-purple-100 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0">
-                      <Building className="w-5 h-5" />
+                  <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0">
+                      <Building className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Organizations</span>
-                      <span className="text-xl font-headline font-extrabold text-purple-700">
+                      <span className="text-xl font-headline font-extrabold text-slate-900">
                         {new Set(visitors.map(v => v.organization).filter(Boolean)).size}
                       </span>
                     </div>
@@ -1864,6 +2017,7 @@ export default function AdminDashboardPage() {
                               <th className="py-3 px-4">Email</th>
                               <th className="py-3 px-4">Country</th>
                               <th className="py-3 px-4">Organization / Title</th>
+                              <th className="py-3 px-4">Acquisition Channel</th>
                               <th className="py-3 px-4">Date</th>
                               <th className="py-3 px-4 text-right">Actions</th>
                             </tr>
@@ -1895,6 +2049,11 @@ export default function AdminDashboardPage() {
                                     <span className="text-slate-400 italic">—</span>
                                   )}
                                 </td>
+                                <td className="py-3.5 px-4">
+                                  <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full text-[11px] font-medium border border-slate-200">
+                                    {v.referralSource || 'Direct'}
+                                  </span>
+                                </td>
                                 <td className="py-3.5 px-4 text-slate-500 text-[11px] whitespace-nowrap">
                                   {v.createdAt ? new Date(v.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
                                 </td>
@@ -1903,9 +2062,9 @@ export default function AdminDashboardPage() {
                                     size="sm"
                                     variant="outline"
                                     onClick={() => handleDeleteVisitor(v.id, v.fullName)}
-                                    className="border-red-200 text-red-600 hover:bg-red-50 text-xs h-7 px-2"
+                                    className="border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 text-xs h-7 px-2"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <Trash2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700" />
                                   </Button>
                                 </td>
                               </tr>
@@ -1928,6 +2087,7 @@ export default function AdminDashboardPage() {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </main>
+  </div>
+);
 }

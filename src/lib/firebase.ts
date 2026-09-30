@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { 
   getFirestore, 
+  initializeFirestore,
   doc, 
   setDoc, 
   onSnapshot, 
@@ -24,7 +25,17 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const storage = getStorage(app);
-export const db = getFirestore(app);
+function initFirestore() {
+  try {
+    return initializeFirestore(app, {
+      experimentalAutoDetectLongPolling: true,
+    });
+  } catch {
+    return getFirestore(app);
+  }
+}
+
+export const db = initFirestore();
 
 const CMS_DOC_REF = doc(db, "cms", "main_content");
 const VISITORS_COLLECTION_REF = collection(db, "symposium_visitors");
@@ -37,6 +48,7 @@ export type SymposiumVisitor = {
   country: string;
   organization?: string;
   title?: string;
+  referralSource?: string;
   createdAt: string;
 };
 
@@ -82,12 +94,16 @@ export async function uploadMediaToFirebaseStorage(
  */
 export async function saveContentToFirestore(data: any): Promise<void> {
   try {
+    // Strip undefined values which cause Firestore setDoc to throw errors
+    const sanitizedData = JSON.parse(JSON.stringify(data));
+    
     await setDoc(CMS_DOC_REF, {
-      ...data,
+      ...sanitizedData,
       updatedAt: new Date().toISOString()
     }, { merge: true });
   } catch (err) {
     console.warn("Firestore save error:", err);
+    throw err;
   }
 }
 
@@ -174,6 +190,7 @@ export function subscribeToSymposiumVisitors(
           country: data.country || '',
           organization: data.organization || '',
           title: data.title || '',
+          referralSource: data.referralSource || '',
           createdAt: data.createdAt || ''
         });
       });

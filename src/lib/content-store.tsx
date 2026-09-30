@@ -88,7 +88,7 @@ export const defaultAboutUs = {
   description: "ASSERWA (Forum of Sewage Emptiers in Rwanda) is a non-governmental organization that brings together sewage emptiers and sanitation service providers in Rwanda.",
   mission: "To promote a culture of hygiene and sanitation among members and the wider community.",
   objectiveScope: "The organization works to improve sanitation services, protect public health, and safeguard the environment across all provinces of Rwanda.",
-  imageUrl: ""
+  imageUrl: "/images/about-asserwa.jpg"
 };
 
 export const defaultObjectives = [
@@ -133,31 +133,31 @@ export const defaultObjectives = [
 export const defaultServices = [
   {
     id: 'srv-1',
-    title: "Environmental & Hygiene Promotion",
-    description: "Promoting environmental protection, sanitation practices, and community hygiene to improve health and well-being.",
-    link: "/compliance",
-    cta: "View Objectives"
+    title: "Liquid Waste Collection and Transport",
+    description: "Modern vacuum trucks for efficient waste collection, serving schools, hospitals, hotels, and commercial buildings.",
+    link: "/book",
+    cta: "Book Collection"
   },
   {
     id: 'srv-2',
-    title: "Professional Development",
-    description: "Promoting high professional standards among sewage emptiers and sanitation workers across Rwanda.",
-    link: "/about",
-    cta: "Learn More"
+    title: "Installation of Decentralized Wastewater Treatment Systems",
+    description: "Advanced systems for clean water reuse in irrigation, cleaning, flushing, and eco-friendly solutions using activated sludge technology.",
+    link: "/book",
+    cta: "Request Installation"
   },
   {
     id: 'srv-3',
-    title: "Institutional Advocacy",
-    description: "Advocating for sanitation practitioners at national government institutions, local government bodies, and non-government stakeholders.",
-    link: "/contact",
-    cta: "Partner With Us"
+    title: "Maintenance & Consultancy",
+    description: "Quarterly maintenance services and expert advice for optimal wastewater management.",
+    link: "/book",
+    cta: "Schedule Maintenance"
   },
   {
-    id: 'srv-[#3b66b0]',
-    title: "Sanitation Infrastructure",
-    description: "Advocating for toilet construction and promoting proper operation and maintenance of sanitation facilities.",
-    link: "/dashboard",
-    cta: "View Member Network"
+    id: 'srv-4',
+    title: "Sanitation Projects and Partnerships",
+    description: "Collaborating with government and private organizations and promoting public health and hygiene.",
+    link: "/contact",
+    cta: "Partner With Us"
   }
 ];
 
@@ -425,7 +425,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed.slideshows)) setSlideshows(sanitizeItems(parsed.slideshows));
-          if (parsed.aboutUs) setAboutUs({ ...parsed.aboutUs, imageUrl: cleanUnsplashUrl(parsed.aboutUs.imageUrl) });
+          if (parsed.aboutUs) setAboutUs({ ...parsed.aboutUs, imageUrl: cleanUnsplashUrl(parsed.aboutUs.imageUrl) || "/images/about-asserwa.jpg" });
           if (parsed.objectives) setObjectives(parsed.objectives);
           if (parsed.services) setServices(parsed.services);
           if (parsed.memberNetwork) setMemberNetwork(parsed.memberNetwork);
@@ -448,7 +448,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = subscribeToFirestoreContent((data) => {
       if (!data) return;
       if (Array.isArray(data.slideshows)) setSlideshows(sanitizeItems(data.slideshows));
-      if (data.aboutUs) setAboutUs({ ...data.aboutUs, imageUrl: cleanUnsplashUrl(data.aboutUs.imageUrl) });
+      if (data.aboutUs) setAboutUs({ ...data.aboutUs, imageUrl: cleanUnsplashUrl(data.aboutUs.imageUrl) || "/images/about-asserwa.jpg" });
       if (data.objectives) setObjectives(data.objectives);
       if (data.services) setServices(data.services);
       if (data.memberNetwork) setMemberNetwork(data.memberNetwork);
