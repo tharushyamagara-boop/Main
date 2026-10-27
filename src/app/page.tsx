@@ -17,6 +17,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import {
   Dialog,
@@ -31,6 +32,16 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<MemberCompany | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    setCurrentSlide(carouselApi.selectedScrollSnap());
+    carouselApi.on("select", () => {
+      setCurrentSlide(carouselApi.selectedScrollSnap());
+    });
+  }, [carouselApi]);
 
   useEffect(() => {
     const unsub = subscribeToMemberCompanies((data) => {
@@ -53,47 +64,72 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full bg-slate-50/50 min-h-screen">
-      {/* 100% Full Width Hero Slideshow Section */}
-      <section className="relative w-full overflow-hidden bg-slate-100">
-        <Carousel className="w-full" opts={{ loop: true }}>
-          <CarouselContent>
+      {/* Hero Slideshow Section - Edge-to-Edge 16:9 Media with Zero Left, Top & Bottom Margin */}
+      <section className="relative w-full bg-white border-b border-slate-200 overflow-hidden">
+        <Carousel className="w-full relative" opts={{ loop: true }} setApi={setCarouselApi}>
+          <CarouselContent className="-ml-0">
             {slideshows.map((slide, index) => {
               return (
-                <CarouselItem key={slide.id || index}>
-                  <div className="relative h-[460px] md:h-[520px] w-full flex items-center">
-                    {/* Background Image / Video */}
-                    <div className="absolute inset-0 z-0 bg-black">
-                      {slide.imageUrl && (
-                        slide.mediaType === 'video' || slide.imageUrl.startsWith('data:video') || slide.imageUrl.match(/\.(mp4|webm|ogg)$/i) ? (
-                          <video
-                            src={slide.imageUrl}
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <Image
-                            src={slide.imageUrl}
-                            alt={slide.title}
-                            fill
-                            className="object-cover"
-                            priority={index === 0}
-                          />
-                        )
-                      )}
+                <CarouselItem key={slide.id || index} className="pl-0">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+                    {/* Left: 16:9 Media - 100% Flush Edge-to-Edge (Zero Left, Top, Bottom Margin) */}
+                    <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-8 w-full">
+                      <div className="relative w-full aspect-[16/9] bg-black overflow-hidden">
+                        {slide.imageUrl && (
+                          slide.mediaType === 'video' || slide.imageUrl.startsWith('data:video') || slide.imageUrl.match(/\.(mp4|webm|ogg)$/i) ? (
+                            <video
+                              src={slide.imageUrl}
+                              autoPlay
+                              muted
+                              loop
+                              playsInline
+                              className="w-full h-full object-cover object-center"
+                            />
+                          ) : (
+                            <Image
+                              src={slide.imageUrl}
+                              alt={slide.title}
+                              fill
+                              className="object-cover object-center"
+                              priority={index === 0}
+                            />
+                          )
+                        )}
+                      </div>
                     </div>
 
-                    {/* Compact White Background Slide Overlay */}
-                    <div className="container mx-auto px-6 lg:px-12 z-10 relative">
-                      <div className="max-w-lg space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-xl">
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-headline font-extrabold leading-tight text-slate-900 tracking-tight">
-                          {slide.title}<span className="text-[#6cb166]">{slide.titleHighlight}</span>
-                        </h1>
-                        <p className="text-xs sm:text-sm font-body text-slate-600 leading-relaxed">
-                          {slide.description}
-                        </p>
+                    {/* Right: Text Column with Internal Padding */}
+                    <div className="lg:col-span-5 xl:col-span-5 2xl:col-span-4 flex flex-col justify-center p-6 sm:p-8 lg:p-10 xl:p-14 pb-20 sm:pb-24 lg:pb-14 space-y-4 xl:space-y-5">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="bg-blue-50/80 border-blue-200 text-[#3b66b0] text-[11px] font-bold px-2.5 py-0.5 rounded-lg">
+                          ASSERWA SPOTLIGHT #{index + 1}
+                        </Badge>
+                        <span className="text-slate-400 text-xs font-semibold">
+                          {index + 1} of {slideshows.length}
+                        </span>
+                      </div>
+
+                      <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-headline font-extrabold leading-tight text-slate-900 tracking-tight">
+                        {slide.title}
+                        <span className="text-[#6cb166] block sm:inline sm:ml-1.5">{slide.titleHighlight}</span>
+                      </h1>
+
+                      <p className="text-sm sm:text-base lg:text-base xl:text-lg font-body text-slate-600 leading-relaxed">
+                        {slide.description}
+                      </p>
+
+                      <div className="pt-2 flex flex-wrap items-center gap-2.5">
+                        <Button asChild size="sm" className="bg-[#3b66b0] hover:bg-[#2b4c85] text-white text-xs sm:text-sm font-bold shadow-xs rounded-xl px-5 py-2.5 h-auto">
+                          <Link href="/about" className="flex items-center gap-1.5">
+                            <span>Learn More</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm" className="bg-white border-slate-200 text-slate-700 hover:text-[#3b66b0] hover:bg-slate-50 text-xs sm:text-sm font-semibold rounded-xl px-5 py-2.5 h-auto">
+                          <Link href="/book">
+                            Book Service
+                          </Link>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -101,10 +137,26 @@ export default function Home() {
               );
             })}
           </CarouselContent>
-          
-          <div className="absolute bottom-6 right-6 md:right-12 flex gap-2.5 z-20">
-            <CarouselPrevious className="static translate-y-0 bg-white/90 border-slate-200 text-slate-800 hover:bg-[#3b66b0] hover:text-white hover:border-[#3b66b0] h-10 w-10 rounded-xl shadow-md transition-colors" />
-            <CarouselNext className="static translate-y-0 bg-white/90 border-slate-200 text-slate-800 hover:bg-[#3b66b0] hover:text-white hover:border-[#3b66b0] h-10 w-10 rounded-xl shadow-md transition-colors" />
+
+          {/* Fixed Navigation Controls overlayed on the right side */}
+          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-8 lg:bottom-8 lg:right-10 flex items-center gap-3 z-20">
+            <div className="flex items-center gap-1.5 mr-1">
+              {slideshows.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  onClick={() => carouselApi?.scrollTo(dotIdx)}
+                  className={`h-2 transition-all rounded-full ${
+                    currentSlide === dotIdx ? "w-8 bg-[#3b66b0]" : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                  }`}
+                  aria-label={`Go to slide ${dotIdx + 1}`}
+                />
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <CarouselPrevious className="static translate-y-0 bg-white/95 border-slate-200 text-slate-700 hover:bg-[#3b66b0] hover:text-white hover:border-[#3b66b0] h-9 w-9 sm:h-10 sm:w-10 rounded-xl shadow-md transition-colors" />
+              <CarouselNext className="static translate-y-0 bg-white/95 border-slate-200 text-slate-700 hover:bg-[#3b66b0] hover:text-white hover:border-[#3b66b0] h-9 w-9 sm:h-10 sm:w-10 rounded-xl shadow-md transition-colors" />
+            </div>
           </div>
         </Carousel>
       </section>

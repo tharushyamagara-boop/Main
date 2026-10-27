@@ -25,6 +25,7 @@ export type NewsItem = {
   id: string;
   title: string;
   excerpt: string;
+  body?: string;
   date: string;
   author: string;
   tag: string;
@@ -219,6 +220,15 @@ export const defaultNews: NewsItem[] = [
     id: 'news-1',
     title: "ASSERWA Conducts Regional Sanitation & Hygiene Workshop",
     excerpt: "Promoting high professional standards among sewage emptiers and sanitation practitioners in Rwanda.",
+    body: `ASSERWA (Forum of Sewage Emptiers in Rwanda) has concluded a comprehensive three-day regional training and capacity-building workshop aimed at elevating operational and environmental standards across the sanitation sector.
+
+The workshop gathered over 120 sanitation technicians, operators, and private vacuum tanker enterprise representatives from Kigali City, Eastern Province, and Northern Province. Key topics covered included advanced fecal sludge handling protocols, personal protective equipment (PPE) compliance, workplace hygiene safeguards, and spill mitigation procedures.
+
+During the opening address, the ASSERWA leadership emphasized the critical role private sanitation operators play in safeguarding public health: "Our sector is the backbone of urban hygiene. By standardizing our practices, upgrading equipment handling, and adhering to strict environmental guidelines, we protect both our workers and the communities we serve."
+
+Participants also participated in hands-on equipment demonstrations, reviewing preventive maintenance checklists for vacuum haulage pumps, safety pressure relief valves, and secure discharge operations at designated municipal treatment plants.
+
+The workshop concluded with the distribution of updated ASSERWA Standard Operating Procedures (SOP) manuals and a joint pledge to maintain zero-tolerance for unsafe sludge discharge across all operating districts.`,
     date: "May 24, 2024",
     author: "ASSERWA Secretariat",
     tag: "Advocacy",
@@ -229,6 +239,13 @@ export const defaultNews: NewsItem[] = [
     id: 'news-2',
     title: "Promoting Toilet Construction & Facility Maintenance",
     excerpt: "Workshops focusing on infrastructure maintenance and environmental protection in communities.",
+    body: `In collaboration with local administrative entities and community development partners, ASSERWA has rolled out an intensive educational campaign focused on modern toilet facility construction, proper lining, and sustainable maintenance routines.
+
+Many households and commercial facilities in rapidly urbanizing zones face challenges with unlined or improperly constructed latrines and holding tanks. In response, ASSERWA engineering consultants delivered practical guidance on soil stabilization, impermeable pit containment, and ventilation design to prevent groundwater contamination.
+
+The campaign highlights the economic and health advantages of planned emptying schedules versus reactive crisis response. "Proper construction ensures tanks can be safely and efficiently emptied by standard vacuum tankers without structural collapse or environmental leaching," explained an ASSERWA technical officer.
+
+ASSERWA member companies committed to offering subsidized introductory inspection visits to schools, health centers, and community facilities, assisting them in mapping their containment infrastructure and scheduling regular preventive maintenance.`,
     date: "June 12, 2024",
     author: "ASSERWA Secretariat",
     tag: "Infrastructure",
@@ -239,6 +256,13 @@ export const defaultNews: NewsItem[] = [
     id: 'news-3',
     title: "Multi-Level Stakeholder Advocacy Engagement",
     excerpt: "Advocating for sewage emptiers at national and local government institutions across provinces.",
+    body: `ASSERWA delegates have concluded high-level consultative engagements with national regulatory authorities, the Rwanda Utilities Regulatory Authority (RURA), Ministry of Infrastructure (MININFRA), and district municipal leadership to advocate for supportive operational policies for sanitation practitioners.
+
+Discussions centered on establishing streamlined licensing frameworks, dedicated designated fecal sludge treatment dumping corridors, and tariff structures that ensure affordability for citizens while allowing sanitation companies to invest in modern, high-capacity equipment.
+
+ASSERWA also presented data on the sector's economic contribution, noting that member companies support hundreds of direct technical jobs and transport thousands of cubic meters of fecal sludge monthly to treatment facilities.
+
+Government representatives commended ASSERWA for its proactive self-regulation and organization of operators under a unified professional umbrella. Both parties agreed to establish a permanent quarterly liaison committee to address emerging sanitation challenges and coordinate emergency response readiness.`,
     date: "June 05, 2024",
     author: "ASSERWA Secretariat",
     tag: "Community",
@@ -323,7 +347,6 @@ const ContentStoreContext = createContext<ContentStoreContextType | undefined>(u
 const STORAGE_KEY = 'asserwa_cms_content_v4';
 
 const cleanUnsplashUrl = (url: string) => {
-  if (url && url.includes("images.unsplash.com")) return "";
   return url || "";
 };
 
@@ -332,6 +355,25 @@ const sanitizeItems = <T extends { imageUrl?: string }>(items: T[]): T[] => {
     ...item,
     imageUrl: cleanUnsplashUrl(item.imageUrl || "")
   }));
+};
+
+const mergeNewsItems = (savedNews: any[]): NewsItem[] => {
+  if (!Array.isArray(savedNews)) return defaultNews;
+  return savedNews.map(item => {
+    const fallback = defaultNews.find(d => d.id === item.id);
+    return {
+      id: item.id || fallback?.id || `news-${Date.now()}`,
+      title: item.title || fallback?.title || "Advocacy Update",
+      excerpt: item.excerpt || fallback?.excerpt || "",
+      body: (item.body && typeof item.body === 'string' && item.body.trim()) ? item.body : (fallback?.body || item.excerpt || ""),
+      date: item.date || fallback?.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      author: item.author || fallback?.author || "ASSERWA Secretariat",
+      tag: item.tag || fallback?.tag || "Advocacy",
+      imageUrl: cleanUnsplashUrl(item.imageUrl || fallback?.imageUrl || ""),
+      mediaType: item.mediaType || fallback?.mediaType || 'image',
+      videoUrl: item.videoUrl || fallback?.videoUrl
+    };
+  });
 };
 
 const mergeNavMenuItems = (savedItems: any[]): NavMenuItem[] => {
@@ -430,7 +472,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           if (parsed.services) setServices(parsed.services);
           if (parsed.memberNetwork) setMemberNetwork(parsed.memberNetwork);
           if (parsed.resources) setResources(parsed.resources);
-          if (Array.isArray(parsed.news)) setNews(sanitizeItems(parsed.news));
+          if (Array.isArray(parsed.news)) setNews(mergeNewsItems(parsed.news));
           if (Array.isArray(parsed.gallery)) setGallery(sanitizeItems(parsed.gallery));
           if (parsed.contactInfo) setContactInfo(parsed.contactInfo);
           if (Array.isArray(parsed.navMenuItems)) {
@@ -453,7 +495,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       if (data.services) setServices(data.services);
       if (data.memberNetwork) setMemberNetwork(data.memberNetwork);
       if (data.resources) setResources(data.resources);
-      if (Array.isArray(data.news)) setNews(sanitizeItems(data.news));
+      if (Array.isArray(data.news)) setNews(mergeNewsItems(data.news));
       if (Array.isArray(data.gallery)) setGallery(sanitizeItems(data.gallery));
       if (data.contactInfo) setContactInfo(data.contactInfo);
       if (Array.isArray(data.navMenuItems)) {

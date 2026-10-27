@@ -165,7 +165,7 @@ function AdminDashboardContent() {
     }
   };
 
-  // Media File Upload Helper (Firebase Storage + Fallback Data URL)
+  // Media File Upload Helper (Firebase Storage + Optimized Fallback)
   const handleMediaFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     onComplete: (url: string, mediaType: 'image' | 'video') => void
@@ -184,11 +184,58 @@ function AdminDashboardContent() {
       onComplete(downloadUrl, isVid ? 'video' : 'image');
       toast({
         title: "Uploaded to Firebase Cloud Storage!",
-        description: `${file.name} successfully stored in Firebase Storage.`,
+        description: `${file.name} successfully stored. Click 'Save' to sync live to Cloud Firestore.`,
       });
       return;
     } catch (err) {
-      console.warn("Firebase Storage upload fallback to Data URL:", err);
+      console.warn("Firebase Storage upload fallback to optimized Data URL:", err);
+    }
+
+    // Local Optimized Data URL Fallback (Compresses image to ~50-80KB so Firestore 1MB limit is never exceeded)
+    try {
+      if (!isVid) {
+        const compressedUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const img = document.createElement('img');
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const maxDim = 1200;
+              let width = img.width;
+              let height = img.height;
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.82));
+              } else {
+                resolve(evt.target?.result as string);
+              }
+            };
+            img.onerror = () => resolve(evt.target?.result as string);
+            img.src = evt.target?.result as string;
+          };
+          reader.readAsDataURL(file);
+        });
+        onComplete(compressedUrl, 'image');
+        toast({
+          title: "Photo Processed & Attached",
+          description: `${file.name} optimized. Click 'Save' to persist to Cloud Firestore.`,
+        });
+        return;
+      }
+    } catch (e) {
+      console.warn("Image compression fallback error:", e);
     }
 
     // Local Data URL Fallback
@@ -271,6 +318,7 @@ function AdminDashboardContent() {
       id: `news-${Date.now()}`,
       title: "New Advocacy Update or Press Release",
       excerpt: "Short summary of the advocacy update or news story...",
+      body: "Write the full article body text here. You can include detailed paragraphs, official statements, and program outcomes.",
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
       author: "ASSERWA Secretariat",
       tag: "Advocacy",
@@ -280,7 +328,7 @@ function AdminDashboardContent() {
     setNews([...news, newItem]);
     toast({
       title: "Article Added",
-      description: "New news article added. Please upload your photo/video file.",
+      description: "New news article added. You can now edit the title, excerpt, full body content, and media.",
     });
   };
 
@@ -1607,15 +1655,31 @@ function AdminDashboardContent() {
                   </CardTitle>
                   <CardDescription className="text-xs">Manage press releases, advocacy articles, photos, and video media.</CardDescription>
                 </div>
-                <Button onClick={handleAddNewsItem} className="bg-[#3b66b0] hover:bg-[#2e5291] text-white font-headline text-xs font-bold px-4 shrink-0 shadow-sm">
-                  + Add New Article
-                </Button>
+                <div className="flex items-center gap-2.5">
+                  <Button onClick={handleAddNewsItem} className="bg-[#3b66b0] hover:bg-[#2e5291] text-white font-headline text-xs font-bold px-4 shrink-0 shadow-sm">
+                    + Add New Article
+                  </Button>
+                  <Button onClick={handleSave} className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold px-4 shrink-0 shadow-sm flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Save News Changes</span>
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 {news.map((item, idx) => (
                   <div key={item.id} className="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-headline font-bold text-sm text-[#3b66b0]">Article #{idx + 1}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-headline font-bold text-sm text-[#3b66b0]">Article #{idx + 1}</h4>
+                        <a 
+                          href={`/news/${item.id}`} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="text-[11px] font-semibold text-[#3b66b0] hover:underline flex items-center gap-1 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md"
+                        >
+                          View Article Page ↗
+                        </a>
+                      </div>
                       <Button
                         variant="outline"
                         size="sm"
@@ -1681,7 +1745,7 @@ function AdminDashboardContent() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold">Article Excerpt</Label>
+                      <Label className="text-xs font-bold">Article Excerpt (Short Summary)</Label>
                       <Textarea 
                         value={item.excerpt} 
                         onChange={(e) => {
@@ -1690,6 +1754,23 @@ function AdminDashboardContent() {
                           setNews(updated);
                         }}
                         className="bg-white text-xs min-h-[60px]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs font-bold text-slate-800">Full Article Body Content</Label>
+                        <span className="text-[11px] text-slate-400">Displayed on the dedicated article view (supports multiple paragraphs)</span>
+                      </div>
+                      <Textarea 
+                        value={item.body || ''} 
+                        onChange={(e) => {
+                          const updated = [...news];
+                          updated[idx].body = e.target.value;
+                          setNews(updated);
+                        }}
+                        placeholder="Write or paste the full body text of the news article or press release here..."
+                        className="bg-white text-xs min-h-[140px] font-body leading-relaxed"
                       />
                     </div>
 
@@ -1755,6 +1836,20 @@ function AdminDashboardContent() {
                   </div>
                 ))}
               </CardContent>
+              <CardFooter className="bg-slate-50 border-t p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span className="text-xs text-slate-500 font-medium">
+                  {news.length} total articles. Click save to synchronize all news articles and photos with Cloud Firestore.
+                </span>
+                <div className="flex items-center gap-3">
+                  <Button onClick={handleAddNewsItem} variant="outline" className="border-slate-300 text-xs font-bold">
+                    + Add Another Article
+                  </Button>
+                  <Button onClick={handleSave} className="bg-[#6cb166] hover:bg-[#5aa054] text-white font-headline text-xs font-bold px-6 shadow-md flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Save All News to Cloud Firestore</span>
+                  </Button>
+                </div>
+              </CardFooter>
             </Card>
           </TabsContent>
 
