@@ -23,6 +23,7 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import { SlideVideoPlayer } from '@/components/slide-video-player';
 
 export default function Home() {
   const { slideshows, memberNetwork, objectives, contactInfo, services } = useContentStore();
@@ -77,13 +78,10 @@ export default function Home() {
                       <div className="relative w-full aspect-[16/9] bg-black overflow-hidden">
                         {slide.imageUrl && (
                           slide.mediaType === 'video' || slide.imageUrl.startsWith('data:video') || slide.imageUrl.match(/\.(mp4|webm|ogg)$/i) ? (
-                            <video
+                            <SlideVideoPlayer
                               src={slide.imageUrl}
-                              autoPlay
-                              muted
-                              loop
-                              playsInline
-                              className="w-full h-full object-cover object-center"
+                              isActive={currentSlide === index}
+                              title={slide.title}
                             />
                           ) : (
                             <Image
