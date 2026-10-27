@@ -9,41 +9,80 @@ interface SlideVideoPlayerProps {
   title?: string;
 }
 
-export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlayerProps) {
+function formatTime(seconds: number): string {
+  if (isNaN(seconds) || seconds < 0 || !isFinite(seconds)) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+export function SlideVideoPlayer({ src, isActive = true }: SlideVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+  const autoHideTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [volume, setVolume] = useState<number>(0.85);
-  const [showControls, setShowControls] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
+  const [showControls, setShowControls] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
-  // Sync muted and volume state with the actual video DOM element
+  // Synchronize muted and volume with the HTML5 video element
   useEffect(() => {
     if (!videoRef.current) return;
     videoRef.current.muted = isMuted;
     videoRef.current.volume = isMuted ? 0 : volume;
   }, [isMuted, volume]);
 
-  // Handle active slide state (pause/mute when slide is swiped away)
+  // Auto-hide controls after 5 seconds of video playback without interaction
+  const resetAutoHideTimer = useCallback(() => {
+    if (autoHideTimerRef.current) {
+      clearTimeout(autoHideTimerRef.current);
+      autoHideTimerRef.current = null;
+    }
+
+    if (showControls && isPlaying) {
+      autoHideTimerRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 5000);
+    }
+  }, [showControls, isPlaying]);
+
+  useEffect(() => {
+    resetAutoHideTimer();
+    return () => {
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+      }
+    };
+  }, [resetAutoHideTimer]);
+
+  // Reveal controls on user activity (mouse move, touch)
+  const handleActivity = useCallback(() => {
+    setShowControls(true);
+    resetAutoHideTimer();
+  }, [resetAutoHideTimer]);
+
+  // Carousel slide synchronization
   useEffect(() => {
     if (!videoRef.current) return;
+
     if (!isActive) {
-      // Automatically mute and pause if this slide is no longer active in the carousel
       videoRef.current.muted = true;
       setIsMuted(true);
       videoRef.current.pause();
       setIsPlaying(false);
       setShowControls(false);
+      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
     } else {
-      // Resume playback when slide becomes active
+      setShowControls(true);
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => setIsPlaying(true))
           .catch(() => {
-            // Autoplay with audio was blocked or interrupted
             if (videoRef.current) {
               videoRef.current.muted = true;
               setIsMuted(true);
@@ -54,7 +93,7 @@ export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlay
     }
   }, [isActive]);
 
-  // Fullscreen change listener
+  // Listen for fullscreen change
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(Boolean(document.fullscreenElement));
@@ -65,10 +104,34 @@ export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlay
     };
   }, []);
 
-  // Toggle Mute / Unmute
-  const toggleMute = useCallback((e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+  // Clicking anywhere on the video background toggles play / pause
+  const handleVideoClick = () => {
     if (!videoRef.current) return;
+
+    if (videoRef.current.paused) {
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+        setShowControls(true);
+      }).catch(() => {});
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+      setShowControls(true);
+    }
+  };
+
+  // Toggle Play / Pause from controls
+  const togglePlayPause = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleVideoClick();
+  };
+
+  // Toggle Mute / Unmute
+  const toggleMute = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+
+    handleActivity();
 
     if (isMuted) {
       videoRef.current.muted = false;
@@ -76,32 +139,19 @@ export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlay
       videoRef.current.volume = targetVolume;
       setVolume(targetVolume);
       setIsMuted(false);
-      // Ensure it is playing
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     } else {
       videoRef.current.muted = true;
       setIsMuted(true);
     }
-  }, [isMuted, volume]);
-
-  // Toggle Play / Pause
-  const togglePlayPause = useCallback((e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (!videoRef.current) return;
-
-    if (videoRef.current.paused) {
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  }, []);
+  }, [isMuted, volume, handleActivity]);
 
   // Handle Volume Change
-  const handleVolumeChange = useCallback((newVol: number, e?: React.ChangeEvent<HTMLInputElement>) => {
-    if (e) e.stopPropagation();
+  const handleVolumeChange = useCallback((newVol: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     if (!videoRef.current) return;
+
+    handleActivity();
 
     const clamped = Math.max(0, Math.min(1, newVol));
     setVolume(clamped);
@@ -113,11 +163,20 @@ export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlay
       videoRef.current.volume = clamped;
       setIsMuted(false);
     }
-  }, []);
+  }, [handleActivity]);
 
-  // Toggle Fullscreen
-  const toggleFullscreen = useCallback((e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+  // Handle Seeking
+  const handleSeek = (newTime: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+    handleActivity();
+  };
+
+  // Fullscreen Toggle
+  const toggleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!containerRef.current) return;
 
     if (!document.fullscreenElement) {
@@ -125,19 +184,15 @@ export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlay
     } else {
       document.exitFullscreen().catch(() => {});
     }
-  }, []);
-
-  // Tapping the container toggles the controls overlay
-  const handleContainerTap = () => {
-    setShowControls(prev => !prev);
   };
 
   return (
     <div
       ref={containerRef}
-      onClick={handleContainerTap}
-      className="relative w-full h-full cursor-pointer select-none group overflow-hidden bg-black flex items-center justify-center"
-      aria-label="Video slide - tap to toggle audio and playback controls"
+      onClick={handleVideoClick}
+      onMouseMove={handleActivity}
+      onTouchStart={handleActivity}
+      className="relative w-full h-full cursor-pointer select-none overflow-hidden bg-black flex items-center justify-center group"
     >
       {/* HTML5 Video Element */}
       <video
@@ -150,158 +205,122 @@ export function SlideVideoPlayer({ src, isActive = true, title }: SlideVideoPlay
         className="w-full h-full object-cover object-center pointer-events-none"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onTimeUpdate={() => {
+          if (videoRef.current) {
+            setCurrentTime(videoRef.current.currentTime);
+          }
+        }}
+        onLoadedMetadata={() => {
+          if (videoRef.current) {
+            setDuration(videoRef.current.duration);
+          }
+        }}
+        onDurationChange={() => {
+          if (videoRef.current) {
+            setDuration(videoRef.current.duration);
+          }
+        }}
       />
 
-      {/* Persistent Audio Badge (Shown when controls are hidden) */}
-      {!showControls && (
-        <div className="absolute bottom-3 left-3 z-20 pointer-events-auto">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Tapping this badge directly reveals controls and uninhibited toggle
-              if (isMuted) {
-                toggleMute();
-                setShowControls(true);
-              } else {
-                setShowControls(prev => !prev);
-              }
-            }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 hover:bg-slate-900/95 backdrop-blur-md text-white text-xs font-semibold shadow-lg border border-white/20 transition-all transform hover:scale-105 active:scale-95"
-            title={isMuted ? "Tap to unmute video" : "Tap for audio controls"}
-          >
-            {isMuted ? (
-              <>
-                <VolumeX className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-                <span className="tracking-wide">Tap to Unmute</span>
-              </>
-            ) : (
-              <>
-                <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="tracking-wide">Sound On</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
-
-      {/* Quick Tap Hint Indicator (top-left) */}
-      {!showControls && (
-        <div className="absolute top-3 left-3 z-10 opacity-0 group-hover:opacity-100 sm:transition-opacity duration-200 pointer-events-none">
-          <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-sm text-[11px] font-medium text-slate-200 border border-white/10">
-            Tap video for controls
-          </span>
-        </div>
-      )}
-
-      {/* Interactive Controls Overlay (Revealed on Tap, Hidden on Tap Again) */}
-      {showControls && (
-        <div
-          className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[2px] flex flex-col justify-between p-3 sm:p-5 transition-opacity duration-200"
-          onClick={handleContainerTap}
-        >
-          {/* Top Bar: Status and Dismiss Tip */}
-          <div className="flex items-center justify-between pointer-events-none">
-            <div className="flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-md ${
-                isMuted
-                  ? 'bg-amber-500/20 text-amber-200 border-amber-400/40'
-                  : 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40'
-              }`}>
-                {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                {isMuted ? 'Muted' : `Volume: ${Math.round(volume * 100)}%`}
-              </span>
-            </div>
-
-            <span className="px-3 py-1 rounded-full bg-black/60 border border-white/15 text-slate-300 text-[11px] font-medium shadow-sm">
-              Tap video again to hide
-            </span>
+      {/* Paused State Center Indicator */}
+      {!isPlaying && (
+        <div className="absolute inset-0 z-10 bg-black/30 flex items-center justify-center pointer-events-none transition-opacity duration-200">
+          <div className="p-4 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 shadow-2xl">
+            <Play className="w-8 h-8 fill-current ml-1" />
           </div>
+        </div>
+      )}
 
-          {/* Center Action: Big Unmute / Play Prompt if Muted */}
-          {isMuted && (
-            <div className="flex justify-center pointer-events-auto">
-              <button
-                type="button"
-                onClick={toggleMute}
-                className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-blue-600/90 hover:bg-blue-600 active:scale-95 text-white font-bold text-sm shadow-2xl border border-blue-400/50 backdrop-blur-md transition-all transform hover:scale-105"
-              >
-                <Volume2 className="w-5 h-5 text-amber-300" />
-                <span>Tap Here to Unmute Audio</span>
-              </button>
-            </div>
-          )}
+      {/* Audio Playback Progress Bar, Timestamp & Controls Bar */}
+      <div
+        className={`absolute bottom-0 inset-x-0 z-20 pt-8 pb-3 px-3 sm:px-4 bg-gradient-to-t from-black/85 via-black/50 to-transparent flex flex-col gap-2 transition-opacity duration-300 ${
+          showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Playback Progress Bar (Scrubbable) */}
+        <div className="relative w-full flex items-center group/scrubber cursor-pointer py-1">
+          <div className="relative w-full h-1 group-hover/scrubber:h-2 bg-white/25 rounded-full overflow-hidden transition-all">
+            <div
+              className="h-full bg-[#3b66b0] rounded-full transition-all duration-75"
+              style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+            />
+          </div>
+          <input
+            type="range"
+            min="0"
+            max={duration || 100}
+            step="0.1"
+            value={currentTime}
+            onChange={(e) => handleSeek(parseFloat(e.target.value), e)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            title="Seek playback progress"
+          />
+        </div>
 
-          {/* Bottom Bar: Complete Audio & Playback Control Bar */}
-          <div
-            className="w-full max-w-xl mx-auto bg-slate-950/85 backdrop-blur-md border border-white/20 rounded-2xl p-2.5 sm:p-3 shadow-2xl flex items-center justify-between gap-3 text-white pointer-events-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Play / Pause Toggle */}
+        {/* Controls Row: Play/Pause, Audio Mute/Unmute, Volume Slider, Timestamp, Fullscreen */}
+        <div className="flex items-center justify-between text-white text-xs">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Play / Pause Toggle Button */}
             <button
               type="button"
               onClick={togglePlayPause}
-              className="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-colors"
-              title={isPlaying ? "Pause video" : "Play video"}
+              className="p-1.5 rounded-lg hover:bg-white/20 active:scale-95 text-white transition-colors"
               aria-label={isPlaying ? "Pause video" : "Play video"}
+              title={isPlaying ? "Pause" : "Play"}
             >
-              {isPlaying ? <Pause className="w-4 h-4 sm:w-5 sm:h-5" /> : <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />}
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
             </button>
 
-            {/* Mute / Unmute Toggle Button */}
+            {/* Audio Mute / Unmute Button (starts with muted icon) */}
             <button
               type="button"
               onClick={toggleMute}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all active:scale-95 ${
-                isMuted
-                  ? 'bg-amber-500/30 text-amber-200 border border-amber-400/50 hover:bg-amber-500/40'
-                  : 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/50 hover:bg-emerald-500/40'
-              }`}
-              title={isMuted ? "Unmute audio" : "Mute audio"}
+              className="p-1.5 rounded-lg hover:bg-white/20 active:scale-95 text-white transition-colors"
+              aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              title={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? (
-                <>
-                  <VolumeX className="w-4 h-4 text-amber-300" />
-                  <span>Unmute</span>
-                </>
+                <VolumeX className="w-4 h-4 text-amber-300" />
               ) : (
-                <>
-                  <Volume2 className="w-4 h-4 text-emerald-300" />
-                  <span>Mute</span>
-                </>
+                <Volume2 className="w-4 h-4 text-emerald-400" />
               )}
             </button>
 
-            {/* Volume Range Slider */}
-            <div className="flex-1 flex items-center gap-2 min-w-[80px] max-w-[160px] sm:max-w-[200px]">
+            {/* Inline Volume Slider */}
+            {!isMuted && (
               <input
                 type="range"
                 min="0"
                 max="1"
                 step="0.05"
-                value={isMuted ? 0 : volume}
+                value={volume}
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value), e)}
-                className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#3b66b0] focus:outline-none"
-                title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
+                className="w-16 sm:w-20 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white transition-opacity"
+                title={`Volume: ${Math.round(volume * 100)}%`}
               />
-              <span className="text-[11px] font-mono font-medium text-slate-300 w-8 text-right">
-                {Math.round((isMuted ? 0 : volume) * 100)}%
-              </span>
-            </div>
+            )}
 
-            {/* Fullscreen Button */}
-            <button
-              type="button"
-              onClick={toggleFullscreen}
-              className="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-colors"
-              title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-              aria-label={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-            >
-              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-            </button>
+            {/* Timestamp (e.g. 0:14 / 1:23) */}
+            <div className="font-mono text-[11px] sm:text-xs text-slate-200 select-none pl-1 flex items-center gap-1">
+              <span className="font-semibold text-white">{formatTime(currentTime)}</span>
+              <span className="text-slate-400">/</span>
+              <span>{formatTime(duration)}</span>
+            </div>
           </div>
+
+          {/* Fullscreen Button */}
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="p-1.5 rounded-lg hover:bg-white/20 active:scale-95 text-white transition-colors"
+            aria-label={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }
