@@ -74,6 +74,7 @@ export default function GalleryPage() {
                   isVideo(img) ? (
                     <video
                       src={img.imageUrl}
+                      preload="none"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
@@ -81,6 +82,9 @@ export default function GalleryPage() {
                       src={img.imageUrl}
                       alt={img.description}
                       fill
+                      loading="lazy"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      unoptimized={img.imageUrl.startsWith('data:')}
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   )
@@ -161,6 +165,7 @@ export default function GalleryPage() {
                   fill
                   className="object-contain rounded-xl shadow-2xl"
                   sizes="(max-width: 768px) 100vw, 80vw"
+                  unoptimized={current.imageUrl.startsWith('data:')}
                 />
               </div>
             )}

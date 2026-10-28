@@ -54,6 +54,8 @@ export default function AboutPage() {
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   priority
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  unoptimized={aboutUs.imageUrl?.startsWith('data:')}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-3.5 left-4 right-4 flex items-center justify-between text-white text-xs">

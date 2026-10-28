@@ -202,6 +202,7 @@ export function SlideVideoPlayer({ src, isActive = true }: SlideVideoPlayerProps
         muted
         loop
         playsInline
+        preload={isActive ? "auto" : "none"}
         className="w-full h-full object-cover object-center pointer-events-none"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}

@@ -128,12 +128,14 @@ export default function ArticleDetailPage() {
                 <video
                   src={article.imageUrl}
                   controls
+                  preload="metadata"
                   className="w-full h-full object-cover object-center"
                 />
               ) : (
                 <img
                   src={article.imageUrl}
                   alt={article.title}
+                  decoding="async"
                   className="w-full h-full object-cover object-center"
                 />
               )}

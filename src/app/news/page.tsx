@@ -35,6 +35,7 @@ export default function NewsPage() {
                     item.mediaType === 'video' || item.imageUrl.startsWith('data:video') || item.imageUrl.match(/\.(mp4|webm|ogg)$/i) ? (
                       <video
                         src={item.imageUrl}
+                        preload="none"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         muted
                       />
@@ -44,6 +45,7 @@ export default function NewsPage() {
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-95 group-hover:brightness-100"
                         loading="lazy"
+                        decoding="async"
                       />
                     )
                   ) : (

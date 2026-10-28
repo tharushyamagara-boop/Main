@@ -90,6 +90,8 @@ export default function Home() {
                               fill
                               className="object-cover object-center"
                               priority={index === 0}
+                              unoptimized={slide.imageUrl.startsWith('data:')}
+                              sizes="(max-width: 1024px) 100vw, 65vw"
                             />
                           )
                         )}
@@ -264,6 +266,8 @@ export default function Home() {
                             <img
                               src={comp.logoUrl}
                               alt={comp.name}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-contain"
                             />
                           ) : (
